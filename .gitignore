@@ -10,11 +10,11 @@ desktop.ini
 *.swo
 *~
 
-# Hugo / static-site build output (when /website/ comes online)
-website/public/
-website/resources/
-website/_site/
-website/.hugo_build.lock
+# Static-site build output (when /docs/ has a build pipeline)
+docs/public/
+docs/resources/
+docs/_site/
+docs/.hugo_build.lock
 
 # Python (in case a future skill ships Python helpers)
 __pycache__/
