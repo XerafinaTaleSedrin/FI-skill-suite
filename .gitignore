@@ -1,0 +1,33 @@
+# OS noise
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Hugo / static-site build output (when /website/ comes online)
+website/public/
+website/resources/
+website/_site/
+website/.hugo_build.lock
+
+# Python (in case a future skill ships Python helpers)
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+.env
+
+# Local user data — sentinel files that should NEVER be committed even if
+# someone accidentally puts them in the repo. Defense in depth.
+holdings.md
+lifetime-earnings.md
+transactions/
+fu-money-log/
+*-private.md

@@ -1,0 +1,19 @@
+# Normalize all text files to LF line endings in the repo, regardless of OS.
+# This kills the "LF will be replaced by CRLF" warnings on Windows checkouts
+# and makes the repo behave consistently across Mac / Linux / Windows.
+
+* text=auto eol=lf
+
+# Markdown explicitly LF
+*.md text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+
+# Binary files (won't be normalized)
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.svg binary
+*.pdf binary
+*.zip binary
