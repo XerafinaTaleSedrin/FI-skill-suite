@@ -19,7 +19,7 @@ The flagship onboarding skill. Walks the user through populating a `holdings.md`
 
 ## The concept (decades-stable)
 
-Knowing what you own is the prerequisite for any conscious financial decision. Most people don't know — their assets are scattered across employer-managed retirement accounts they barely look at, brokerages with auto-deposits they forgot about, foreign currency holdings from old jobs, real estate equity they don't track, debts whose balances are stale. The catch-up framing of YMOYL Step 1 names this honestly: most adults are running their financial lives on partial information.
+Knowing what you own is the prerequisite for any conscious financial decision. Most people don't know — their assets are scattered across employer-managed retirement accounts they barely look at, brokerages with auto-deposits they forgot about, foreign currency holdings, retirement contributions from old jobs, real estate equity they don't track, debts whose balances are stale. The catch-up framing of YMOYL Step 1 names this honestly: most adults are running their financial lives on partial information.
 
 A consolidated holdings file resolves this — not as a planning tool, but as a security-blanket artifact you can read like a weather report.
 

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{page_title} — {site_name}</title>
+    <meta name="description" content="{meta_description}">
+    <link rel="alternate" type="application/rss+xml" title="{site_name} RSS" href="{base_url}/feed.xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="{google_fonts_url}">
+    <link rel="stylesheet" href="{base_url}/static/css/style.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <div class="site-brand">
+                <h1 class="site-title"><a href="{base_url}/">{site_name}</a></h1>
+                <p class="site-tagline">{tagline}</p>
+            </div>
+            <nav class="site-nav">
+                <a href="{base_url}/">Audits</a>
+                <a href="{base_url}/about.html">About</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        {content}
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <hr class="deco-divider">
+            <p>{footer_text}</p>
+            <p class="footer-meta">&copy; {year} Marika Olson &middot; <a href="{base_url}/feed.xml">RSS</a></p>
+        </div>
+    </footer>
+</body>
+</html>

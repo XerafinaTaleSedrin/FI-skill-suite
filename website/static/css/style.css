@@ -1,0 +1,341 @@
+/* Rogue Reads — Modernist editorial */
+
+:root {
+    --bg-primary: #F5EDD8;
+    --bg-secondary: #EDE3C8;
+    --text-primary: #1F3F5A;
+    --text-secondary: #496A85;
+    --accent: #A88753;
+    --accent-hover: #8B6F40;
+    --border: #D4C8A8;
+    --code-bg: #EDE3C8;
+    --font-body: 'Raleway', system-ui, -apple-system, sans-serif;
+    --font-heading: 'Aboreto', 'Raleway', system-ui, sans-serif;
+    --font-code: 'JetBrains Mono', 'Courier New', monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+    font-family: var(--font-body);
+    font-weight: 400;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.7;
+    font-size: 18px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.15s, color 0.15s;
+}
+a:hover {
+    color: var(--accent-hover);
+    border-bottom-color: var(--accent-hover);
+}
+
+.container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+/* ---------- Header ---------- */
+.site-header {
+    padding: 2.5rem 0 2rem;
+    border-bottom: 3px double var(--border);
+    margin-bottom: 3rem;
+}
+.site-header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+.site-title {
+    font-family: var(--font-heading);
+    font-size: 2.4rem;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    margin: 0;
+    line-height: 1;
+}
+.site-title a {
+    color: var(--text-primary);
+    border: none;
+}
+.site-title a:hover {
+    color: var(--accent);
+}
+.site-tagline {
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    font-style: italic;
+    margin-top: 0.4rem;
+    letter-spacing: 0.01em;
+}
+.site-nav {
+    display: flex;
+    gap: 1.5rem;
+}
+.site-nav a {
+    font-family: var(--font-heading);
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    border: none;
+}
+.site-nav a:hover {
+    color: var(--accent);
+}
+
+/* ---------- Headings ---------- */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    font-weight: 400;
+    color: var(--text-primary);
+    line-height: 1.25;
+    letter-spacing: 0.04em;
+}
+h1 { font-size: 2.2rem; margin: 0 0 0.6rem; letter-spacing: 0.06em; }
+h2 { font-size: 1.45rem; margin: 2.5rem 0 1rem; letter-spacing: 0.08em; }
+h3 { font-size: 1.05rem; margin: 1.8rem 0 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
+h4 { font-size: 1rem; margin: 1.4rem 0 0.5rem; }
+
+/* ---------- Body content ---------- */
+p { margin-bottom: 1.2rem; }
+strong { font-weight: 600; color: var(--text-primary); }
+em { font-style: italic; }
+
+ul, ol { margin: 0 0 1.4rem 1.6rem; }
+li { margin-bottom: 0.5rem; }
+
+blockquote {
+    border-left: 3px solid var(--accent);
+    padding: 0.4rem 0 0.4rem 1.2rem;
+    margin: 1.5rem 0;
+    color: var(--text-secondary);
+    font-style: italic;
+    font-size: 1.05rem;
+}
+blockquote p:last-child { margin-bottom: 0; }
+
+code {
+    font-family: var(--font-code);
+    background: var(--code-bg);
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    font-size: 0.88em;
+    color: var(--text-primary);
+}
+pre {
+    background: var(--code-bg);
+    padding: 1.2rem;
+    border-radius: 4px;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    border: 1px solid var(--border);
+}
+pre code { background: none; padding: 0; font-size: 0.85em; }
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-size: 0.95rem;
+}
+th, td {
+    padding: 0.6rem 0.8rem;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+}
+th {
+    font-family: var(--font-heading);
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+}
+
+hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2rem 0;
+}
+
+/* Deco double-rule divider — used in header / footer / between major sections */
+hr.deco-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    height: 4px;
+    margin: 2rem 0;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 3px;
+    margin: 1rem 0;
+}
+
+/* ---------- Audit shelf (homepage) ---------- */
+.audit-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.audit-item {
+    padding: 1.8rem 0;
+    border-bottom: 1px solid var(--border);
+}
+.audit-item:last-child { border-bottom: none; }
+.audit-item-meta {
+    font-family: var(--font-heading);
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+}
+.audit-item-title {
+    font-family: var(--font-heading);
+    font-size: 1.6rem;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    margin: 0.2rem 0 0.6rem;
+}
+.audit-item-title a {
+    color: var(--text-primary);
+    border: none;
+}
+.audit-item-title a:hover { color: var(--accent); }
+.audit-item-author {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    font-style: italic;
+    margin-bottom: 0.6rem;
+}
+.audit-item-verdict {
+    display: inline-block;
+    margin-top: 0.6rem;
+    padding: 0.3rem 0.9rem;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-family: var(--font-heading);
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+}
+
+/* ---------- Single audit page ---------- */
+.audit-header {
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 3px double var(--border);
+}
+.audit-meta {
+    font-family: var(--font-heading);
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 0.8rem;
+}
+.audit-title {
+    font-family: var(--font-heading);
+    font-size: 2.6rem;
+    line-height: 1.15;
+    letter-spacing: 0.04em;
+    margin: 0 0 0.8rem;
+}
+.audit-byline {
+    font-style: italic;
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+.audit-content {
+    font-size: 1rem;
+    line-height: 1.75;
+}
+
+/* Hearth verdict — Deco-stamp styling */
+.hearth-verdict {
+    margin: 2.5rem 0;
+    padding: 1.4rem 1.8rem;
+    border: 2px solid var(--accent);
+    border-radius: 2px;
+    background: var(--bg-secondary);
+    position: relative;
+}
+.hearth-verdict::before {
+    content: "Hearth's Verdict";
+    position: absolute;
+    top: -0.7rem;
+    left: 1rem;
+    background: var(--bg-primary);
+    padding: 0 0.6rem;
+    font-family: var(--font-heading);
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+}
+.hearth-verdict .verdict-tag {
+    display: inline-block;
+    margin-top: 0.6rem;
+    padding: 0.3rem 0.8rem;
+    background: var(--accent);
+    color: var(--bg-primary);
+    font-family: var(--font-heading);
+    font-size: 0.78rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+}
+
+/* ---------- Footer ---------- */
+.site-footer {
+    margin-top: 5rem;
+    padding-bottom: 2rem;
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+.site-footer a {
+    color: var(--accent);
+    border: none;
+}
+.site-footer a:hover {
+    color: var(--accent-hover);
+    border-bottom: 1px solid var(--accent-hover);
+}
+.footer-meta {
+    margin-top: 0.6rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.05em;
+}
+
+/* ---------- About page ---------- */
+.about-content { line-height: 1.8; }
+.about-content h2 { color: var(--accent); }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 640px) {
+    body { font-size: 17px; }
+    .site-header .container { flex-direction: column; align-items: flex-start; }
+    .site-title { font-size: 2rem; }
+    .audit-title { font-size: 2rem; }
+    h1 { font-size: 1.8rem; }
+    h2 { font-size: 1.3rem; }
+    .container { padding: 0 1rem; }
+}

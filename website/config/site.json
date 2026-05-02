@@ -1,0 +1,24 @@
+{
+  "site_name": "Rogue Reads",
+  "tagline": "Editorial book audits, with Hearth's verdict.",
+  "author_name": "Marika Olson",
+  "author_url": "https://marikaolson.com",
+  "base_url": "",
+  "colors": {
+    "bg_primary": "#F5EDD8",
+    "bg_secondary": "#EDE3C8",
+    "text_primary": "#1F3F5A",
+    "text_secondary": "#496A85",
+    "accent": "#A88753",
+    "accent_hover": "#8B6F40",
+    "border": "#D4C8A8",
+    "code_bg": "#EDE3C8"
+  },
+  "fonts": {
+    "body": "'Raleway', system-ui, -apple-system, sans-serif",
+    "heading": "'Aboreto', 'Raleway', system-ui, sans-serif",
+    "code": "'JetBrains Mono', 'Courier New', monospace"
+  },
+  "google_fonts_url": "https://fonts.googleapis.com/css2?family=Aboreto&family=Raleway:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap",
+  "footer_text": "Rogue Reads is part of <a href=\"https://marikaolson.com\">Marika Olson Consulting</a>. Audits run on the <a href=\"https://github.com/XerafinaTaleSedrin/FI-skill-suite\">FI-skill-suite</a>. Hearth approves only what she'd actually sit with."
+}
