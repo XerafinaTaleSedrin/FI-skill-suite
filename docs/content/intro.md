@@ -1,0 +1,1 @@
+Rogue Reads is the editorial-audit shelf where Marika Olson harvests the load-bearing mechanics from finance, business, and systems books — separated from their rhetorical packaging, with Hearth's verdict on whether the book is worth the time. Honest, blunt, and occasionally undiplomatic.

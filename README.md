@@ -1,6 +1,8 @@
-# fi-skill-suite
+# FI-skill-suite
 
-A free, open, multi-skill suite for navigating towards financial independence — built on multiple frameworks, modernized for 2026 work modes, written to age well as the world keeps changing. Many thanks to the original authors of Your Money Or Your Life for setting the author on this journey, and to the other authors whose work will be added to the book audits in editions to come. 
+> **Finance Tools Rot, Concepts Survive.**
+
+A free, open, multi-skill suite for navigating towards financial independence — built on multiple frameworks, modernized for 2026 work modes, written to age well as the world keeps changing. Many thanks to the original authors of Your Money Or Your Life for setting the author on this journey, and to the other authors whose work will be added to the book audits in editions to come.
 
 > **Status:** scaffold (2026-05-01). Active development. Not yet production-ready. Eventual home: a public GitHub repo under the `XerafinaTaleSedrin` GH account, posted as work by Marika Olson Consulting.
 

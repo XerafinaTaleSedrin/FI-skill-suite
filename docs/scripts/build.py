@@ -333,44 +333,19 @@ def render_index(audits: list[dict], config: dict) -> str:
 </li>""")
         items_html = '<ul class="audit-list">' + "\n".join(items) + "</ul>"
 
-    intro = """<section class="intro">
-<p>Rogue Reads is the editorial-audit shelf where Marika Olson harvests the load-bearing mechanics from finance, business, and systems books — separated from their rhetorical packaging, with Hearth's verdict on whether the book is worth the time. Honest, blunt, and occasionally undiplomatic.</p>
-</section>
-<hr class="deco-divider">
-"""
+    intro_md_path = WEBSITE_ROOT / "content" / "intro.md"
+    intro_body = markdown_to_html(intro_md_path.read_text(encoding="utf-8")) if intro_md_path.exists() else ""
+    intro = f'<section class="intro">{intro_body}</section>\n<hr class="deco-divider">\n'
     return render_page(load_template(), config, "Audits", intro + items_html)
 
 
 def render_about(config: dict) -> str:
-    body = f"""<div class="about-content">
-<h1>About Rogue Reads</h1>
-<p>Rogue Reads is the book-audit shelf attached to <a href="{config.get("author_url", "https://marikaolson.com")}">Marika Olson Consulting</a>. Each audit takes one finance, business, or systems book and runs it through a fixed extraction format: strip the persona, surface the load-bearing mechanic, separate what aged well from what aged poorly, name what the book ignores, and give an honest verdict on who should read it.</p>
-
-<p>Every audit closes with <strong>Hearth's verdict</strong> — a one-line read from the cat that lives on the desk. Tonal range: <em>nap-worthy</em>, <em>hiss-worthy</em>, <em>windowsill-approved</em>, <em>would-knock-off-the-desk</em>. Hearth has standards.</p>
-
-<h2>What this isn't</h2>
-<ul>
-<li>Stock tips, market timing, or get-rich-quick patterns.</li>
-<li>Affiliate-bait disguised as criticism. (Bookshop.org links may appear; revenue isn't the point.)</li>
-<li>Sponsored content. Ever.</li>
-</ul>
-
-<h2>What this is</h2>
-<ul>
-<li>Editorial book audits, written by Marika Olson, in a single voice.</li>
-<li>Closed to outside-author submissions — the voice integrity is the point. If you want to write audits, write them on your own platform; we'll happily link to good ones.</li>
-<li>Free to read, forever. Content is licensed CC BY-NC-SA 4.0.</li>
-</ul>
-
-<h2>The skill suite</h2>
-<p>The audit pipeline runs on the <a href="https://github.com/XerafinaTaleSedrin/FI-skill-suite">FI-skill-suite</a> — a free, open-source set of Claude Code skills for navigating financial independence. Anyone can clone the suite, run the audit skill against a book they've read, and produce their own audit on their own platform.</p>
-
-<h2>Why "Rogue"</h2>
-<p>Rogue Reads is part of the same editorial family as <a href="https://roguebureaucrat.com">Rogue Bureaucrat</a> — Marika's political-commentary shelf written under the Xerafina Tale'Sedrin pen name. <em>Rogue</em> is the family marker. It signals: refusing softness, naming things plainly, and bringing structural critique to spaces that prefer not to look at it.</p>
-
-<p>Rogue Reads is published under Marika Olson by name. Rogue Bureaucrat is published pseudonymously. Different shelves, different voices, same sensibility.</p>
-</div>
-"""
+    about_md_path = WEBSITE_ROOT / "content" / "about.md"
+    if about_md_path.exists():
+        about_html = markdown_to_html(about_md_path.read_text(encoding="utf-8"))
+    else:
+        about_html = "<p>About content not found at <code>content/about.md</code>.</p>"
+    body = f'<div class="about-content">\n{about_html}\n</div>\n'
     return render_page(load_template(), config, "About", body, "About Rogue Reads.")
 
 
