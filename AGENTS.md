@@ -1,6 +1,7 @@
+
 # AGENTS.md — cross-skill rules
 
-Rules that apply across every skill in `fi-skill-suite`. If you find yourself copy-pasting a behavior across multiple `SKILL.md` files, factor it here and reference back. (This is Kate Chapman's pattern from the [flywheel](https://github.com/Untangling-Systems/flywheel) repo — single source of truth, no silent divergence.)
+Rules that apply across every skill in `FI-skill-suite`. If you find yourself copy-pasting a behavior across multiple `SKILL.md` files, factor it here and reference back. (This is Kate Chapman's pattern from the [flywheel](https://github.com/Untangling-Systems/flywheel) repo — single source of truth, no silent divergence.)
 
 ---
 
@@ -90,10 +91,10 @@ Skills can use WebFetch (when available) to verify external state. When WebFetch
 
 ## Hearth — appearance and tone
 
-`Hearth` is Marika's companion-cat figure (see `.claude/instructions/companion-hearth.md` in the parent Komorebi repo). In `fi-skill-suite`, Hearth has a defined role:
+`Hearth` is Marika's companion-cat figure (see `.claude/instructions/companion-hearth.md` in the parent Komorebi repo). In `FI-skill-suite`, Hearth has a defined role:
 
-- **`fi-audit` skill**: Hearth's verdict is **mandatory** on every short-form clip (IG carousels, social cuts, the 5-line takeaway hero slide) and present on the full audit. Tonal range: *nap-worthy / hiss-worthy / windowsill-approved / would-knock-off-the-desk*. Hearth speaks for herself; she's not a tagline machine.
-- **Other skills**: Hearth is silent unless the user invokes her with a command-line flag. Default OFF for all skills except `fi-audit`.
+- **`/fi:audit` skill**: Hearth's verdict is **mandatory** on every short-form clip (IG carousels, social cuts, the 5-line takeaway hero slide) and present on the full audit. Tonal range: *nap-worthy / hiss-worthy / windowsill-approved / would-knock-off-the-desk*. Hearth speaks for herself; she's not a tagline machine.
+- **Other skills**: Hearth is silent unless the user invokes her with a command-line flag. Default OFF for all skills except `/fi:audit`.
 
 ---
 
@@ -103,11 +104,11 @@ Skills that read from / write to shared sentinel files must respect the schema:
 
 | Sentinel file | Owner skill | Reader skills | Schema source |
 |---|---|---|---|
-| `holdings.md` (user repo) | `fi-holdings-scaffold` | `fi-fu-money-readout`, `fi-net-worth`, `fi-crossover`, `fi-investing`, `fi-monthly-tabulation` | See `skills/fi-holdings-scaffold/SCHEMA.md` |
-| `lifetime-earnings.md` (user repo) | `fi-lifetime-earnings` | `fi-net-worth` (catch-up framing) | See `skills/fi-lifetime-earnings/SCHEMA.md` |
-| `transactions/<YYYY-MM>.csv` (user repo) | `fi-track-spending` | `fi-monthly-tabulation`, `fi-three-questions`, `fi-wallchart` | See `skills/fi-track-spending/SCHEMA.md` |
-| `wallchart.md` (user repo) | `fi-wallchart` | `fi-crossover` | See `skills/fi-wallchart/SCHEMA.md` |
-| `book-audits/<DATE>-<book>.md` (this repo) | `fi-audit` | (read by humans, surfaced in cross-references) | See `book-audits/_audit-template.md` |
+| `holdings.md` (user repo) | `/fi:holdings-scaffold` | `/fi:fu-money-readout`, `/fi:net-worth`, `/fi:crossover`, `/fi:investing`, `/fi:monthly-tabulation` | See `skills/holdings-scaffold/SCHEMA.md` |
+| `lifetime-earnings.md` (user repo) | `/fi:lifetime-earnings` | `/fi:net-worth` (catch-up framing) | See `skills/lifetime-earnings/SCHEMA.md` |
+| `transactions/<YYYY-MM>.csv` (user repo) | `/fi:track-spending` | `/fi:monthly-tabulation`, `/fi:three-questions`, `/fi:wallchart` | See `skills/track-spending/SCHEMA.md` |
+| `wallchart.md` (user repo) | `/fi:wallchart` | `/fi:crossover` | See `skills/wallchart/SCHEMA.md` |
+| `book-audits/<DATE>-<book>.md` (this repo) | `/fi:audit` | (read by humans, surfaced in cross-references) | See `book-audits/_audit-template.md` |
 
 **Rule:** if a skill reads from a sentinel file, it MUST validate the schema and fail loudly if the file is malformed. Don't silently ignore unexpected fields.
 

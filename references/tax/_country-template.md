@@ -8,7 +8,7 @@ contributors:
 
 # Tax — [Country]
 
-> Per-country tax reference. Tool-layer (1-3 year half-life). Update annually OR whenever rates / limits change. The skills in `fi-skill-suite/skills/` read this file structurally — keep the schema below intact.
+> Per-country tax reference. Tool-layer (1-3 year half-life). Update annually OR whenever rates / limits change. The skills in `FI-skill-suite/skills/` read this file structurally — keep the schema below intact.
 
 ---
 

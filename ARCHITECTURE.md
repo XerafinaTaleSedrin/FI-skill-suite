@@ -1,6 +1,6 @@
 # Architecture
 
-The architectural choices in `fi-skill-suite` exist to solve one specific problem: **personal finance content rots.** YMOYL was published in 1992, last meaningfully updated in 2018. By 2026 — a 5-year-or-less gap — significant chunks of its math no longer hold (bond yields, contribution limits, tools that no longer exist, work modes that didn't exist when it was written). Profit First (2014) is starting to show similar gaps. Any book or skill written today will face the same drift in 5-10 years.
+The architectural choices in `FI-skill-suite` exist to solve one specific problem: **personal finance content rots.** YMOYL was published in 1992, last meaningfully updated in 2018. By 2026 — a 5-year-or-less gap — significant chunks of its math no longer hold (bond yields, contribution limits, tools that no longer exist, work modes that didn't exist when it was written). Profit First (2014) is starting to show similar gaps. Any book or skill written today will face the same drift in 5-10 years.
 
 Rather than write skills that will rot, this repo enforces a discipline that lets the durable parts persist while the time-sensitive parts get replaced.
 
@@ -59,9 +59,9 @@ Examples:
 
 ## Why this matters in practice
 
-**Skills don't reach down to tools directly.** A skill like `fi-hourly-wage` operates at the concept + pattern layer ("subtract work-related costs"; "use category-based capture"). It doesn't say "use Monarch." It says "use a transaction aggregator (current options: see tools/aggregators.md)."
+**Skills don't reach down to tools directly.** A skill like `/fi:hourly-wage` operates at the concept + pattern layer ("subtract work-related costs"; "use category-based capture"). It doesn't say "use Monarch." It says "use a transaction aggregator (current options: see tools/aggregators.md)."
 
-**Tools don't bleed up into skills.** When Monarch dies (and one day it will), `fi-hourly-wage` doesn't break. The tool register gets updated, a new aggregator gets named, the skill keeps working.
+**Tools don't bleed up into skills.** When Monarch dies (and one day it will), `/fi:hourly-wage` doesn't break. The tool register gets updated, a new aggregator gets named, the skill keeps working.
 
 **The README always tells the reader: read concepts first, then patterns, then tools.** Descend the layers. Don't start at tools — they're the most likely to be dated.
 
@@ -75,7 +75,7 @@ Tax rules are tool-layer (1-3 year half-life — rates change yearly, structures
 
 Schema: each `references/tax/<COUNTRY>.md` file follows a uniform structure (account types available, contribution limits, tax-deferred vs. tax-free vs. taxable hierarchy, current rates, last-reviewed date) so concept-layer skills can read any country file structurally.
 
-Concept-layer skills like `fi-hourly-wage` and `fi-crossover` are **tax-agnostic** — they don't reach into the tax files at all. Only `fi-investing`, the eventual `fi-allocation-buckets`, and the placement-audit skill care about the tax layer.
+Concept-layer skills like `/fi:hourly-wage` and `/fi:crossover` are **tax-agnostic** — they don't reach into the tax files at all. Only `/fi:investing`, the eventual `/fi:allocation-buckets`, and the placement-audit skill care about the tax layer.
 
 This is the natural community-contribution surface. Marika authors `US.md` (her actual expertise). Other contributors author their own country files. Pin a "Country tax files needed — community contributions welcome" issue.
 
@@ -86,16 +86,18 @@ This is the natural community-contribution surface. Marika authors `US.md` (her 
 Every skill folder has at minimum:
 
 ```
-skills/fi-<concept>/
+skills/<concept>/
 ├── SKILL.md            ← concept + pattern + frontmatter
 └── (optional) examples/  ← worked examples specific to this skill
 ```
+
+Skill folder names use the bare concept (e.g., `holdings-scaffold/`, `hourly-wage/`). The `fi` namespace is applied automatically by the plugin manifest, so skills are invoked as `/fi:<concept>` (e.g., `/fi:holdings-scaffold`).
 
 The SKILL.md frontmatter declares:
 
 ```yaml
 ---
-name: fi-<concept>
+name: <concept>
 description: One-line purpose.
 layer: concept | concept+pattern | concept+pattern+tool
 ymoyl_step: 1 | 2 | 3 | … | n/a

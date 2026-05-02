@@ -1,5 +1,5 @@
 ---
-name: fi-crossover
+name: crossover
 description: Computes the financial-independence threshold — when investment income covers expenses. YMOYL Step 8, mode-aware for the user's chosen retirement frame.
 layer: concept+pattern
 ymoyl_step: 8
@@ -11,7 +11,7 @@ sources:
 last-reviewed: 2026-05-01
 ---
 
-# fi-crossover
+# /fi:crossover
 
 Reads holdings + monthly spending baseline + the user's chosen retirement frame, computes when (or whether) the user crosses the FI threshold, and surfaces sensitivity to the load-bearing assumptions.
 
@@ -63,7 +63,7 @@ Fully supported. Cron-friendly; produces an updated projection monthly.
 - [ ] Real-return assumption methodology — what historical window? what inflation source?
 - [ ] Mode-aware variants of the crossover math (4 frames).
 - [ ] Sensitivity-table format that's actually useful, not overwhelming.
-- [ ] Cross-reference with `fi-investing` for portfolio-mix assumptions.
+- [ ] Cross-reference with `/fi:investing` for portfolio-mix assumptions.
 
 ---
 

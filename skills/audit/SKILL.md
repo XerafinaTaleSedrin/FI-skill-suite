@@ -1,5 +1,5 @@
 ---
-name: fi-audit
+name: audit
 description: Book audit pipeline — extracts the load-bearing mechanics from a finance/business book, separated by layer (concept / pattern / tool), with Hearth's verdict.
 layer: concept+pattern
 ymoyl_step: n/a
@@ -10,7 +10,7 @@ sources:
 last-reviewed: 2026-05-01
 ---
 
-# fi-audit
+# /fi:audit
 
 The book audit skill. Strips persona, surfaces the load-bearing mechanics, separates concept-pattern-tool layers, and delivers Hearth's verdict on every book audited. Output feeds the rest of the suite — when a load-bearing mechanic shows up in an audit, it earns its way into a `fi-*` skill (or refines an existing one's `sources:`).
 

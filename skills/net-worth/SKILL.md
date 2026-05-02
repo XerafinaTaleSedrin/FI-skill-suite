@@ -1,5 +1,5 @@
 ---
-name: fi-net-worth
+name: net-worth
 description: Computes the user's current net worth from the holdings.md sentinel file. The "where do I actually stand right now?" half of YMOYL Step 1.
 layer: concept+pattern
 ymoyl_step: 1
@@ -11,9 +11,9 @@ sources:
 last-reviewed: 2026-05-01
 ---
 
-# fi-net-worth
+# /fi:net-worth
 
-Reads `holdings.md` (created by `fi-holdings-scaffold`) and produces the user's current net worth, with the YMOYL Step 1 catch-up framing comparing total lifetime earnings (`fi-lifetime-earnings` output) against current net worth.
+Reads `holdings.md` (created by `/fi:holdings-scaffold`) and produces the user's current net worth, with the YMOYL Step 1 catch-up framing comparing total lifetime earnings (`/fi:lifetime-earnings` output) against current net worth.
 
 ---
 

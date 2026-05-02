@@ -1,4 +1,4 @@
-# Contributing to fi-skill-suite
+# Contributing to FI-skill-suite
 
 Thank you for considering a contribution. Read this end-to-end before opening a PR — most review feedback comes from missed conventions, not bad code.
 
@@ -10,7 +10,7 @@ In rough order of value to the project:
 
 1. **Per-country tax reference files** (`references/tax/<COUNTRY>.md`). The highest-leverage surface. If your country isn't represented, please contribute. Schema in [`references/tax/_country-template.md`](references/tax/_country-template.md).
 2. **Tool register entries** (`tools/`). New aggregators, banks, brokerages, or platforms that fit one of the existing tool categories. Each entry needs `last-reviewed: YYYY-MM-DD` and a "if this dies, look for X-shape replacement" hint.
-3. **Book audits** (`book-audits/`). Run the `fi-audit` skill on a finance/business book and submit the output. Use the audit template; include Hearth's verdict.
+3. **Book audits** (`book-audits/`). Run the `/fi:audit` skill on a finance/business book and submit the output. Use the audit template; include Hearth's verdict.
 4. **User-extensible category submissions**. After running a skill, if you added a custom category that you think generalizes (e.g., a work-related expense category that wasn't in the canonical list), open an issue or discussion to suggest promotion. Maintainer reviews; if the same category recurs across submissions, it gets promoted with attribution.
 5. **Documentation fixes, typo corrections, link updates**. Always welcome.
 6. **New skills**. Less common — most concepts already have a home. **Open an issue first** to discuss before writing the skill.
@@ -65,16 +65,17 @@ If you're not sure, open a discussion before opening a PR.
 
 ## Style conventions
 
-### Naming convention — capital FI vs lowercase fi-
+### Naming convention — capital FI vs lowercase fi
 
 - **`FI`** (capital) is the proper-noun acronym for **Financial Independence** — used in the project name, repo name, and suite-level branding (`FI-skill-suite`).
-- **`fi-`** (lowercase) is the CLI prefix for individual skills (`fi-hourly-wage`, `fi-crossover`, etc.) — same shape as Kate Chapman's `fw-` prefix on the flywheel suite. Lowercase is the typeable command-line convention.
+- **`fi`** (lowercase) is the **plugin name** declared in `.claude-plugin/plugin.json`, which Claude Code automatically applies as the slash-command namespace. So skills are invoked as `/fi:hourly-wage`, `/fi:crossover`, etc. — same shape as Kate Chapman's `/fw:` flywheel namespace and `/sw:` switch namespace.
+- **Skill folder names** drop any prefix (just `hourly-wage/`, `crossover/`, etc.) — the `fi` namespace is applied automatically by the plugin manifest, so prefixing the folder names would create redundant `/fi:fi-hourly-wage` invocations.
 
-When in doubt: project / repo / brand context = capital FI. Skill name / file path / CLI invocation = lowercase fi-.
+When in doubt: project / repo / brand context = capital FI. Plugin name / slash-command namespace = lowercase fi. Skill folder name = bare concept (no prefix).
 
 ### File naming
 
-- All `SKILL.md` files live at `skills/<skill-name>/SKILL.md`. The folder name is the skill name (e.g., `fi-hourly-wage`).
+- All `SKILL.md` files live at `skills/<skill-name>/SKILL.md`. The folder name is the bare concept (e.g., `hourly-wage`, NOT `fi-hourly-wage`). The skill is invoked as `/fi:<skill-name>`.
 - Tool register files use kebab-case category names: `tools/transaction-aggregators.md`, `tools/high-yield-savings.md`.
 - Country tax files use ISO country codes: `references/tax/US.md`, `references/tax/GB.md`, `references/tax/CA.md`.
 - Book audit files: `book-audits/YYYY-MM-DD-<book-slug>.md` (date is audit date, not publication date).
@@ -128,7 +129,7 @@ This project is built using Claude Code, and contributors may use AI assistance.
 ## PR workflow
 
 1. **Open an issue first** for non-trivial changes (new skills, schema changes, removed content). Quick fixes (typos, broken links, doc updates) can skip this step.
-2. **Fork + branch.** Branch name should describe the change concisely: `add-tax-NL`, `fix-fi-hourly-wage-headless`, `audit-housel`.
+2. **Fork + branch.** Branch name should describe the change concisely: `add-tax-NL`, `fix-hourly-wage-headless`, `audit-housel`.
 3. **One logical concern per PR.** If the diff needs an "AND" or "+" in the title, split it.
 4. **Run any tests / validations specified in `AGENTS.md`.** When validation tooling exists for SKILL.md schemas, it'll be referenced here.
 5. **Update the structure diagram in `README.md`** if you're adding a new sentinel file or directory.

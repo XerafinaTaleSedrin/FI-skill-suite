@@ -1,5 +1,5 @@
 ---
-name: fi-monthly-tabulation
+name: monthly-tabulation
 description: Aggregates a month of transactions into category totals + life-energy-cost per category. YMOYL Step 3.
 layer: concept+pattern
 ymoyl_step: 3
@@ -11,9 +11,9 @@ sources:
 last-reviewed: 2026-05-01
 ---
 
-# fi-monthly-tabulation
+# /fi:monthly-tabulation
 
-Reads a month's transactions (from `fi-track-spending`) and produces a category-aggregated monthly tab — total dollars per category PLUS life-energy cost per category (using the user's real hourly wage from `fi-hourly-wage`).
+Reads a month's transactions (from `/fi:track-spending`) and produces a category-aggregated monthly tab — total dollars per category PLUS life-energy cost per category (using the user's real hourly wage from `/fi:hourly-wage`).
 
 ---
 
@@ -32,10 +32,10 @@ Read transactions, aggregate by category, multiply by inverse of real hourly wag
 ## What the skill does at runtime
 
 1. Reads `~/finances/transactions/YYYY-MM.csv` (latest by default; user can specify a month).
-2. Reads the latest `hourly-wage-YYYY-MM-DD.md` from `fi-hourly-wage`.
+2. Reads the latest `hourly-wage-YYYY-MM-DD.md` from `/fi:hourly-wage`.
 3. Computes per-category totals + life-energy cost (hours = dollars / real-hourly-wage).
 4. Reports the tabulation as a markdown table.
-5. Writes to `~/finances/monthly-tabs/YYYY-MM.md` for `fi-three-questions`, `fi-wallchart`, and `fi-crossover` to read.
+5. Writes to `~/finances/monthly-tabs/YYYY-MM.md` for `/fi:three-questions`, `/fi:wallchart`, and `/fi:crossover` to read.
 
 ---
 

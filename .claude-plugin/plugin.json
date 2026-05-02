@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "fi",
+  "version": "0.1.0",
+  "description": "A free, open, multi-skill suite for navigating financial independence — built on multiple frameworks, modernized for 2026 work modes, written to age well. Finance Tools Rot, Concepts Survive.",
+  "author": {
+    "name": "Marika Olson",
+    "url": "https://marikaolson.com"
+  },
+  "homepage": "https://github.com/XerafinaTaleSedrin/FI-skill-suite",
+  "repository": "https://github.com/XerafinaTaleSedrin/FI-skill-suite",
+  "license": "CC-BY-NC-SA-4.0",
+  "keywords": [
+    "financial-independence",
+    "personal-finance",
+    "ymoyl",
+    "your-money-or-your-life",
+    "vicki-robin",
+    "joe-dominguez",
+    "wealth-planning",
+    "values-fit",
+    "compounding",
+    "anti-bro-finance"
+  ]
+}

@@ -1,5 +1,5 @@
 ---
-name: fi-fu-money-readout
+name: fu-money-readout
 description: Optional daily ground-state report — net direction, runway, recurring passive income, crossover %, nuclear runway. Reads from holdings.md.
 layer: concept+pattern
 ymoyl_step: 8
@@ -11,7 +11,7 @@ sources:
 last-reviewed: 2026-05-01
 ---
 
-# fi-fu-money-readout
+# /fi:fu-money-readout
 
 Optional daily check-in skill. Produces a brief ground-state report from `holdings.md` so the user has a regular pulse on their financial position. Inspired by YMOYL's crossover-point model, modernized for a 2026 rate environment and any user-defined "retirement" frame.
 
@@ -33,7 +33,7 @@ A short daily readout, rendered in the terminal or saved to a log file, produced
 
 ## What the skill does at runtime
 
-1. **Reads `holdings.md`.** Validates schema. Reports if the file is missing — points at `fi-holdings-scaffold` to create one.
+1. **Reads `holdings.md`.** Validates schema. Reports if the file is missing — points at `/fi:holdings-scaffold` to create one.
 2. **Checks freshness.** Flags warm if last-updated is >14 days ago; flags stale if >30 days.
 3. **Pulls the user's "retirement frame"** from a saved profile. Frame options:
    - **Full stop**: traditional retirement, all income from passive sources.
@@ -91,7 +91,7 @@ This skill is **explicitly designed to run headlessly** as a session-start ritua
 - Writes it to `~/finances/fu-money-log/YYYY-MM-DD.md`.
 - Does NOT print to stdout (no human there to read it).
 - Does NOT block on any interactive prompt.
-- If `holdings.md` is missing or malformed: writes an error note to the log file with a clear next step (run `fi-holdings-scaffold`), exits cleanly.
+- If `holdings.md` is missing or malformed: writes an error note to the log file with a clear next step (run `/fi:holdings-scaffold`), exits cleanly.
 
 ---
 
@@ -122,7 +122,7 @@ For each frame, the readout uses different language and different math. The outp
 - [ ] Implement the four retirement-frame variants of the crossover math.
 - [ ] Define the tone-options.md content (grounding-sentence pool per tone).
 - [ ] Worked examples in `examples/` for each retirement frame.
-- [ ] Cross-skill: define how `fi-track-spending` feeds the monthly-expense baseline this skill needs.
+- [ ] Cross-skill: define how `/fi:track-spending` feeds the monthly-expense baseline this skill needs.
 
 ---
 

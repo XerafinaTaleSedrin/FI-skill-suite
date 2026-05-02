@@ -1,5 +1,5 @@
 ---
-name: fi-wallchart
+name: wallchart
 description: Plots monthly income vs. spending vs. investment income across all logged months. YMOYL Step 5 long-arc visual.
 layer: concept+pattern
 ymoyl_step: 5
@@ -11,7 +11,7 @@ sources:
 last-reviewed: 2026-05-01
 ---
 
-# fi-wallchart
+# /fi:wallchart
 
 Reads all available monthly tabs + holdings.md (for investment income trend) and produces YMOYL's wall chart: three lines plotted over time (monthly income, monthly spending, monthly investment income). The crossover where investment income meets spending is the FI threshold.
 

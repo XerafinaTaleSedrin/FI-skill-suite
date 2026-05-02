@@ -10,7 +10,7 @@ A free, open, multi-skill suite for navigating towards financial independence �
 
 ## What this is
 
-A set of Claude Code skills (`fi-*`, prefix for **financial independence**) that walk a user through the load-bearing mechanics of personal finance:
+A set of Claude Code skills (under the `/fi:` namespace, where **fi** stands for **financial independence**) that walk a user through the load-bearing mechanics of personal finance:
 
 - Total lifetime earnings reconstruction
 - Current net worth + holdings file
@@ -51,23 +51,26 @@ This is a deliberate choice. The repo is **explicitly free for everyone, forever
 ## Getting started (when scaffold is done)
 
 ```bash
-# Clone the repo
+# Install as a Claude Code plugin
+claude plugin install fi@https://github.com/XerafinaTaleSedrin/FI-skill-suite
+
+# Or clone manually for customization
 git clone https://github.com/XerafinaTaleSedrin/FI-skill-suite.git
 
-# In your Claude Code project, install:
-# (instructions tbd — typically a marketplace command or symlink to .claude/skills/)
-
-# Run the foundation:
-/fi-holdings-scaffold      # builds your local holdings file
-/fi-fu-money-readout       # daily ground-state report (optional)
+# Run the foundation
+/fi:holdings-scaffold      # builds your local holdings file
+/fi:fu-money-readout       # daily ground-state report (optional)
 ```
 
-After that, any of the YMOYL-step skills (`fi-lifetime-earnings`, `fi-hourly-wage`, `fi-monthly-tabulation`, `fi-three-questions`, `fi-wallchart`, `fi-crossover`, `fi-investing`) read from the holdings file and produce their own analyses.
+After that, any of the YMOYL-step skills (`/fi:lifetime-earnings`, `/fi:hourly-wage`, `/fi:monthly-tabulation`, `/fi:three-questions`, `/fi:wallchart`, `/fi:crossover`, `/fi:investing`) read from the holdings file and produce their own analyses.
 
 ## Repo structure
 
 ```
-fi-skill-suite/
+FI-skill-suite/
+├── .claude-plugin/
+│   └── plugin.json               ← plugin manifest (name: "fi")
+├── CLAUDE.md                     ← user-facing plugin instructions
 ├── README.md                     ← you are here
 ├── ARCHITECTURE.md               ← three-layer rule + half-life discipline
 ├── AGENTS.md                     ← cross-skill rules (DRY layer)
@@ -75,22 +78,23 @@ fi-skill-suite/
 ├── _last-reviewed.md             ← freshness flag
 ├── skills/
 │   ├── 00-overview.md            ← skill index + YMOYL → skill map
-│   ├── fi-holdings-scaffold/     ← flagship #1 — builds the user's holdings.md
-│   ├── fi-fu-money-readout/      ← flagship #2 — daily ground-state report
-│   ├── fi-lifetime-earnings/     ← YMOYL Step 1a
-│   ├── fi-net-worth/             ← YMOYL Step 1b
-│   ├── fi-hourly-wage/           ← YMOYL Step 2a (work-mode-aware)
-│   ├── fi-track-spending/        ← YMOYL Step 2b
-│   ├── fi-monthly-tabulation/    ← YMOYL Step 3
-│   ├── fi-three-questions/       ← YMOYL Step 4
-│   ├── fi-wallchart/             ← YMOYL Step 5
-│   ├── fi-crossover/             ← YMOYL Step 8
-│   ├── fi-investing/             ← YMOYL Step 9 (question-asking)
-│   └── fi-audit/                 ← book audit pipeline
+│   ├── holdings-scaffold/        ← /fi:holdings-scaffold — flagship #1
+│   ├── fu-money-readout/         ← /fi:fu-money-readout — flagship #2
+│   ├── lifetime-earnings/        ← /fi:lifetime-earnings — YMOYL Step 1a
+│   ├── net-worth/                ← /fi:net-worth — YMOYL Step 1b
+│   ├── hourly-wage/              ← /fi:hourly-wage — YMOYL Step 2a (mode-aware)
+│   ├── track-spending/           ← /fi:track-spending — YMOYL Step 2b
+│   ├── monthly-tabulation/       ← /fi:monthly-tabulation — YMOYL Step 3
+│   ├── three-questions/          ← /fi:three-questions — YMOYL Step 4
+│   ├── wallchart/                ← /fi:wallchart — YMOYL Step 5
+│   ├── crossover/                ← /fi:crossover — YMOYL Step 8
+│   ├── investing/                ← /fi:investing — YMOYL Step 9 (question-asking)
+│   └── audit/                    ← /fi:audit — book audit pipeline
 ├── references/                   ← shared rules, per-country tax files
 │   └── tax/                      ← community-contributed per-country tax content
 ├── tools/                        ← tool register, dated, replacement-shape
-├── book-audits/                  ← outputs of fi-audit
+├── book-audits/                  ← outputs of /fi:audit
+├── docs/                         ← Rogue Reads website (rendered from book-audits/)
 └── examples/                     ← worked examples, dated
 ```
 
@@ -102,7 +106,7 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md). Short version:
 
 - **Country tax files**: highest-leverage contribution surface. If your country doesn't have a `references/tax/<COUNTRY>.md` file, write one.
 - **New tool entries**: add to `tools/` with `last-reviewed` frontmatter and a "if this dies, look for X-shape replacement" note.
-- **Book audits**: run the `fi-audit` skill on a finance/business book you've read; submit the output as a PR.
+- **Book audits**: run the `/fi:audit` skill on a finance/business book you've read; submit the output as a PR.
 - **New skills**: less common — most concepts already have a home. If you think a new concept needs its own skill, open an issue first.
 
 ## Author / posting

@@ -15,7 +15,7 @@ contributors:
 
 One or two sentences about what role tools in this category play in the FI suite. Which skills read from this file. What user-need this category serves.
 
-Example: *"Transaction aggregators consolidate bank, credit card, and brokerage transactions into a single view that the `fi-track-spending` skill can import. Without an aggregator, the user falls back to manual capture from each financial institution's website."*
+Example: *"Transaction aggregators consolidate bank, credit card, and brokerage transactions into a single view that the `/fi:track-spending` skill can import. Without an aggregator, the user falls back to manual capture from each financial institution's website."*
 
 ---
 

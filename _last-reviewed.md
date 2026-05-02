@@ -22,7 +22,7 @@ This file tracks the last full review of the repo's contents. The intent: at any
 
 - **2026-06-01** target — first iteration pass with Marika to flesh out the YMOYL-specific skills based on her active reading.
 - **2026-07-01** target — book audit pipeline runnable; first audit published (likely YMOYL or Profit First).
-- **2026-Q3** target — first runnable skill (likely `fi-holdings-scaffold` since it's the gateway).
+- **2026-Q3** target — first runnable skill (likely `/fi:holdings-scaffold` since it's the gateway).
 
 ---
 

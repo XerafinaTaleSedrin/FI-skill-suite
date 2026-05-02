@@ -6,13 +6,13 @@ audited: YYYY-MM-DD (when this audit was written)
 auditor: (GitHub handle or "Marika Olson")
 hearth_verdict: (one of: nap-worthy / hiss-worthy / windowsill-approved / would-knock-off-the-desk)
 contributes_to_skills:
-  - (e.g., fi-hourly-wage)
-  - (e.g., fi-crossover)
+  - (e.g., hourly-wage)
+  - (e.g., crossover)
 ---
 
 # Audit: [Book Title]
 
-> Output of the `fi-audit` skill. Strips persona, surfaces load-bearing mechanic, separates layers, delivers Hearth's verdict.
+> Output of the `/fi:audit` skill. Strips persona, surfaces load-bearing mechanic, separates layers, delivers Hearth's verdict.
 
 ---
 

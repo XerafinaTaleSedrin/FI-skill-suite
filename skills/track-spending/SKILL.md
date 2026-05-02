@@ -1,5 +1,5 @@
 ---
-name: fi-track-spending
+name: track-spending
 description: Captures every penny of spending — YMOYL Step 2b. Aggregator-import OR manual capture, with category schema that downstream skills read.
 layer: concept+pattern
 ymoyl_step: 2
@@ -11,9 +11,9 @@ sources:
 last-reviewed: 2026-05-01
 ---
 
-# fi-track-spending
+# /fi:track-spending
 
-Captures the user's every-penny spending into a per-month transaction log. Two modes: (1) import from an aggregator export (Monarch, Copilot, plain CSV), or (2) manual capture. Output is a per-month transaction file other skills (`fi-monthly-tabulation`, `fi-three-questions`, `fi-wallchart`) read from.
+Captures the user's every-penny spending into a per-month transaction log. Two modes: (1) import from an aggregator export (Monarch, Copilot, plain CSV), or (2) manual capture. Output is a per-month transaction file other skills (`/fi:monthly-tabulation`, `/fi:three-questions`, `/fi:wallchart`) read from.
 
 ---
 

@@ -1,5 +1,5 @@
 ---
-name: fi-hourly-wage
+name: hourly-wage
 description: Computes real hourly wage — the YMOYL life-energy math, modernized for 2026 work modes (remote, hybrid, on-site, gig).
 layer: concept+pattern
 ymoyl_step: 2
@@ -11,7 +11,7 @@ sources:
 last-reviewed: 2026-05-01
 ---
 
-# fi-hourly-wage
+# /fi:hourly-wage
 
 Walks the user through computing their *real* hourly wage — gross pay minus work-related costs, divided by total hours including commute, prep, decompression, and tooling-maintenance. This is YMOYL's life-energy math; the 2026 update makes it work-mode-aware so it doesn't flatter remote workers and overstate on-site costs (or vice versa).
 

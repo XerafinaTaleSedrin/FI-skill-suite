@@ -1,5 +1,5 @@
 ---
-name: fi-lifetime-earnings
+name: lifetime-earnings
 description: Reconstructs total lifetime earnings — the YMOYL Step 1 catch-up artifact. Used as the "what did all that work add up to?" anchor for everything else.
 layer: concept+pattern
 ymoyl_step: 1
@@ -11,9 +11,9 @@ sources:
 last-reviewed: 2026-05-01
 ---
 
-# fi-lifetime-earnings
+# /fi:lifetime-earnings
 
-Walks the user through reconstructing total lifetime earnings — every dollar of W-2, 1099, self-employment, and other earned income they've ever received. Pairs with `fi-net-worth` (Step 1b) to deliver YMOYL's full Step 1.
+Walks the user through reconstructing total lifetime earnings — every dollar of W-2, 1099, self-employment, and other earned income they've ever received. Pairs with `/fi:net-worth` (Step 1b) to deliver YMOYL's full Step 1.
 
 ---
 
@@ -50,7 +50,7 @@ Result is a `lifetime-earnings.md` file in the user's `~/finances/` directory (g
 
 ## Headless behavior
 
-Not generally headless — interactive walkthrough by design. Optional manifest-input mode planned (similar to `fi-holdings-scaffold`).
+Not generally headless — interactive walkthrough by design. Optional manifest-input mode planned (similar to `/fi:holdings-scaffold`).
 
 ---
 
@@ -58,7 +58,7 @@ Not generally headless — interactive walkthrough by design. Optional manifest-
 
 - [ ] Per-country earnings-record retrieval guidance (delegated to `references/earnings-records/` per country).
 - [ ] Inflation-adjustment math; pull source rates dynamically (BLS / ONS / StatsCan / etc.).
-- [ ] Schema for the output file so `fi-net-worth` can read the lifetime total for the catch-up framing.
+- [ ] Schema for the output file so `/fi:net-worth` can read the lifetime total for the catch-up framing.
 
 ---
 

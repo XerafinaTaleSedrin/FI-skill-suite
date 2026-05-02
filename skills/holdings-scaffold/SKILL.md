@@ -1,5 +1,5 @@
 ---
-name: fi-holdings-scaffold
+name: holdings-scaffold
 description: Builds the user's local holdings.md from scratch — accounts, holdings, asset-class roll-up, net worth, gitignore enforcement.
 layer: concept+pattern
 ymoyl_step: 1
@@ -11,7 +11,7 @@ sources:
 last-reviewed: 2026-05-01
 ---
 
-# fi-holdings-scaffold
+# /fi:holdings-scaffold
 
 The flagship onboarding skill. Walks the user through populating a `holdings.md` file from scratch, account by account, with privacy enforcement built in. Every other skill in the suite reads from this file; without it, nothing else has data.
 
@@ -47,7 +47,7 @@ A single, hand-curated, locally-owned markdown file with structured sections per
    - Asset-class tag per holding (US equity / intl equity / bonds / REIT / cash / commodity / crypto / other) — skill suggests based on ticker, user confirms
 4. **Generates the asset-class roll-up.** Sums by tag across all accounts.
 5. **Computes net worth** including non-investment assets (real estate gross value, vehicles, mortgage debt, other loans, credit card balances, foreign-currency holdings converted at runtime FX rate).
-6. **Adds the catch-up framing.** YMOYL Step 1 has two halves — lifetime earnings (TODO pointer to `fi-lifetime-earnings`) and current net worth (just populated). Skill sets up both sections of the file.
+6. **Adds the catch-up framing.** YMOYL Step 1 has two halves — lifetime earnings (TODO pointer to `/fi:lifetime-earnings`) and current net worth (just populated). Skill sets up both sections of the file.
 7. **Outputs a clean, structured markdown file** the user can read like a security blanket. Sections are predictable; updates can be made in any text editor.
 8. **Tells the user how to keep it updated.** Monthly refresh suggested; offer to schedule the refresh as a recurring agent invocation if the harness supports it.
 
@@ -128,7 +128,7 @@ Future option: read from a YAML manifest file (`holdings-input.yaml`) and skip p
 - [ ] Define the manifest-input schema for batch population.
 - [ ] Worked example: full session run for a typical 5-account US user (in `examples/`).
 - [ ] Worked example: full session run for a multi-currency UK+US user (in `examples/`).
-- [ ] Cross-skill data contract section: explicit schema for `fi-net-worth`, `fi-fu-money-readout`, `fi-crossover` to read.
+- [ ] Cross-skill data contract section: explicit schema for `/fi:net-worth`, `/fi:fu-money-readout`, `/fi:crossover` to read.
 
 ---
 

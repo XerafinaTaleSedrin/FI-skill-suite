@@ -1,5 +1,5 @@
 ---
-name: fi-investing
+name: investing
 description: Question-asking skill for investment management — walks the user through their actual setup, asks load-bearing questions, runs runtime freshness on rates/limits/platforms.
 layer: concept+pattern+tool
 ymoyl_step: 9
@@ -15,7 +15,7 @@ sources:
 last-reviewed: 2026-05-01
 ---
 
-# fi-investing
+# /fi:investing
 
 The investment-management skill. Deliberately a **question-asking** skill, not an instruction skill. It walks the user through their actual setup, asks the load-bearing questions, runs runtime freshness checks for current rate environment, contribution limits, and platform availability — and helps the user reach their own decisions.
 
