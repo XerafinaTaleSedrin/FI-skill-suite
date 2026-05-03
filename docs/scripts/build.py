@@ -286,6 +286,7 @@ def render_page(template: str, config: dict, page_title: str, content: str,
 
 def render_audit_page(audit: dict, config: dict) -> str:
     base_url = config.get("base_url", "")
+    repo_url = "https://github.com/XerafinaTaleSedrin/FI-skill-suite"
     verdict_html = ""
     if audit["hearth_verdict"]:
         verdict_html = (
@@ -294,6 +295,16 @@ def render_audit_page(audit: dict, config: dict) -> str:
             f'<span class="verdict-tag">{html.escape(audit["hearth_verdict"])}</span>'
             f'</div>'
         )
+    repo_footer = f"""<aside class="audit-repo-footer">
+    <h3>How this feeds into the repo</h3>
+    <p>This audit is part of <a href="{repo_url}" rel="noopener">FI-skill-suite</a> — a free, open Claude Code plugin for navigating financial independence. The audits are how we decide what the skills should and shouldn't do; the skills are how the audited concepts get implemented.</p>
+    <ul class="repo-footer-links">
+        <li><a href="{repo_url}/blob/main/book-audits/{audit['slug']}.md" rel="noopener">View this audit's source</a></li>
+        <li><a href="{repo_url}/tree/main/skills" rel="noopener">Browse the skills</a></li>
+        <li><a href="{repo_url}/blob/main/CONTRIBUTING.md" rel="noopener">How to contribute</a></li>
+    </ul>
+</aside>
+"""
     content = f"""<article>
 <header class="audit-header">
     <div class="audit-meta">{html.escape(audit['audited'])} &middot; Audit by {html.escape(audit['auditor'])}</div>
@@ -303,6 +314,7 @@ def render_audit_page(audit: dict, config: dict) -> str:
 <div class="audit-content">
 {audit['body_html']}
 </div>
+{repo_footer}
 </article>
 """
     return render_page(
