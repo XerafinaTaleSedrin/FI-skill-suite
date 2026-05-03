@@ -18,7 +18,7 @@ A set of Claude Code skills (under the `/fi:` namespace, where **fi** stands for
 - Values-fit consciousness check on each spending category
 - Long-arc income/spending/passive-income wall chart
 - Crossover-point math (when investment income exceeds expenses, including SSA / pension third-leg inputs)
-- Investment management as a question-asking discipline
+- Surplus-cashflow deployment — debt paydown AND investing, as a question-asking discipline (`/fi:redirect`)
 - Daily FU money readout (optional) *("FU" is intentional — established FI slang for "fuck-you money," having enough to walk away from any situation. Not a typo of "FI.")*
 - Book audit pipeline ("I read it so you didn't have to")
 
@@ -61,7 +61,7 @@ git clone https://github.com/XerafinaTaleSedrin/FI-skill-suite.git
 /fi:fu-money-readout       # daily ground-state report (optional)
 ```
 
-After that, any of the YMOYL-step skills (`/fi:hourly-wage`, `/fi:monthly-tabulation`, `/fi:three-questions`, `/fi:wallchart`, `/fi:crossover`, `/fi:investing`) read from the holdings file and produce their own analyses.
+After that, any of the YMOYL-step skills (`/fi:hourly-wage`, `/fi:monthly-tabulation`, `/fi:three-questions`, `/fi:wallchart`, `/fi:crossover`, `/fi:redirect`) read from the holdings file and produce their own analyses.
 
 ## Repo structure
 
@@ -85,7 +85,7 @@ FI-skill-suite/
 │   ├── three-questions/          ← /fi:three-questions — YMOYL Step 4
 │   ├── wallchart/                ← /fi:wallchart — YMOYL Step 5
 │   ├── crossover/                ← /fi:crossover — YMOYL Step 8
-│   ├── investing/                ← /fi:investing — YMOYL Step 9 (question-asking)
+│   ├── redirect/                 ← /fi:redirect — YMOYL Step 5 + 9 (debt + investment deployment, question-asking)
 │   └── audit/                    ← /fi:audit — book audit pipeline
 ├── references/                   ← shared rules, per-country tax files
 │   └── tax/                      ← community-contributed per-country tax content

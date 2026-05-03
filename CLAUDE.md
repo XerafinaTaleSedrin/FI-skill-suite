@@ -34,7 +34,7 @@ All skills are invoked under the `fi` namespace. The 12 currently defined:
 | Three questions | `/fi:three-questions` | 4 — values-fit consciousness check |
 | Wall chart | `/fi:wallchart` | 5 — long-arc income/spending/passive chart |
 | Crossover | `/fi:crossover` | 8 — FI threshold (mode-aware), incl. SSA-benefit projection |
-| Investing | `/fi:investing` | 9 — investment management as question-asking |
+| Redirect (deploy surplus) | `/fi:redirect` | 5 + 9 — debt paydown AND investment management, weighed against each other, question-asking |
 
 > **Step 1 — what we don't implement.** YMOYL's Step 1 has two prescribed halves: current net worth, and total lifetime earnings reconstruction. We implement only the first. The lifetime-earnings half lands in 2026 as a shame mechanic that distorts dignified non-paycheck years. See `book-audits/2026-05-01-ymoyl.md` §8 for full reasoning.
 
@@ -68,7 +68,7 @@ Book audits (NOT user-private) go in the plugin's own repo at `book-audits/`.
 ## Reading order if you're new to the user's setup
 
 1. Check whether `~/finances/holdings.md` exists. If not, `/fi:holdings-scaffold` is the gateway — every other skill reads from that file.
-2. After holdings exists, `/fi:fu-money-readout` provides daily orientation. Other skills (`/fi:crossover`, `/fi:investing`, `/fi:monthly-tabulation`) all read from holdings.
+2. After holdings exists, `/fi:fu-money-readout` provides daily orientation. Other skills (`/fi:crossover`, `/fi:redirect`, `/fi:monthly-tabulation`) all read from holdings.
 3. The YMOYL Step 2-5 skills (hourly-wage, track-spending, monthly-tabulation, three-questions, wallchart) chain together: each reads from the previous.
 
 ## Runtime freshness

@@ -23,7 +23,7 @@ Canonical reordered sequence:
 6.  /fi:hourly-wage           Does my work close the gap? (uses /fi:track-time)
 7.  /fi:three-questions       Values check per category
 8.  /fi:wallchart             Long-arc trend
-9.  /fi:investing             Allocation strategy
+9.  /fi:redirect             Allocation strategy
 
 Capture-layer skills (feed everything above):
 - /fi:track-flow              Dollars in/out

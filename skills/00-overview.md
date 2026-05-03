@@ -19,7 +19,7 @@ All skills are namespaced under the `fi` plugin and invoked as `/fi:<skill-name>
 | 6 — Minimizing spending | (chapter of tactics — likely splits across multiple skills) | TBD per tactic | not started |
 | 7 — Maximizing income | (chapter of tactics — likely splits across multiple skills) | TBD per tactic | not started |
 | 8 — Capital and the crossover point | FI threshold (incl. SSA-benefit projection input) | [`/fi:crossover`](crossover/SKILL.md) | scaffold |
-| 9 — Managing your finances | Investment management (question-asking) | [`/fi:investing`](investing/SKILL.md) | scaffold |
+| 5 + 9 — Redirect surplus / Manage capital | Debt paydown AND investment deployment, weighed against each other (question-asking) | [`/fi:redirect`](redirect/SKILL.md) | scaffold |
 
 > **YMOYL Step 1 — what we don't implement.** YMOYL prescribes Step 1 as having two halves: current net worth AND total lifetime earnings reconstruction. We implement only the first. The lifetime-earnings half was load-bearing in 1992 (single career, regular paycheck, motivated by guilt-prompted action) but lands in 2026 as a shame mechanic that distorts dignified non-paycheck years (caregiving, immigration, illness, recovery, RIF, federal service capped at the SSA wage base). See `book-audits/2026-05-01-ymoyl.md` §8 for full reasoning. The operational pieces survive elsewhere: SSA benefit projection folds into `/fi:crossover` as a single prompt; SSA earnings-record audit is a one-time task documented but not skilled.
 
@@ -52,8 +52,8 @@ Concepts named in books OTHER than YMOYL that earn their own skill:
 |---|---|---|---|
 | Mike Michalowicz, *Profit First* (2014) | Purpose-bound allocation buckets | `/fi:allocation-buckets` (planned) | not started |
 | Bill Perkins, *Die With Zero* (2020) | Time-buckets for life-stage spending | TBD | not started |
-| Morgan Housel, *Psychology of Money* (2020) | Tail-event awareness in investing | TBD (likely folds into `/fi:investing`) | not started |
-| Nick Maggiulli, *Just Keep Buying* (2022) | Front-loading vs. dollar-cost averaging | TBD (likely folds into `/fi:investing`) | not started |
+| Morgan Housel, *Psychology of Money* (2020) | Tail-event awareness in investing | TBD (likely folds into `/fi:redirect`) | not started |
+| Nick Maggiulli, *Just Keep Buying* (2022) | Front-loading vs. dollar-cost averaging | TBD (likely folds into `/fi:redirect`) | not started |
 
 When a book's load-bearing concept doesn't already have a home, it earns a new skill under the `fi` namespace. When the concept refines an existing skill, the skill's `sources:` frontmatter gets the new book added — no rename, no fork.
 
@@ -67,7 +67,7 @@ Roughly: do these in order. Some skills can run independently once `/fi:holdings
 /fi:holdings-scaffold ─┬─→ /fi:fu-money-readout (daily, optional)
                       │
                       ├─→ /fi:hourly-wage  (the natural Step-2 forward-look)
-                      ├─→ /fi:investing
+                      ├─→ /fi:redirect
                       └─→ /fi:crossover
                                           │
 /fi:track-spending ─→ /fi:monthly-tabulation ─→ /fi:three-questions

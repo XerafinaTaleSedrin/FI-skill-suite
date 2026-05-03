@@ -36,7 +36,7 @@ The flagship onboarding skill. Walks the user through populating a `holdings.md`
 **Do NOT invoke when:**
 - The user asks about a specific calculation (real hourly wage, crossover point, monthly tabulation) — those are downstream skills that read from holdings.md after this one has run.
 - The user wants stock tips, market timing, or product recommendations (out of scope for the entire FI suite).
-- The user wants fund-level placement / diversification analysis — that's `/fi:investing`. This skill captures account-level data; fund-level detail is layered in later.
+- The user wants fund-level placement / diversification analysis — that's `/fi:redirect`. This skill captures account-level data; fund-level detail is layered in later.
 
 ---
 
@@ -158,10 +158,10 @@ For each account the user owns, capture:
 | `maturity_date` | YYYY-MM-DD | required for CDs / Treasuries / I-Bonds | When the time-locked instrument matures and principal becomes accessible. Critical for cash-flow planning and ladder strategies. |
 | `term` | string | optional, helpful for CDs / Treasuries | Original term length (e.g., `3-month`, `12-month`, `5-year`). Helps the user reason about ladder structures. |
 | `ladder_role` | string | optional | If this account is part of a laddered strategy (CD ladder, Treasury ladder), name the ladder (e.g., `RB-12mo-CD-ladder-month-1`) so the skill can roll up ladder-level positions. |
-| `holdings` | list | optional (deferred to `/fi:investing`) | If the account has discrete holdings (stocks, funds, etc.), capture each: ticker, shares, native price-per-share, asset-class tag. Most users won't have this on first run. |
+| `holdings` | list | optional (deferred to `/fi:redirect`) | If the account has discrete holdings (stocks, funds, etc.), capture each: ticker, shares, native price-per-share, asset-class tag. Most users won't have this on first run. |
 | `last_updated` | YYYY-MM-DD | yes | When the user last verified this balance |
 
-**Why capture `rate`:** knowing the spread between what cash earns and what debt costs is foundational for downstream skills. A user with $50k in a 0.01% checking account and a 24% credit card balance is leaking money in a way the net-worth number alone doesn't surface. `/fi:fu-money-readout` and `/fi:investing` both want this signal. Aggregators rarely capture it cleanly, so we prompt for it directly.
+**Why capture `rate`:** knowing the spread between what cash earns and what debt costs is foundational for downstream skills. A user with $50k in a 0.01% checking account and a 24% credit card balance is leaking money in a way the net-worth number alone doesn't surface. `/fi:fu-money-readout` and `/fi:redirect` both want this signal. Aggregators rarely capture it cleanly, so we prompt for it directly.
 
 **Why capture `maturity_date` and `term` for time-locked instruments:** CDs, Treasuries, I-Bonds, and brokered fixed-income all have terms. If the user is running a **laddered strategy** (rolling CDs, rolling Treasuries), the skill should detect the pattern and prompt:
 
@@ -277,7 +277,7 @@ Even if the aggregator did pull in checking-account balances or a Zillow estimat
 After all data is captured:
 
 1. **Asset-class roll-up**: sum value (in base currency) by asset-class tag across all investment accounts.
-2. **Account-type roll-up**: sum value by account type (taxable / tax-deferred / tax-free / other) — needed by `/fi:investing` for placement audit.
+2. **Account-type roll-up**: sum value by account type (taxable / tax-deferred / tax-free / other) — needed by `/fi:redirect` for placement audit.
 3. **Net worth**: sum all assets (investment + non-investment + cash) minus all debts.
 4. **Foreign-currency conversion**: for any non-base-currency holdings, query a current FX rate at this moment of the calculation. **Do NOT store the converted figure in the file.** Store native currency only. Note the FX rate used and the timestamp in a comment so re-runs are auditable. Use a reliable source — `https://api.frankfurter.dev/v1/latest?from=<src>&to=<base>` (free, no API key, ECB-sourced).
 
@@ -360,7 +360,7 @@ What to do with this
 
 ## Schema (the holdings.md output format)
 
-This format is the **cross-skill data contract**. Other skills (`/fi:fu-money-readout`, `/fi:crossover`, `/fi:investing`, `/fi:monthly-tabulation`) read from holdings.md using this schema. Don't break it without coordinated updates across the suite.
+This format is the **cross-skill data contract**. Other skills (`/fi:fu-money-readout`, `/fi:crossover`, `/fi:redirect`, `/fi:monthly-tabulation`) read from holdings.md using this schema. Don't break it without coordinated updates across the suite.
 
 ```markdown
 ---
@@ -382,7 +382,7 @@ holdings-schema-version: 1
 - **term**: <e.g., 12-month>  *(optional, helpful for CDs)*
 - **ladder-role**: <ladder-name>  *(optional, when part of a laddered strategy)*
 - **last-verified**: YYYY-MM-DD
-- **holdings**:  *(optional — deferred to `/fi:investing` for most users)*
+- **holdings**:  *(optional — deferred to `/fi:redirect` for most users)*
   - <TICKER>: <shares> shares @ <price> <currency> = <value> <currency> [asset-class: <tag>]
   - <TICKER>: <shares> shares @ <price> <currency> = <value> <currency> [asset-class: <tag>]
 
@@ -454,8 +454,8 @@ Read it like a weather report. Not a verdict on your self-worth. The past is jus
 **Progressive-enrichment philosophy.** The schema is layered, not all-at-once:
 
 - This skill captures **account-level** data (account → balance → currency → last-verified). That's enough to compute net worth, account-type roll-up, and serve as input to most downstream skills.
-- **Fund-level holdings detail** (per-ticker shares, prices, cost basis) is OUT OF SCOPE here. That layer is added later by `/fi:investing` when the user runs a placement audit or diversification analysis. The schema's `holdings:` field per investment account is **optional** and may be empty initially — `/fi:investing` will populate it during its own walkthrough.
-- **Asset-class roll-up** sections in the file may be left as `*deferred to /fi:investing*` placeholders if fund-level detail isn't yet captured. Don't fail or block — leave a clear marker.
+- **Fund-level holdings detail** (per-ticker shares, prices, cost basis) is OUT OF SCOPE here. That layer is added later by `/fi:redirect` when the user runs a placement audit or diversification analysis. The schema's `holdings:` field per investment account is **optional** and may be empty initially — `/fi:redirect` will populate it during its own walkthrough.
+- **Asset-class roll-up** sections in the file may be left as `*deferred to /fi:redirect*` placeholders if fund-level detail isn't yet captured. Don't fail or block — leave a clear marker.
 
 This matters because most users start with a generic aggregator drag-and-drop ("By Account" view), not a per-holding export. Forcing them to provide fund-level data upfront blocks the skill on something they don't yet have. Layered enrichment respects that.
 
@@ -513,7 +513,7 @@ This skill is **interactive by default**. Running it headlessly (cron / pipeline
 |---|---|---|
 | `/fi:fu-money-readout` | All sections | Daily ground-state report; uses net worth, recurring passive (computed from holdings), runway calculation |
 | `/fi:crossover` | Investment accounts + asset-class roll-up | Computes FI threshold; needs portfolio composition for expected-return assumptions |
-| `/fi:investing` | Investment accounts + account-type roll-up + holdings list | Tax-advantaged placement audit; diversification overlap analysis |
+| `/fi:redirect` | Investment accounts + account-type roll-up + holdings list | Tax-advantaged placement audit; diversification overlap analysis |
 | `/fi:monthly-tabulation` | Doesn't read holdings.md directly, but reads transactions/ which are gitignored alongside | n/a |
 
 **If you change the schema**: update every reader skill in the same PR. The `holdings-schema-version` frontmatter field exists to make breakage detectable.

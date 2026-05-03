@@ -67,7 +67,7 @@ Fully supported. Cron-friendly; produces an updated projection monthly.
 - [ ] Real-return assumption methodology — what historical window? what inflation source?
 - [ ] Mode-aware variants of the crossover math (4 frames).
 - [ ] Sensitivity-table format that's actually useful, not overwhelming.
-- [ ] Cross-reference with `/fi:investing` for portfolio-mix assumptions.
+- [ ] Cross-reference with `/fi:redirect` for portfolio-mix assumptions.
 - [ ] **SSA-benefit-projection prompt UX** — when the user doesn't have their SSA statement on hand, offer the choice between (a) pause the skill and come back, (b) skip third-leg input and run portfolio-only crossover (note that the result will be conservative — likely understates true crossover age by 5-15 years for users with substantial SS earnings history). Document the conservative-skip outcome clearly.
 - [ ] **SSA-earnings-record audit reminder** — when the user pulls their SSA statement for the first time, surface a one-liner: *"While you have this open: scan year-by-year for missing earnings. If any look wrong, file SSA Form 7008 to correct. One-time task, but missed earnings cost real benefit dollars later."* Don't make this a sub-skill; just a side note.
 

@@ -8,15 +8,15 @@ hearth_verdict: (one of: nap-worthy / hiss-worthy / windowsill-approved / would-
 status: (draft | complete)
 ---
 
-## 1. The premise in one paragraph (no jargon)
+## 1. The premise in one paragraph
 
 [2-4 sentences. What is this book actually about, in plain terms? No jargon, no marketing copy.]
 
 ---
 
-## 2. The load-bearing mechanic — the 1-3 actual moves the book proposes
+## 2. The load-bearing mechanics
 
-[Strip away the rhetorical packaging. What does the book actually want the reader to do? Should be 1-3 concrete moves.]
+[Strip away the rhetorical packaging. What does the book actually want the reader to do? List the concrete moves.]
 
 1. [Move 1]
 2. [Move 2]
@@ -24,7 +24,7 @@ status: (draft | complete)
 
 ---
 
-## 3. What aged well (still applicable in 2026)
+## 3. What aged well and is still *at least mostly* applicable
 
 [Concepts and patterns that survive the era they were written in.]
 
@@ -33,18 +33,18 @@ status: (draft | complete)
 
 ---
 
-## 4. What aged poorly (era-bound math, dead assumptions, vibes-based claims)
+## 4. What aged poorly *and is no longer suited to current realities*
 
-[Specific numerical assumptions, named tools, era-specific frames that no longer hold. Be blunt. Cite chapter or page where possible.]
+[Specific numerical assumptions, named tools, era-specific frames that no longer hold. Be blunt. Cite chapter where possible.]
 
-- [Item 1] — why it's dated; how it would mislead a 2026 reader
+- [Item 1] — why it's dated; how it would mislead a current reader
 - [Item 2] — why it's dated
 
 ---
 
 ## 5. What's missing (things the book ignores that matter now)
 
-[What does a 2026 reader need to consider that the book doesn't address?]
+[What does a current reader need to consider that the book doesn't address?]
 
 - [Item 1] — e.g., AI-displacement risk for white-collar work
 - [Item 2] — e.g., HSA / high-deductible health plans (post-ACA reality)
@@ -60,15 +60,13 @@ status: (draft | complete)
 
 ---
 
-## 7. The 5-line takeaway you'd actually run
+## 7. The takeaway parts I found useful
 
-The smallest version of the book's advice. If a reader does only these five things and skips everything else in the book, do they get the load-bearing benefit?
+The smallest version of the book's advice worth keeping. If a reader does only these things and skips everything else in the book, do they get the load-bearing benefit? Length is whatever the book actually deserves — could be one item, could be many, could be zero.
 
-1. [Line 1]
-2. [Line 2]
-3. [Line 3]
-4. [Line 4]
-5. [Line 5]
+1. [Item 1]
+2. [Item 2]
+3. [Item 3]
 
 ---
 

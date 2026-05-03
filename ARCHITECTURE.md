@@ -75,7 +75,7 @@ Tax rules are tool-layer (1-3 year half-life — rates change yearly, structures
 
 Schema: each `references/tax/<COUNTRY>.md` file follows a uniform structure (account types available, contribution limits, tax-deferred vs. tax-free vs. taxable hierarchy, current rates, last-reviewed date) so concept-layer skills can read any country file structurally.
 
-Concept-layer skills like `/fi:hourly-wage` and `/fi:crossover` are **tax-agnostic** — they don't reach into the tax files at all. Only `/fi:investing`, the eventual `/fi:allocation-buckets`, and the placement-audit skill care about the tax layer.
+Concept-layer skills like `/fi:hourly-wage` and `/fi:crossover` are **tax-agnostic** — they don't reach into the tax files at all. Only `/fi:redirect`, the eventual `/fi:allocation-buckets`, and the placement-audit skill care about the tax layer.
 
 This is the natural community-contribution surface. Marika authors `US.md` (her actual expertise). Other contributors author their own country files. Pin a "Country tax files needed — community contributions welcome" issue.
 
