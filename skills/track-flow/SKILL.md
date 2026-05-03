@@ -173,42 +173,77 @@ User declares one default per mixed-purpose vendor. Skill auto-reclassifies on i
 
 ### Step 7 — Income source-type classification
 
-Critical for honest cashflow rollups. Tag every positive-amount row with one of these source-types (NOT mutually exclusive with category — orthogonal axis):
+Critical for honest cashflow rollups. Tag every positive-amount row (positive amounts only — negatives are expenses or internal) with one of these source-types (orthogonal to category):
 
-| Source-type | Definition | Active cashflow? | Yield event? |
+| Source-type | Definition | Active cashflow? | Notes |
 |---|---|---|---|
-| **wage** | Paycheck-shaped income — UI, severance, W-2 payroll, employer bonuses | ✓ yes | n/a |
-| **family-support** | Recurring transfers from family members (mom, dad, partner, parents-in-law) | ✓ yes | n/a |
-| **side-hustle** | Informal / platform / sporadic income — Poshmark, Etsy, Substack tips, gig work | ✓ yes | n/a |
-| **investment-cash** | Investment income paid as cash — HYSA interest, money-market interest, dividends paid to checking, REIT distributions to cash | ✓ yes | ✓ yes |
-| **investment-yield-realized** | Investment income or principal redemption realized as a transaction — index-fund dividends, REIT distributions, eREIT redemptions, stock dividend events. **Counts as yield income** even when auto-redeployed; the redemption represents potential cashflow the user could redirect to checking by toggling reinvest off. | ⚠️ depends on redeployment (paired event below) | ✓ yes — meaningful for retirement-income modeling |
-| **investment-redeployment** | The reinvest leg of a yield event — same-day same-amount share-purchase or eREIT-buy following a yield-realized row. Marker, not income; pairs with `investment-yield-realized` to compute *net cashflow from investments.* | ❌ no — redirects yield away from cash | n/a |
-| **refund** | Reversal of a prior expense — flight refund, return credit, insurance reimbursement, vendor adjustment. Should reduce the original expense, NOT count as income. | ❌ no | n/a |
-| **one-time-large** | Single large events not part of recurring pattern — severance lump sum, inheritance, settlement, RSU vesting, sale of major asset. Flag explicitly so they don't distort monthly averages. | ✓ yes (but flag as one-time) | n/a |
+| **wage** | Paycheck-shaped income — UI, severance, W-2 payroll, employer bonuses | ✓ yes | apply phantom-paycheck filter first (Step 6 — savings-institution P2P transfers tagged Paychecks reclassify to internal) |
+| **family-support** | Recurring transfers from family members (mom, dad, partner, parents-in-law) | ✓ yes | declared markers per user |
+| **side-hustle** | Informal / platform / sporadic income — Poshmark, Etsy, Substack tips, gig work | ✓ yes | platform list user-extensible |
+| **investment-cash** | Investment income paid as cash to a non-investment account — HYSA interest, money-market interest, dividends paid to checking | ✓ yes | counted in BOTH active cashflow AND gross-yield |
+| **refund** | Reversal of a prior expense — flight refund, return credit, insurance reimbursement, vendor adjustment | ❌ no — see cross-period attribution below | reduces in-window expense magnitude only when matched original is in-window |
+| **windfall** | Cross-period refund (original expense out-of-window OR unmatched) AND unmatched positive-shape events that don't fit other types — settlements, lump-sum gifts, inheritance, sale of major asset, severance lump sum, etc. | ✓ yes (but flagged as one-time, separate line) | NEVER folded into recurring-baseline; surface as discrete event |
+| **business-income** | Income to business buckets (handled separately in business breakdown) | n/a | shown in business section, not personal |
 
-**Two views of investment income, both honest:**
+**Investment-account internal flows (default behavior)**
 
-- **Gross investment yield** = sum of (`investment-cash` + `investment-yield-realized`) — what your portfolio generated this month. This is the *retirement-income capacity* number — what could flow to cash if the user toggled auto-reinvest off. Useful for `/fi:fu-money-readout` runway / passive-income / "you could live off this" framing.
-- **Net investment cashflow** = `investment-cash` + (`investment-yield-realized` − `investment-redeployment`) — what actually hit available cash. Useful for current-month spending coverage math.
+All transactions in investment-bucket accounts (Brokerage, IRA, Roth IRA, Traditional IRA, TSP, 401k, Fundrise, Robinhood, etc.) are **excluded from cashflow income/expense by default**. The auto-reinvest assumption: dividends and yield events round-trip inside the account, principal sales pair with reinvestment buys, no money exits to checking unless explicitly withdrawn. This applies to:
 
-**Auto-reinvest / redeployment pair detection**: for each investment-bucket account, scan for same-day same-amount yield-event/buy-event pairs. The yield row stays as `investment-yield-realized` (counts as gross yield); the buy row gets tagged `investment-redeployment`. Both are visible in the data; they net to zero in the *net cashflow* view but stay separate in the *gross yield* view. Most modern brokerages auto-reinvest by default; this is the common case.
+- Interest, Dividends & Capital Gains, Investment Income categories
+- Sell rows (whether yield distributions or principal redemptions)
+- Buy rows
+- Transfer rows
+- Retirement Account contributions/sweeps
 
-**Active cashflow income** = sum of (wage + family-support + side-hustle + investment-cash + investment-yield-realized − investment-redeployment + one-time-large), NOT including refund (those reverse the original expense).
+These rows still contribute to **gross investment yield** (extracted separately, see below) but never to active cashflow.
 
-**The retirement-income lens** = sum of (investment-cash + investment-yield-realized) — *"what your portfolio is generating per month, regardless of whether you're currently living off it."*
+**User confirmation in Step 2 — account-purpose interrogation:** the skill confirms with the user *"this account auto-reinvests dividends, yes? Or do dividends flow to checking?"* for each investment-bucket account. Default = auto-reinvest. If a user has an account that DOES cash out yield to checking, flip the default; those yield events then count as `investment-cash` for that account.
 
-**Why both views matter**: a user with substantial investment yield that's auto-redeploying might look "low income" on the active-cashflow view but be sitting on meaningful retirement capacity. The gross-yield view answers *"what could the portfolio support if I needed it to?"* — relevant for `/fi:fu-money-readout`'s passive-income / runway / Coast-FI framing. The active-cashflow view answers *"can I cover this month's expenses with cash?"* — relevant for current-month spending coverage.
+**Why this matters:** without this rule, every quarterly dividend distribution and every fund rebalance (e.g., consolidating multiple eREIT positions into a single fund) inflates "income" — sometimes by thousands of dollars in a single month. The validation case: a 7-sells-to-1-buy same-day rebalance event totaling ~5K of principal moving sideways inside a Fundrise account looked like ~5K of income until the rule was added.
+
+**Gross investment yield (capacity number, separate from cashflow):**
+
+Compute by scanning all rows (including internal-account ones) for yield-event shape:
+
+- Direct yield categories: Interest, Dividends & Capital Gains, Investment Income (sum |amount| — Monarch sometimes shows in-account yield as negative; absolute value gives the right magnitude)
+- Sell rows that are NOT principal redemptions (no "Redemption" or "SOLD" keyword in merchant/statement) — these are realized capital gains
+- Vanguard-pattern dividend rows: Transfer category with merchant "Dividend" (positive leg only, to avoid double-counting the reinvest leg)
+
+**Sells that ARE redemptions (merchant/statement contains "Redemption" or "SOLD")**: principal moving between funds within the same account → not yield, not cashflow. If unpaired (no same-day buy in same account), surface as anomaly: *"this looks like a principal withdrawal — did $X exit to checking?"*
+
+**Two views, both honest:**
+
+- **Active cashflow income** = wage + family-support + side-hustle + investment-cash + income-other. Excludes refund (nets to expense), excludes windfall (separate one-time line), excludes investment-account internal flows. Useful for "can I cover this month with recurring income?"
+- **Gross investment yield** = sum of yield-event amounts across all accounts. Useful for "what's my portfolio's retirement-income capacity?" — relevant for `/fi:fu-money-readout`, `/fi:crossover`.
+
+**Cross-period refund attribution (rule + user confirmation)**
+
+When a refund-shaped row is detected (positive amount in expense-shaped category), attempt to match against same-merchant negative rows in the prior 12 months across the FULL transaction history (not just the in-window slice). Three outcomes:
+
+| Match outcome | Treatment |
+|---|---|
+| In-window match (original expense in same tracking window) | Tag as `refund`. Reduces current-month expense magnitude (current behavior). |
+| Out-of-window match (original expense pre-tracking) | Reclassify as `windfall`. Does NOT reduce current expense magnitude — surfaces as separate windfall line. |
+| No match (no prior same-merchant negative found) | Reclassify as `windfall`, flag for user: *"This positive-amount row from [vendor] looks refund-shaped but I can't find a matching original expense. Refund of an out-of-window purchase, or income event?"* |
+
+**Why this matters:** refunds for purchases made before the tracking window started would otherwise net against unrelated current-month expenses, making the period look artificially cheap. The validation case: a flight cancelation refund of ~2K in April for tickets purchased the previous September would have understated April's actual spending by 40%.
 
 ### Step 8 — Tabulate
 
-Compute per-month rollups:
+Compute per-month rollups. Show **gross**, **netting adjustments**, and **windfalls separately** — never collapse into a single hidden number.
 
-- **Personal cashflow**: real income (per Step 7 source-type) - real expenses (excluding refunds since they reduce the original expense)
+- **Active cashflow income** (per Step 7): wage + family-support + side-hustle + investment-cash + income-other
+- **Gross expenses**: sum of negative-amount rows in personal bucket (excluding internal-flow rows)
+- **In-window refunds**: sum of `refund`-tagged rows (positive, original expense in tracking window) — netted against gross expenses
+- **Net expenses (refund-netted)**: gross expenses + in-window refunds
+- **Personal net cashflow**: active cashflow income + net expenses
+- **Windfall income** (separate line, not folded into recurring baseline): cross-period refunds + unmatched windfall events
+- **Gross investment yield (capacity)**: extracted from yield-shape rows in investment accounts (per Step 7)
 - **Business cashflow**: business income - business expenses (per bucket)
-- **Combined month-closed-at**: personal net + business net
+- **Combined month-closed-at**: personal net + business net + windfalls
 - Per-category total (in base currency)
 - Per-category transaction count, expense count, top expense vendor (NOT top vendor weighted by absolute amount — that biases toward income rows)
-- **Mixed-sign categories**: when a category has both expense rows AND income/refund rows (e.g., Shopping with a $1K family transfer mis-tagged), report expenses separately from income/refund and flag in a Note column
+- **Mixed-sign categories**: when a category has both expense rows AND income/refund rows (e.g., Shopping with a 1K family transfer mis-tagged), report expenses separately from income/refund and flag in a Note column
 - Recurring vs one-time split (recurring = same vendor + similar amount in 3+ months)
 - Currency mix (% of category that was non-base-currency, if any)
 
@@ -223,10 +258,13 @@ Patterns worth flagging:
 - **Trend anomaly**: "Healthcare spending up 40% vs 6-month avg" — flags categories that drift significantly from baseline median
 - **Recurring discovery**: "First time seeing $X to vendor Y this month — recurring or one-off?" — surfaces new patterns for user awareness
 - **One-time income anomaly**: positive-amount rows >3x median monthly income — flag for user confirmation that they're one-time (severance, inheritance, etc.) and shouldn't pollute monthly averages
-- **Refund pairing**: refund-shaped rows that may correspond to a prior expense — skill prompts *"This refund from [vendor]: which prior expense does it reverse?"* and the user pairs them.
-- **Investment redemption**: `[Sell]` category rows in investment accounts — flag as `investment-yield-realized` (counts as yield), then check for same-day buy events that pair as `investment-redeployment`. Surface BOTH views in the readout: gross yield (retirement-income capacity) + net cashflow (what's actually hitting available cash)
+- **Refund pairing (cross-period attribution)**: positive-amount rows in expense-shaped categories trigger a full-history scan for same-merchant negatives in the prior 12 months. In-window match → tag as `refund` (nets against current expenses). Out-of-window match OR no match → reclassify as `windfall` AND prompt the user: *"This refund-shaped row from [vendor] for $X: matched original expense from [date], which is outside the tracking window. Treat as windfall (one-time, not recurring), or did I miss something?"*
+- **Investment-account anomaly**: investment-bucket accounts default to fully-internal (auto-reinvest assumption). If a Sell row (with "Redemption" or "SOLD" keyword) does NOT pair with a same-day or next-day buy in the same account, flag: *"This redemption of $X from [account] doesn't have a matching reinvestment leg. Did $X exit to checking, or is the buy leg appearing in a different aggregator window?"*
 - **Phantom-paycheck candidate**: aggregator-tagged Paychecks rows from savings-institution merchants — confirm with user before excluding from income
 - **Transfer disambiguation**: aggregator-tagged Transfer rows where merchant suggests an outbound payment (IRS, state Dept of Revenue, etc.) — these may be real expenses, not internal moves
+- **Account-purpose ambiguity**: a positive Interest/Dividend row in a non-investment account (regular checking) — confirm with user: *"Interest paid into your checking account from [source] — yield event, or something else?"*
+
+**The user-confirmation principle:** any anomaly the skill detects but can't resolve confidently — large windfall, unmatched refund, principal sale that may have exited an investment account, account-purpose ambiguity — surface to the user for disambiguation. The skill does not silently assume; it asks.
 
 After computing patterns, ask:
 
@@ -271,11 +309,12 @@ Show:
 ### `transactions/YYYY-MM.csv`
 
 ```
-date,amount_native,currency,amount_base,description,category_imported,category_canonical,account,vendor,bucket,source_type,recurring_flag
-2026-04-12,-87.34,USD,-87.34,<grocery store>,Groceries,food,<personal checking>,<grocery vendor>,personal,,recurring
-2026-04-15,-29.99,USD,-29.99,<streaming service>,Entertainment,subscription-streaming,<personal credit card>,<streaming vendor>,personal,,recurring
-2026-04-01,250.00,USD,250.00,Zelle from family,Other Income,income-other,<personal checking>,<family member>,personal,family-support,recurring
-2026-04-30,500.00,USD,500.00,Investment redemption,Sell,sell,<brokerage>,<investment vendor>,personal-investment,investment-yield-realized,
+date,amount_native,currency,amount_base,description,category_imported,category_canonical,account,vendor,bucket,is_internal,is_yield,source_type,recurring_flag
+2026-04-12,-87.34,USD,-87.34,<grocery store>,Groceries,food,<personal checking>,<grocery vendor>,personal,false,false,,recurring
+2026-04-15,-29.99,USD,-29.99,<streaming service>,Entertainment,subscription-streaming,<personal credit card>,<streaming vendor>,personal,false,false,,recurring
+2026-04-01,250.00,USD,250.00,Zelle from family,Other Income,income-other,<personal checking>,<family member>,personal,false,false,family-support,recurring
+2026-04-30,500.00,USD,500.00,Dividend distribution,Dividends & Capital Gains,income-passive,<brokerage>,<fund vendor>,personal,true,true,,
+2026-04-15,1500.00,USD,1500.00,Refund from prior-year purchase,Travel & Vacation,travel-and-vacation,<personal checking>,<travel vendor>,personal,false,false,windfall,
 ```
 
 ### `monthly-tabs/YYYY-MM.md`
@@ -296,27 +335,30 @@ patterns-detected: 4
 
 | | |
 |---|---|
-| Personal active cashflow income   | $X |
-| Personal expenses                 | -$Y |
-| **Personal net (cashflow)**       | **$Z** |
-| Business net                      | $A (accumulating in business account) |
-| **Month closed at**               | **$B combined cashflow net** |
+| Personal active cashflow income | $X |
+| Personal expenses (gross) | -$Y |
+| Refunds (in-window, net against expenses) | +$R |
+| Personal expenses (net of in-window refunds) | -$Yn |
+| **Personal net (cashflow)** | **$Z** |
+| Windfall income (cross-period refunds, settlements, etc.) | +$W |
+| Business net | $A (accumulating in business account) |
+| **Month closed at** | **$B combined (incl. windfalls)** |
+| Gross investment yield (capacity) | $G (auto-reinvested in investment accounts) |
 
-*Cashflow only. Net worth (with market moves on holdings) lives in `holdings.md`. Refunds reverse original expenses, not counted as income — see source-type breakdown below.*
+*Cashflow only. Net worth (with market moves on holdings) lives in `holdings.md`. Investment-account internal flows (Brokerage/IRA/Roth/TSP/etc. dividends + reinvestments + redemption rebalances) are excluded from cashflow but counted toward gross-yield capacity. Cross-period refunds (original expense outside the tracking window) treated as windfall, not expense reduction.*
 
 ## Personal income by source-type
 
-| Source-type | Amount | Active cashflow? | Yield event? |
+| Source-type | Amount | # txns | Treatment |
 |---|---|---|---|
-| wage | $X | ✓ | n/a |
-| family-support | $X | ✓ | n/a |
-| side-hustle | $X | ✓ | n/a |
-| investment-cash | $X | ✓ | ✓ |
-| investment-yield-realized | $X | (paired with redeployment below) | ✓ |
-| investment-redeployment | -$X | (offsets above) | n/a |
-| refund | $X | ❌ reverses prior expense | n/a |
+| wage | $X | N | ✓ active cashflow |
+| family-support | $X | N | ✓ active cashflow |
+| side-hustle | $X | N | ✓ active cashflow |
+| investment-cash | $X | N | ✓ active cashflow |
+| refund | $X | N | ✗ reverses in-window expense |
+| windfall | $X | N | ✗ one-time, separate line |
 | **Active cashflow income** | **$Y** | | |
-| **Gross investment yield (capacity)** | **$Z** | | |
+| **Gross investment yield** | **$Z** | | capacity (incl. auto-reinvested) |
 
 ## Personal expenses by category (descending)
 
@@ -349,10 +391,18 @@ month,category,bucket,total,transaction_count,top_vendor,top_vendor_share,recurr
 ### `monthly-tabs/_trend-totals.csv`
 
 ```
-month,personal_real_income,personal_expense,personal_net,business_income,business_expense,business_net,complete
-2026-04,X.XX,-X.XX,X.XX,X.XX,-X.XX,X.XX,true
-2026-05,...,...,...,...,...,...,partial
+month,personal_active_income,personal_gross_yield,personal_windfall,personal_expense_gross,personal_refund_in_window,personal_expense,personal_net,business_income,business_expense,business_net,complete
+2026-04,X.XX,X.XX,X.XX,-X.XX,X.XX,-X.XX,X.XX,X.XX,-X.XX,X.XX,true
+2026-05,...,...,...,...,...,...,...,...,...,...,partial
 ```
+
+Eleven-column schema gives downstream skills (`/fi:crossover`, `/fi:redirect`, `/fi:fu-money-readout`) access to:
+- `personal_active_income` — recurring cashflow baseline (use as crossover-target denominator)
+- `personal_gross_yield` — retirement-income capacity (use for "what could the portfolio support?")
+- `personal_windfall` — one-time events (exclude from rolling-baseline averages)
+- `personal_expense_gross` vs `personal_expense` — see how much is real vs refund-netted
+- `personal_refund_in_window` — magnitude of in-period reversals
+- `complete: true|false` — partial months flagged so consumers can filter
 
 ---
 
@@ -388,7 +438,22 @@ For interactive walkthrough mode (manual capture, account interrogation, vendor-
 
 ## Validation
 
-The skill has been end-to-end-validated against real aggregator data on a multi-stream multi-currency user with a Profit-First-architected business. Each design point in this SKILL.md was surfaced by friction in the actual run — phantom-paycheck filtering, mixed-purpose vendor handling, user-intentional override preservation, mixed-sign category fix, two-view investment yield treatment, refund detection, sub-account architecture recognition.
+The skill has been end-to-end-validated against real aggregator data on a multi-stream multi-currency user with a Profit-First-architected business. Each design point in this SKILL.md was surfaced by friction in the actual run. Validation pass updates incorporated:
+
+1. **Phantom-paycheck filtering** — savings-institution P2P transfers tagged Paychecks reclassify to internal-flow before source-type classification
+2. **Mixed-purpose vendor handling** — vendors used for multiple categories (e.g., big-box stores) default to user-declared dominant category
+3. **User-intentional override preservation** — user-tagged categories preserved; canonical category exposed alongside for reporting
+4. **Mixed-sign category fix** — categories with both expense and income/refund rows split for honest top-vendor display
+5. **Two-view investment yield treatment** — gross yield (capacity) vs active cashflow (recurring) shown separately
+6. **Investment-account internal flows** — all transactions in investment-bucket accounts (Brokerage/IRA/Roth/TSP/Fundrise/etc.) excluded from cashflow by default per auto-reinvest assumption; yield events extracted separately for gross-yield capacity
+7. **Cross-period refund attribution** — refunds matched against full transaction history (not just in-window). In-window match → expense reversal. Out-of-window or unmatched → reclassified as windfall (separate line, not folded into baseline)
+8. **Many-to-one principal-sale rebalance pattern** — fund consolidations (sells of multiple specific positions paired with a single buy of a target position, sum-matched) correctly classified as internal rebalance, not yield
+9. **Negative-amount in-account dividend convention** — some aggregators show in-account auto-reinvest dividends as negative-amount Interest rows; absolute-value-based gross-yield extraction handles this
+10. **Same-account ±2-day reinvest pair window** — dividend-paid-and-reinvested patterns can span date boundaries (e.g., dividend paid D, reinvested D+1); pair-detection window broadened accordingly
+11. **Source-type schema** — wage / family-support / side-hustle / investment-cash / refund / windfall / business-income — orthogonal to category
+12. **Sub-account architecture recognition** — Profit First and similar pass-through-bucket architectures recognized; per-sub-account purpose preserved
+13. **One-time-large income flagging** — positive-amount months >3× median active income flagged for user confirmation (severance, settlement, down-payment, etc.) so they don't pollute the recurring baseline
+14. **User-confirmation principle** — anomalies surface for user disambiguation rather than silent assumption
 
 User-specific test artifacts live on the user's machine in their gitignored finance directory. They do not get published.
 
@@ -405,8 +470,8 @@ User-specific test artifacts live on the user's machine in their gitignored fina
 - [ ] Currency-conversion audit log per month (which transactions were converted, at what rate, when).
 - [ ] Recurring-detection across months — first-month-seen flag, last-month-seen flag for subscriptions ending or starting.
 - [ ] Mixed-purpose vendor profile — user-declared defaults stored in `references/user-profile.md` so the skill remembers Walmart=Groceries across runs.
-- [ ] Auto-reinvest pair detection — pair-matching algorithm for dividend+buy on same day same account.
-- [ ] Refund-pair matching — match inbound refund to specific prior outbound expense by amount + vendor.
+- [x] Auto-reinvest pair detection — replaced by simpler "investment-account = internal by default" rule, validated against real data. Per-account override available via account-purpose interrogation.
+- [x] Refund-pair matching — full-history same-merchant scan in prior 12 months; in-window match → refund, else → windfall.
 - [ ] Account-pair routing rules (e.g., "<savings account> → <checking account> = always internal flow") — declared once, applied forever.
 - [ ] Worked example files — write the test artifacts as a permanent reference example in `examples/`.
 - [ ] Export-back capability — re-emit user's data in a different format if they want to switch aggregators.
@@ -417,4 +482,4 @@ User-specific test artifacts live on the user's machine in their gitignored fina
 
 - **Vicki Robin & Joe Dominguez**, *Your Money or Your Life* (1992; rev. 2018). Step 2b (track every dollar) and Step 3 (monthly tabulation by category). Combined here because the 1992 split assumed paper-ledger reality where tracking and tabulating were sequential weekly tasks; in 2026 aggregator-CSV reality they're one invocation.
 - **Mike Michalowicz**, *Profit First* (2014). The sub-account allocation pattern (operational / tax reserves / profit pool) is YMOYL-adjacent infrastructure — running the skill on a Profit-First-architected user surfaces that the buckets need to be respected, not collapsed.
-- **Marika Olson** (2026). Design refinements surfaced by end-to-end validation on real aggregator data: phantom-paycheck filter, account-purpose interrogation, mixed-purpose vendor reclassification, income source-type split (active cashflow vs investment yield capacity vs refund reversals), Profit First sub-account architecture recognition.
+- **Marika Olson** (2026). Design refinements surfaced by end-to-end validation on real aggregator data: phantom-paycheck filter, account-purpose interrogation, mixed-purpose vendor reclassification, income source-type split (active cashflow vs gross investment yield capacity vs refund reversals vs cross-period windfalls), investment-account internal-flow exclusion (auto-reinvest assumption), cross-period refund attribution rule, principal-sale rebalance detection, user-confirmation principle for anomalies, Profit First sub-account architecture recognition.
