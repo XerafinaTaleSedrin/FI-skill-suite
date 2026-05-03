@@ -12,13 +12,12 @@ A free, open, multi-skill suite for navigating towards financial independence �
 
 A set of Claude Code skills (under the `/fi:` namespace, where **fi** stands for **financial independence**) that walk a user through the load-bearing mechanics of personal finance:
 
-- Total lifetime earnings reconstruction
-- Current net worth + holdings file
+- Current net worth + holdings file (the YMOYL Step 1 "weather report")
 - Real hourly wage (life-energy math, work-mode-aware)
 - Spending capture + monthly tabulation
 - Values-fit consciousness check on each spending category
 - Long-arc income/spending/passive-income wall chart
-- Crossover-point math (when investment income exceeds expenses)
+- Crossover-point math (when investment income exceeds expenses, including SSA / pension third-leg inputs)
 - Investment management as a question-asking discipline
 - Daily FU money readout (optional)
 - Book audit pipeline ("I read it so you didn't have to")
@@ -29,7 +28,7 @@ The skills derive their concepts from books — primarily Vicki Robin & Joe Domi
 
 - **People who can read.** No motivational fluff. No bro-tone. No scarcity-tone. The skills assume you're already convinced personal finance matters.
 - **People who like clean systems.** The architecture (see [ARCHITECTURE.md](./ARCHITECTURE.md)) is opinionated about layer separation and lifecycle hygiene. If that's appealing, you're in the right place.
-- **People who want to own their data.** Holdings, transactions, lifetime earnings — all of it stays on your machine. Nothing syncs anywhere. Nothing phones home.
+- **People who want to own their data.** Holdings, transactions, all financial files — everything stays on your machine. Nothing syncs anywhere. Nothing phones home.
 - **People in any country, with any tax regime.** Per-country tax reference files (community-contributed) let the skills adapt without being rewritten.
 - **People at any work mode.** Fully remote, hybrid, on-site, gig — the skills ask before assuming.
 
@@ -46,7 +45,7 @@ Dual-licensed:
 - **Content** (skills, audits, READMEs, examples, references): [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) — attribution required, non-commercial only, derivatives must inherit the same license.
 - **Code** (any scripts, agents, tool-register automation): [PolyForm Noncommercial 1.0.0](https://polyformproject.org/licenses/noncommercial/1.0.0/) — non-commercial use only, source-available.
 
-This is a deliberate choice. The repo is **explicitly free for everyone, forever, with no commercial appropriation.** Compare with [Kate Chapman's flywheel](https://github.com/Untangling-Systems/flywheel) which uses MIT (commercial-permissive) — that's a different goal. Both choices are right; they're just oriented at different outcomes.
+This is a deliberate choice. The repo is **explicitly free for everyone, forever, with no commercial appropriation.** Other open-source skill suites use commercial-permissive licenses (MIT, Apache) — that's a different goal, oriented at maximum reuse including commercial. Both choices are right; they serve different outcomes. This one is oriented at protecting the work from being repackaged into a paid product.
 
 ## Getting started (when scaffold is done)
 
@@ -62,7 +61,7 @@ git clone https://github.com/XerafinaTaleSedrin/FI-skill-suite.git
 /fi:fu-money-readout       # daily ground-state report (optional)
 ```
 
-After that, any of the YMOYL-step skills (`/fi:lifetime-earnings`, `/fi:hourly-wage`, `/fi:monthly-tabulation`, `/fi:three-questions`, `/fi:wallchart`, `/fi:crossover`, `/fi:investing`) read from the holdings file and produce their own analyses.
+After that, any of the YMOYL-step skills (`/fi:hourly-wage`, `/fi:monthly-tabulation`, `/fi:three-questions`, `/fi:wallchart`, `/fi:crossover`, `/fi:investing`) read from the holdings file and produce their own analyses.
 
 ## Repo structure
 
@@ -78,10 +77,9 @@ FI-skill-suite/
 ├── _last-reviewed.md             ← freshness flag
 ├── skills/
 │   ├── 00-overview.md            ← skill index + YMOYL → skill map
-│   ├── holdings-scaffold/        ← /fi:holdings-scaffold — flagship #1
+│   ├── holdings-scaffold/        ← /fi:holdings-scaffold — flagship #1, YMOYL Step 1
 │   ├── fu-money-readout/         ← /fi:fu-money-readout — flagship #2
-│   ├── lifetime-earnings/        ← /fi:lifetime-earnings — YMOYL Step 1a
-│   ├── net-worth/                ← /fi:net-worth — YMOYL Step 1b
+│   ├── net-worth/                ← /fi:net-worth — YMOYL Step 1 (read-only roll-up)
 │   ├── hourly-wage/              ← /fi:hourly-wage — YMOYL Step 2a (mode-aware)
 │   ├── track-spending/           ← /fi:track-spending — YMOYL Step 2b
 │   ├── monthly-tabulation/       ← /fi:monthly-tabulation — YMOYL Step 3
@@ -117,7 +115,7 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md). Short version:
 
 ## Acknowledgments
 
-- **Vicki Robin & Joe Dominguez** — *Your Money or Your Life*, the load-bearing source.
-- **Kate Chapman ([@wonderchook](https://github.com/wonderchook), [Untangling Systems](https://github.com/Untangling-Systems))** — the [flywheel](https://github.com/Untangling-Systems/flywheel) skills are the architectural model. AGENTS.md / references/ / per-skill discipline patterns are all hers.
+- **Kate Chapman ([@wonderchook](https://github.com/wonderchook), [Untangling Systems](https://github.com/Untangling-Systems))** — `FI-skill-suite` is built on the architectural pattern Kate worked out in her [flywheel](https://github.com/Untangling-Systems/flywheel) skills repo. The `AGENTS.md` cross-skill rules layer, the per-skill `SKILL.md` + `SCHEMA.md` discipline, the `references/` separation, the namespace-as-plugin-name move — all of those structural decisions are hers, generously made open. This repo wouldn't exist in its current shape without that example. Thank you.
+- **Vicki Robin & Joe Dominguez** — *Your Money or Your Life*, the load-bearing source for the FI program these skills implement.
 - **Morgan Housel, Bill Perkins, Nick Maggiulli, Mike Michalowicz** — concepts to be audited and folded in.
 - **The federal civil service folks** who taught Marika what *enough* looks like in practice, before USAID was dismantled.

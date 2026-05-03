@@ -158,7 +158,7 @@ This pattern stays out of any data-collection / privacy minefield (no auto-telem
 ## What's deliberately NOT in this architecture
 
 - **No telemetry, no analytics, no phone-home.** The skills run locally and stay local.
-- **No cloud sync of user data.** Holdings, transactions, lifetime earnings — all gitignored or off-repo. The user owns it.
+- **No cloud sync of user data.** Holdings, transactions, all financial files — gitignored or off-repo. The user owns it.
 - **No platform lock-in.** Country-aware, bank-agnostic, aggregator-agnostic. If your tools change, the skills adapt.
 - **No "premium tier."** It's all free. CC BY-NC-SA 4.0 ensures it stays free.
 - **No motivational framing.** The skills are operational tools, not affirmations.

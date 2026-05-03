@@ -1,61 +1,69 @@
 ---
 name: net-worth
-description: Computes the user's current net worth from the holdings.md sentinel file. The "where do I actually stand right now?" half of YMOYL Step 1.
+description: Read-only roll-up of holdings.md — surfaces the user's current net worth and the YMOYL Step 1 framing without re-walking the inventory. Use when the user wants the "where do I stand right now?" snapshot but doesn't want to re-run the full holdings scaffold.
 layer: concept+pattern
 ymoyl_step: 1
 mode_aware: false
 status: scaffold
 sources:
   - book: Your Money or Your Life
-    contribution: "Step 1b — current net worth as half of 'making peace with the past'"
-last-reviewed: 2026-05-01
+    contribution: "Step 1 — current net worth as 'making peace with the past'. (YMOYL prescribes a second half — lifetime earnings reconstruction — which this suite deliberately does not implement; see book-audits/2026-05-01-ymoyl.md §8 for reasoning.)"
+last-reviewed: 2026-05-02
 ---
 
 # /fi:net-worth
 
-Reads `holdings.md` (created by `/fi:holdings-scaffold`) and produces the user's current net worth, with the YMOYL Step 1 catch-up framing comparing total lifetime earnings (`/fi:lifetime-earnings` output) against current net worth.
+Reads `holdings.md` (created by `/fi:holdings-scaffold`) and produces a read-only net-worth snapshot with the YMOYL Step 1 framing language. **Does not modify the holdings file.**
+
+> **Open question (logged 2026-05-02)**: with Step 1a (lifetime earnings) deliberately not implemented in this suite, the distinct value of `/fi:net-worth` versus the closing block of `/fi:holdings-scaffold` is thin. Both render the same Step 1 framing against the same numbers. Consider merging this skill into `/fi:holdings-scaffold` before promoting either to `alpha`. See YMOYL audit §8.
 
 ---
 
 ## The concept (decades-stable)
 
-Net worth = what you own minus what you owe. Run honestly, this includes hard-to-value assets (real estate, vehicles), debts that never feel "real" (mortgages, student loans), and all currencies you hold. The catch-up framing — *I earned $X across my life; I have $Y now* — surfaces the gap that motivates every later step in the YMOYL program.
+Net worth = what you own minus what you owe. Honest accounting includes hard-to-value assets (real estate, vehicles), debts that don't feel "real" (mortgages, student loans), and any non-base currencies the user holds. The number is data, not a verdict.
 
 ---
 
 ## The pattern (~5-year stable)
 
-Read-only skill. It does not capture anything new from the user; it reads from the sentinel files (`holdings.md`, `lifetime-earnings.md`) that other skills populate. Output is a clean section in the user's existing `holdings.md`, OR a separate readout if the user prefers.
+**Read-only.** Reads from `holdings.md`. Does not capture anything new from the user. Output is either a clean readout to chat OR a "Net Worth" section appended to the holdings file at the user's preference.
 
 ---
 
 ## What the skill does at runtime
 
-1. Reads `holdings.md`. Validates schema.
-2. Reads `lifetime-earnings.md` if present (optional).
-3. Computes:
-   - Asset side: investment account balances + real estate (gross) + vehicles + other assets
-   - Liability side: mortgage + other loans + credit card balances + other debt
+1. Reads `holdings.md`. Validates schema (`holdings-schema-version: 1`).
+2. Computes:
+   - Asset side: investment + real estate + vehicles + saleable inventory + cash + CDs
+   - Liability side: mortgage + other loans + credit-card balances + other debt
    - Net = assets - liabilities
-4. If `lifetime-earnings.md` present: computes the catch-up framing (lifetime earnings vs current net worth, with both nominal and inflation-adjusted views).
-5. Writes the result to a "Net Worth" section in `holdings.md` OR to a separate `~/finances/net-worth.md` readout per user preference.
+3. Multi-currency conversion at runtime (FX-at-read-time rule from holdings-scaffold) — query `api.frankfurter.dev` for current rates; never trust frozen aggregator conversions.
+4. Renders the YMOYL Step 1 framing block:
+
+   > *This file completes Step 1 of Your Money or Your Life — what Vicki Robin calls "making peace with the past." Read it like a weather report. Not a verdict on your self-worth. The past is just data. It does not determine the future. We build on this.*
+
+5. Output destination per user preference:
+   - Chat readout only (default for re-runs)
+   - Append a "Net Worth (snapshot YYYY-MM-DD)" section to `holdings.md`
+   - Separate `~/finances/net-worth-YYYY-MM-DD.md` file
 
 ---
 
 ## Headless behavior
 
-Fully supported. Reads the sentinel files, computes net worth, writes to the configured output location. Useful for cron-driven monthly snapshots.
+Fully supported. Reads `holdings.md`, computes net worth, writes to configured output. Useful for cron-driven monthly snapshots feeding into `/fi:fu-money-readout` or external dashboards the user maintains.
 
 ---
 
 ## TODO
 
-- [ ] Define schema for "non-investment assets" section in `holdings.md`.
-- [ ] Multi-currency net-worth handling (read native, convert at runtime).
-- [ ] Catch-up framing presentation: how to display the gap between lifetime earnings and net worth without being moralistic.
+- [ ] Decide: merge into `/fi:holdings-scaffold` closing block, or keep as separate skill? (Open question above; resolve before `alpha`.)
+- [ ] Multi-currency net-worth handling — confirm FX-at-read-time pattern is consistent with `/fi:holdings-scaffold`.
+- [ ] Snapshot diffing: when the skill runs against a holdings file that has changed since the last snapshot, surface the delta cleanly.
 
 ---
 
 ## Sources
 
-- **Vicki Robin & Joe Dominguez**, *Your Money or Your Life* (1992; rev. 2018). Step 1b.
+- **Vicki Robin & Joe Dominguez**, *Your Money or Your Life* (1992; rev. 2018). Step 1.

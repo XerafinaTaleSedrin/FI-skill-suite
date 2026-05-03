@@ -38,7 +38,7 @@ Sequential prompt-driven extraction with a fixed output format. The skill asks t
 4. Captures the user's responses verbatim where blunt; structures the output to the fixed audit format.
 5. Asks for Hearth's verdict (one-line cat-take, mandatory).
 6. Writes the audit to `book-audits/YYYY-MM-DD-<book-slug>.md`.
-7. Suggests cross-references: which existing `fi-*` skills should add this book to their `sources:`?
+7. **Privately** (not in the audit itself): notes for Marika which existing `fi-*` skills should add this book to their `sources:`. The audit stays clean for the business-interested reader; repo-wiring lives in the SKILL.md files where it belongs.
 
 ---
 
@@ -52,11 +52,12 @@ Sequential prompt-driven extraction with a fixed output format. The skill asks t
 5. What's missing (things the book ignores that matter now)
 6. The honest verdict — who should read it, who should skip it
 7. The 5-line takeaway you'd actually run
-8. Cross-references — which concepts in SKILL.md does this book contribute to?
-9. **Hearth's verdict** — one-line cat-take. Mandatory. Tonal range:
+8. **Hearth's verdict** — one-line cat-take. Mandatory. Tonal range:
    nap-worthy / hiss-worthy / windowsill-approved / would-knock-off-the-desk.
    Hearth speaks for herself; she's not a tagline machine.
 ```
+
+The audit is for the business-interested reader. Repo-internal mappings (which `fi-*` skills this book contributes to, deletion records, refinement notes for existing source lists) live in the SKILL.md files of the relevant skills, NOT in the audit. Keep the two surfaces separate.
 
 ---
 
@@ -79,7 +80,7 @@ Sequential prompt-driven extraction with a fixed output format. The skill asks t
 **Output guardrails:**
 - No hedging language ("it depends", "everyone's different") — pick a side
 - No promotional copy from the author's marketing — work only from the book's actual claims
-- Cite page numbers / chapter titles for every load-bearing claim
+- Cite chapter titles (or step numbers, for stepwise books) for every load-bearing claim. Page numbers are optional — they edition-drift quickly and aren't load-bearing.
 - Translate every dollar figure into [current year] purchasing power if the book is >5 years old
 - For each surviving mechanic, tag the layer it belongs in (concept / pattern / tool)
 
@@ -94,7 +95,7 @@ Not headless — extraction requires interaction. Future option: read from a str
 ## TODO
 
 - [ ] Build the IG-carousel slice — auto-generate a 5-slide carousel from the audit.
-- [ ] Build the cross-reference detection — automatically suggest which `fi-*` skills should add this book to `sources:`.
+- [ ] Build the cross-reference detection (suggest privately to Marika which `fi-*` skills should add this book to `sources:` — the audit stays clean of repo-mapping).
 - [ ] Worked audits in `book-audits/` for YMOYL, Profit First, Psychology of Money, Just Keep Buying, Die With Zero.
 
 ---

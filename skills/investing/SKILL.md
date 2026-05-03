@@ -7,7 +7,7 @@ mode_aware: true
 status: scaffold
 sources:
   - book: Your Money or Your Life
-    contribution: "Step 9 — managing your finances (foundation; their specific advice is dated)"
+    contribution: "Step 9 — managing your finances (foundation; their specific advice is dated). 1992 original prescribed Treasuries-only; 2018 revision added the case for low-cost index funds (VTSAX-class) and SRI-screened options. Treat both editions as concept-layer; runtime freshness pulls current rates and platforms."
   - book: Just Keep Buying
     contribution: "Front-loading vs. dollar-cost averaging; tail-event handling"
   - book: Psychology of Money

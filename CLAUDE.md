@@ -27,15 +27,17 @@ All skills are invoked under the `fi` namespace. The 12 currently defined:
 
 | Skill | Invocation | YMOYL Step |
 |---|---|---|
-| Lifetime earnings | `/fi:lifetime-earnings` | 1a — total earnings reconstruction |
-| Net worth | `/fi:net-worth` | 1b — current net worth |
+| Holdings scaffold | `/fi:holdings-scaffold` | 1 — current net worth ("making peace with the past") |
+| Net worth (read-only roll-up) | `/fi:net-worth` | 1 — current net worth presentation |
 | Hourly wage | `/fi:hourly-wage` | 2a — real hourly wage (work-mode-aware) |
 | Track spending | `/fi:track-spending` | 2b — every-penny capture |
 | Monthly tabulation | `/fi:monthly-tabulation` | 3 — category aggregation with life-energy cost |
 | Three questions | `/fi:three-questions` | 4 — values-fit consciousness check |
 | Wall chart | `/fi:wallchart` | 5 — long-arc income/spending/passive chart |
-| Crossover | `/fi:crossover` | 8 — FI threshold (mode-aware) |
+| Crossover | `/fi:crossover` | 8 — FI threshold (mode-aware), incl. SSA-benefit projection |
 | Investing | `/fi:investing` | 9 — investment management as question-asking |
+
+> **Step 1 — what we don't implement.** YMOYL's Step 1 has two prescribed halves: current net worth, and total lifetime earnings reconstruction. We implement only the first. The lifetime-earnings half lands in 2026 as a shame mechanic that distorts dignified non-paycheck years. See `book-audits/2026-05-01-ymoyl.md` §8 for full reasoning.
 
 ### Editorial pipeline
 
@@ -50,14 +52,13 @@ Strict, non-negotiable rules enforced across all skills:
 1. **Never auto-commit user financial files to git.** Skills validate `.gitignore` coverage before writing or warn if no git repo exists.
 2. **Never auto-sync user data anywhere.** No phone-home, no telemetry, no cloud backup unless the user explicitly invokes one.
 3. **Never log sensitive content to debug output.** Account balances, ticker holdings, net-worth figures NEVER appear in error messages or stack traces.
-4. **Holdings, transactions, lifetime earnings stay on the user's machine.** Period.
+4. **Holdings, transactions, all financial files stay on the user's machine.** Period.
 
 ## Where outputs go
 
 Skills write to predictable, gitignored locations on the user's machine. Default paths (user can override):
 
 - Holdings: `~/finances/holdings.md`
-- Lifetime earnings: `~/finances/lifetime-earnings.md`
 - Transactions: `~/finances/transactions/YYYY-MM.csv`
 - Monthly tabs: `~/finances/monthly-tabs/YYYY-MM.md`
 - Wall chart: `~/finances/wallchart.md`

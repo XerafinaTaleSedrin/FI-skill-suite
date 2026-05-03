@@ -68,7 +68,7 @@ If you're not sure, open a discussion before opening a PR.
 ### Naming convention — capital FI vs lowercase fi
 
 - **`FI`** (capital) is the proper-noun acronym for **Financial Independence** — used in the project name, repo name, and suite-level branding (`FI-skill-suite`).
-- **`fi`** (lowercase) is the **plugin name** declared in `.claude-plugin/plugin.json`, which Claude Code automatically applies as the slash-command namespace. So skills are invoked as `/fi:hourly-wage`, `/fi:crossover`, etc. — same shape as Kate Chapman's `/fw:` flywheel namespace and `/sw:` switch namespace.
+- **`fi`** (lowercase) is the **plugin name** declared in `.claude-plugin/plugin.json`, which Claude Code automatically applies as the slash-command namespace. So skills are invoked as `/fi:hourly-wage`, `/fi:crossover`, etc.
 - **Skill folder names** drop any prefix (just `hourly-wage/`, `crossover/`, etc.) — the `fi` namespace is applied automatically by the plugin manifest, so prefixing the folder names would create redundant `/fi:fi-hourly-wage` invocations.
 
 When in doubt: project / repo / brand context = capital FI. Plugin name / slash-command namespace = lowercase fi. Skill folder name = bare concept (no prefix).
@@ -173,6 +173,4 @@ Specifically NOT welcome:
 
 ---
 
-## Acknowledgments
-
-Patterns adapted from Kate Chapman's [flywheel](https://github.com/Untangling-Systems/flywheel) repo. If you've contributed there, the patterns will feel familiar.
+Acknowledgments live in the [README](./README.md#acknowledgments).

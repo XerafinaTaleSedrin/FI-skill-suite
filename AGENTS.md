@@ -1,15 +1,14 @@
-
 # AGENTS.md — cross-skill rules
 
-Rules that apply across every skill in `FI-skill-suite`. If you find yourself copy-pasting a behavior across multiple `SKILL.md` files, factor it here and reference back. (This is Kate Chapman's pattern from the [flywheel](https://github.com/Untangling-Systems/flywheel) repo — single source of truth, no silent divergence.)
+Rules that apply across every skill in `FI-skill-suite`. If you find yourself copy-pasting a behavior across multiple `SKILL.md` files, factor it here and reference back — single source of truth, no silent divergence.
 
 ---
 
 ## Privacy posture (every skill)
 
 1. **Never auto-sync user data anywhere.** No phone-home, no telemetry, no cloud backup unless the user explicitly invokes a backup command.
-2. **Never auto-commit user financial files to git.** All skills that write to `holdings.md`, `lifetime-earnings.md`, transaction logs, or monthly tabs must check for `.gitignore` coverage before writing — and add the file to `.gitignore` if not already covered. If the user's working directory is not a git repo, write a clear "DO NOT COMMIT" warning header at the top of the file.
-3. **Never log sensitive content to debug output.** Account balances, account names, transaction details, lifetime earnings, net-worth figures — these are PHI-equivalent for personal finance. Don't print them outside the skill's intended user-facing output.
+2. **Never auto-commit user financial files to git.** All skills that write to `holdings.md`, transaction logs, or monthly tabs must check for `.gitignore` coverage before writing — and add the file to `.gitignore` if not already covered. If the user's working directory is not a git repo, write a clear "DO NOT COMMIT" warning header at the top of the file.
+3. **Never log sensitive content to debug output.** Account balances, account names, transaction details, net-worth figures — these are PHI-equivalent for personal finance. Don't print them outside the skill's intended user-facing output.
 4. **Never include user financial details in error messages or stack traces.** If a skill crashes mid-flow, the error should describe the failure shape, not the data shape.
 
 ---
@@ -91,10 +90,14 @@ Skills can use WebFetch (when available) to verify external state. When WebFetch
 
 ## Hearth — appearance and tone
 
-`Hearth` is Marika's companion-cat figure (see `.claude/instructions/companion-hearth.md` in the parent Komorebi repo). In `FI-skill-suite`, Hearth has a defined role:
+`Hearth` is a small companion-cat figure who serves as the verdict voice on book audits. She's not a tagline machine and not a mascot; she's a discerning critic with a cat's altitude. Her tonal range: *nap-worthy / hiss-worthy / windowsill-approved / would-knock-off-the-desk*.
 
-- **`/fi:audit` skill**: Hearth's verdict is **mandatory** on every short-form clip (IG carousels, social cuts, the 5-line takeaway hero slide) and present on the full audit. Tonal range: *nap-worthy / hiss-worthy / windowsill-approved / would-knock-off-the-desk*. Hearth speaks for herself; she's not a tagline machine.
+In `FI-skill-suite`, Hearth has a defined role:
+
+- **`/fi:audit` skill**: Hearth's verdict is **mandatory** on every short-form clip (IG carousels, social cuts, the 5-line takeaway hero slide) and present on the full audit. Hearth speaks for herself.
 - **Other skills**: Hearth is silent unless the user invokes her with a command-line flag. Default OFF for all skills except `/fi:audit`.
+
+The verdict scale is the substance — books that recommend ignoring lived constraints get *hiss-worthy*; books with a single load-bearing insight worth keeping get *windowsill-approved*; books that survive the audit intact and earn re-reads get full Hearth approval. *Would-knock-off-the-desk* is reserved for books that confidently misinform.
 
 ---
 
@@ -105,7 +108,6 @@ Skills that read from / write to shared sentinel files must respect the schema:
 | Sentinel file | Owner skill | Reader skills | Schema source |
 |---|---|---|---|
 | `holdings.md` (user repo) | `/fi:holdings-scaffold` | `/fi:fu-money-readout`, `/fi:net-worth`, `/fi:crossover`, `/fi:investing`, `/fi:monthly-tabulation` | See `skills/holdings-scaffold/SCHEMA.md` |
-| `lifetime-earnings.md` (user repo) | `/fi:lifetime-earnings` | `/fi:net-worth` (catch-up framing) | See `skills/lifetime-earnings/SCHEMA.md` |
 | `transactions/<YYYY-MM>.csv` (user repo) | `/fi:track-spending` | `/fi:monthly-tabulation`, `/fi:three-questions`, `/fi:wallchart` | See `skills/track-spending/SCHEMA.md` |
 | `wallchart.md` (user repo) | `/fi:wallchart` | `/fi:crossover` | See `skills/wallchart/SCHEMA.md` |
 | `book-audits/<DATE>-<book>.md` (this repo) | `/fi:audit` | (read by humans, surfaced in cross-references) | See `book-audits/_audit-template.md` |
@@ -120,13 +122,3 @@ Skills that read from / write to shared sentinel files must respect the schema:
 - **Read CONTRIBUTING.md end-to-end before writing code** — versioning, structure, naming conventions, headless rules. Don't discover them in PR review.
 - **Versioning + manifest hygiene** — bump `plugin.json`, `marketplace.json` (if applicable), add CHANGES entry on every release.
 - **Backwards compat first.** New behavior never surprises an existing user. Default OFF; the user has to ask for the new thing.
-
----
-
-## Source
-
-This file mirrors patterns from Kate Chapman's [flywheel](https://github.com/Untangling-Systems/flywheel) repo, with adaptations specific to financial-data privacy and the YMOYL framework. Lessons captured in:
-
-- `feedback_pr-discipline-lessons-from-kate.md` (Komorebi memory)
-- Kate's review on flywheel PR #2 (2026-04-25)
-- Structural patterns in the flywheel repo itself

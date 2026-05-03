@@ -5,9 +5,7 @@ published: YYYY (publication year of edition reviewed)
 audited: YYYY-MM-DD (when this audit was written)
 auditor: (GitHub handle or "Marika Olson")
 hearth_verdict: (one of: nap-worthy / hiss-worthy / windowsill-approved / would-knock-off-the-desk)
-contributes_to_skills:
-  - (e.g., hourly-wage)
-  - (e.g., crossover)
+status: (draft | complete)
 ---
 
 # Audit: [Book Title]
@@ -64,7 +62,7 @@ contributes_to_skills:
 
 **Read it if**: [specific reader profile — e.g., "you're 25-35, US-based, currently feel financially overwhelmed, and have never tried a category-by-category spending audit"]
 
-**Skip it if**: [specific reader profile — e.g., "you've already done lifetime-earnings + monthly-tabulation work; the rest of this book is rhetorical reinforcement of moves you've made"]
+**Skip it if**: [specific reader profile — e.g., "you've already done holdings-scaffold + monthly-tabulation work; the rest of this book is rhetorical reinforcement of moves you've made"]
 
 ---
 
@@ -80,15 +78,7 @@ The smallest version of the book's advice. If a reader does only these five thin
 
 ---
 
-## 8. Cross-references — which concepts in SKILL.md does this book contribute to?
-
-For each existing `fi-*` skill this book contributes to: name the skill, name the specific concept, note any refinement to the existing source list.
-
-- **`skill-name`**: contributes [specific concept]. Refines existing source list by [specific addition / refinement].
-
----
-
-## 9. Hearth's verdict
+## 8. Hearth's verdict
 
 > [One-line cat-take, written in Hearth's voice. Tonal range: nap-worthy / hiss-worthy / windowsill-approved / would-knock-off-the-desk.]
 
