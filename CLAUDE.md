@@ -21,14 +21,13 @@ All skills are invoked under the `fi` namespace. The 12 currently defined:
 | Skill | Invocation | Purpose |
 |---|---|---|
 | Holdings scaffold | `/fi:holdings-scaffold` | Build the user's local `holdings.md` from scratch — accounts, holdings, asset-class roll-up, net worth, gitignore enforcement |
-| FU money readout | `/fi:fu-money-readout` | Optional daily ground-state report: net direction, runway, recurring passive, crossover %, nuclear runway |
+| FU money readout | `/fi:fu-money-readout` | Optional daily ground-state report: net direction, runway, recurring passive, crossover %, nuclear runway. **"FU money" is intentional — established FI slang for "fuck-you money" (having enough to walk away from any situation). Not a typo of "FI money."** |
 
 ### YMOYL nine-step program
 
 | Skill | Invocation | YMOYL Step |
 |---|---|---|
 | Holdings scaffold | `/fi:holdings-scaffold` | 1 — current net worth ("making peace with the past") |
-| Net worth (read-only roll-up) | `/fi:net-worth` | 1 — current net worth presentation |
 | Hourly wage | `/fi:hourly-wage` | 2a — real hourly wage (work-mode-aware) |
 | Track spending | `/fi:track-spending` | 2b — every-penny capture |
 | Monthly tabulation | `/fi:monthly-tabulation` | 3 — category aggregation with life-energy cost |
@@ -69,7 +68,7 @@ Book audits (NOT user-private) go in the plugin's own repo at `book-audits/`.
 ## Reading order if you're new to the user's setup
 
 1. Check whether `~/finances/holdings.md` exists. If not, `/fi:holdings-scaffold` is the gateway — every other skill reads from that file.
-2. After holdings exists, `/fi:fu-money-readout` provides daily orientation. Other skills (`/fi:net-worth`, `/fi:crossover`, `/fi:investing`) all read from holdings.
+2. After holdings exists, `/fi:fu-money-readout` provides daily orientation. Other skills (`/fi:crossover`, `/fi:investing`, `/fi:monthly-tabulation`) all read from holdings.
 3. The YMOYL Step 2-5 skills (hourly-wage, track-spending, monthly-tabulation, three-questions, wallchart) chain together: each reads from the previous.
 
 ## Runtime freshness

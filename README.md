@@ -19,7 +19,7 @@ A set of Claude Code skills (under the `/fi:` namespace, where **fi** stands for
 - Long-arc income/spending/passive-income wall chart
 - Crossover-point math (when investment income exceeds expenses, including SSA / pension third-leg inputs)
 - Investment management as a question-asking discipline
-- Daily FU money readout (optional)
+- Daily FU money readout (optional) *("FU" is intentional — established FI slang for "fuck-you money," having enough to walk away from any situation. Not a typo of "FI.")*
 - Book audit pipeline ("I read it so you didn't have to")
 
 The skills derive their concepts from books — primarily Vicki Robin & Joe Dominguez's *Your Money or Your Life*, with refinements from Mike Michalowicz's *Profit First*, Morgan Housel's *The Psychology of Money*, Bill Perkins's *Die With Zero*, Nick Maggiulli's *Just Keep Buying*, and others as the audit pipeline grows. Books contribute to skills; books don't *own* skills.
@@ -78,8 +78,7 @@ FI-skill-suite/
 ├── skills/
 │   ├── 00-overview.md            ← skill index + YMOYL → skill map
 │   ├── holdings-scaffold/        ← /fi:holdings-scaffold — flagship #1, YMOYL Step 1
-│   ├── fu-money-readout/         ← /fi:fu-money-readout — flagship #2
-│   ├── net-worth/                ← /fi:net-worth — YMOYL Step 1 (read-only roll-up)
+│   ├── fu-money-readout/         ← /fi:fu-money-readout — flagship #2 (FU = "fuck-you money," intentional)
 │   ├── hourly-wage/              ← /fi:hourly-wage — YMOYL Step 2a (mode-aware)
 │   ├── track-spending/           ← /fi:track-spending — YMOYL Step 2b
 │   ├── monthly-tabulation/       ← /fi:monthly-tabulation — YMOYL Step 3

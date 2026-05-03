@@ -10,7 +10,7 @@ All skills are namespaced under the `fi` plugin and invoked as `/fi:<skill-name>
 
 | YMOYL step | Concept | Skill | Status |
 |---|---|---|---|
-| 1 — Make peace with the past | Current net worth (the "weather report" framing) | [`/fi:holdings-scaffold`](holdings-scaffold/SKILL.md) + [`/fi:net-worth`](net-worth/SKILL.md) | draft / scaffold |
+| 1 — Make peace with the past | Current net worth (the "weather report" framing) | [`/fi:holdings-scaffold`](holdings-scaffold/SKILL.md) | draft |
 | 2 — Be in the present (a) | Real hourly wage (life-energy math) | [`/fi:hourly-wage`](hourly-wage/SKILL.md) | scaffold |
 | 2 — Be in the present (b) | Track every dollar | [`/fi:track-spending`](track-spending/SKILL.md) | scaffold |
 | 3 — Where is it all going? | Monthly tabulation by category | [`/fi:monthly-tabulation`](monthly-tabulation/SKILL.md) | scaffold |
@@ -30,7 +30,7 @@ All skills are namespaced under the `fi` plugin and invoked as `/fi:<skill-name>
 | Skill | Purpose | Status |
 |---|---|---|
 | [`/fi:holdings-scaffold`](holdings-scaffold/SKILL.md) | Builds the user's local `holdings.md` from scratch — every account, every holding, asset-class roll-up, net worth, gitignore enforcement | **draft** ← first runnable skill |
-| [`/fi:fu-money-readout`](fu-money-readout/SKILL.md) | Optional daily ground-state report: net direction, runway, recurring passive income, crossover %, nuclear runway | scaffold |
+| [`/fi:fu-money-readout`](fu-money-readout/SKILL.md) | Optional daily ground-state report: net direction, runway, recurring passive income, crossover %, nuclear runway. **"FU" is intentional — established FI slang for "fuck-you money" (enough to walk away from any situation). Not a typo of "FI."** | scaffold |
 
 `/fi:holdings-scaffold` is the prerequisite for almost every other skill. `/fi:fu-money-readout` is the engagement habit that keeps the holdings file fresh.
 
@@ -66,7 +66,6 @@ Roughly: do these in order. Some skills can run independently once `/fi:holdings
 ```
 /fi:holdings-scaffold ─┬─→ /fi:fu-money-readout (daily, optional)
                       │
-                      ├─→ /fi:net-worth
                       ├─→ /fi:hourly-wage  (the natural Step-2 forward-look)
                       ├─→ /fi:investing
                       └─→ /fi:crossover

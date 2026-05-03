@@ -1,6 +1,6 @@
 ---
 name: fu-money-readout
-description: Optional daily ground-state report — net direction, runway, recurring passive income, crossover %, nuclear runway. Reads from holdings.md.
+description: Optional daily ground-state report — net direction, runway, recurring passive income, crossover %, nuclear runway. Reads from holdings.md. ("FU" in the skill name is intentional FI-community slang for "fuck-you money" — having enough to walk away from any situation. Not a typo of "FI money.")
 layer: concept+pattern
 ymoyl_step: 8
 mode_aware: true
@@ -8,10 +8,12 @@ status: scaffold
 sources:
   - book: Your Money or Your Life
     contribution: "Crossover-point concept (Step 8) — when investment income covers expenses"
-last-reviewed: 2026-05-01
+last-reviewed: 2026-05-02
 ---
 
 # /fi:fu-money-readout
+
+> **About the name** — "FU money" is established FI-community slang for **"fuck-you money"**: the amount of money that gives you the freedom to walk away from any situation you don't want to be in (a bad job, a bad client, a bad relationship structure, a bad city). It's not a typo of "FI money" — it's a specific, deliberate term that captures the *agency* aspect of financial independence rather than the retirement-age aspect. James Altucher, Suze Orman, and the broader FI community have all used the term. This skill is named to keep the ethos visible.
 
 Optional daily check-in skill. Produces a brief ground-state report from `holdings.md` so the user has a regular pulse on their financial position. Inspired by YMOYL's crossover-point model, modernized for a 2026 rate environment and any user-defined "retirement" frame.
 

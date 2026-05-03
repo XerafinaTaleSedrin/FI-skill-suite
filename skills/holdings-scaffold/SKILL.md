@@ -360,7 +360,7 @@ What to do with this
 
 ## Schema (the holdings.md output format)
 
-This format is the **cross-skill data contract**. Other skills (`/fi:fu-money-readout`, `/fi:net-worth`, `/fi:crossover`, `/fi:investing`, `/fi:monthly-tabulation`) read from holdings.md using this schema. Don't break it without coordinated updates across the suite.
+This format is the **cross-skill data contract**. Other skills (`/fi:fu-money-readout`, `/fi:crossover`, `/fi:investing`, `/fi:monthly-tabulation`) read from holdings.md using this schema. Don't break it without coordinated updates across the suite.
 
 ```markdown
 ---
@@ -512,7 +512,6 @@ This skill is **interactive by default**. Running it headlessly (cron / pipeline
 | Reader skill | Reads from holdings.md | What it does with the data |
 |---|---|---|
 | `/fi:fu-money-readout` | All sections | Daily ground-state report; uses net worth, recurring passive (computed from holdings), runway calculation |
-| `/fi:net-worth` | All sections | Reads net-worth roll-up directly; presents the Step 1 framing |
 | `/fi:crossover` | Investment accounts + asset-class roll-up | Computes FI threshold; needs portfolio composition for expected-return assumptions |
 | `/fi:investing` | Investment accounts + account-type roll-up + holdings list | Tax-advantaged placement audit; diversification overlap analysis |
 | `/fi:monthly-tabulation` | Doesn't read holdings.md directly, but reads transactions/ which are gitignored alongside | n/a |
