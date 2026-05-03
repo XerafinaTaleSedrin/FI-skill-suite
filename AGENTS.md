@@ -116,6 +116,20 @@ Skills that read from / write to shared sentinel files must respect the schema:
 
 ---
 
+## Publication discipline
+
+Surfaces that render publicly (`book-audits/*.md` → Rogue Reads website, `README.md`, `docs/content/*.md`) must not contain editorial notes-to-self. Specifically: no "tighten on second pass", no "TODO", no "pending verification", no "needs work later", no `[placeholder text]` markers, no "fix me", no "language to revise."
+
+Editorial notes belong in:
+- `_design-log/` (underscore-prefixed; excluded from build)
+- `_audit-template.md` and other underscore-prefixed files (template only; excluded from build)
+- handoff notes in the parent operating environment (private; not in this repo)
+- commit messages (gitlog audit trail; not user-facing)
+
+The audit format renders to public HTML. Anything in the source markdown will appear on the website. Treat the audit as a finished publication, not a working draft. If a section is genuinely unfinished, set `status: draft` in frontmatter so future tooling can skip it — don't publish placeholder text.
+
+---
+
 ## PR / commit discipline
 
 - **One logical concern per PR.** If the diff title needs an "AND" or a "+", split it.
