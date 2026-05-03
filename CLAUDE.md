@@ -29,8 +29,7 @@ All skills are invoked under the `fi` namespace. The 12 currently defined:
 |---|---|---|
 | Holdings scaffold | `/fi:holdings-scaffold` | 1 — current net worth ("making peace with the past") |
 | Hourly wage | `/fi:hourly-wage` | 2a — real hourly wage (work-mode-aware) |
-| Track spending | `/fi:track-spending` | 2b — every-penny capture |
-| Monthly tabulation | `/fi:monthly-tabulation` | 3 — category aggregation with life-energy cost |
+| Track flow | `/fi:track-flow` | 2b + 3 — unified capture + categorization + monthly tabulation + neutral pattern detection |
 | Three questions | `/fi:three-questions` | 4 — values-fit consciousness check |
 | Wall chart | `/fi:wallchart` | 5 — long-arc income/spending/passive chart |
 | Crossover | `/fi:crossover` | 8 — FI threshold (mode-aware), incl. SSA-benefit projection |
@@ -68,8 +67,8 @@ Book audits (NOT user-private) go in the plugin's own repo at `book-audits/`.
 ## Reading order if you're new to the user's setup
 
 1. Check whether `~/finances/holdings.md` exists. If not, `/fi:holdings-scaffold` is the gateway — every other skill reads from that file.
-2. After holdings exists, `/fi:fu-money-readout` provides daily orientation. Other skills (`/fi:crossover`, `/fi:redirect`, `/fi:monthly-tabulation`) all read from holdings.
-3. The YMOYL Step 2-5 skills (hourly-wage, track-spending, monthly-tabulation, three-questions, wallchart) chain together: each reads from the previous.
+2. After holdings exists, `/fi:fu-money-readout` provides daily orientation. Other skills (`/fi:crossover`, `/fi:redirect`, `/fi:track-flow`) all read from holdings.
+3. The YMOYL Step 2-5 skills (hourly-wage, track-flow, three-questions, wallchart) chain together: each reads from the previous.
 
 ## Runtime freshness
 

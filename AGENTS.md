@@ -107,8 +107,11 @@ Skills that read from / write to shared sentinel files must respect the schema:
 
 | Sentinel file | Owner skill | Reader skills | Schema source |
 |---|---|---|---|
-| `holdings.md` (user repo) | `/fi:holdings-scaffold` | `/fi:fu-money-readout`, `/fi:crossover`, `/fi:redirect`, `/fi:monthly-tabulation` | See `skills/holdings-scaffold/SCHEMA.md` |
-| `transactions/<YYYY-MM>.csv` (user repo) | `/fi:track-spending` | `/fi:monthly-tabulation`, `/fi:three-questions`, `/fi:wallchart` | See `skills/track-spending/SCHEMA.md` |
+| `holdings.md` (user repo) | `/fi:holdings-scaffold` | `/fi:fu-money-readout`, `/fi:crossover`, `/fi:redirect` | See `skills/holdings-scaffold/SCHEMA.md` |
+| `transactions/<YYYY-MM>.csv` (user repo) | `/fi:track-flow` | (internal — track-flow reads its own output during the rolling tabulation pass) | See `skills/track-flow/SCHEMA.md` |
+| `monthly-tabs/<YYYY-MM>.md` (user repo) | `/fi:track-flow` | `/fi:three-questions` | See `skills/track-flow/SCHEMA.md` |
+| `monthly-tabs/_trend-categories.csv` (user repo) | `/fi:track-flow` | `/fi:wallchart` | See `skills/track-flow/SCHEMA.md` |
+| `monthly-tabs/_trend-totals.csv` (user repo) | `/fi:track-flow` | `/fi:crossover` | See `skills/track-flow/SCHEMA.md` |
 | `wallchart.md` (user repo) | `/fi:wallchart` | `/fi:crossover` | See `skills/wallchart/SCHEMA.md` |
 | `book-audits/<DATE>-<book>.md` (this repo) | `/fi:audit` | (read by humans, surfaced in cross-references) | See `book-audits/_audit-template.md` |
 

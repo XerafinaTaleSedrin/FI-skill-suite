@@ -13,7 +13,7 @@ last-reviewed: 2026-05-01
 
 # /fi:three-questions
 
-Reads a monthly tab (from `/fi:monthly-tabulation`) and walks the user through YMOYL's three questions for each category:
+Reads a monthly tab (from `/fi:track-flow`) and walks the user through YMOYL's three questions for each category:
 
 1. **Did I receive fulfillment, satisfaction, and value in proportion to life energy spent?** (Life-energy fit)
 2. **Is this expenditure of life energy in alignment with my values and life purpose?** (Values fit)

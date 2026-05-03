@@ -61,7 +61,7 @@ git clone https://github.com/XerafinaTaleSedrin/FI-skill-suite.git
 /fi:fu-money-readout       # daily ground-state report (optional)
 ```
 
-After that, any of the YMOYL-step skills (`/fi:hourly-wage`, `/fi:monthly-tabulation`, `/fi:three-questions`, `/fi:wallchart`, `/fi:crossover`, `/fi:redirect`) read from the holdings file and produce their own analyses.
+After that, any of the YMOYL-step skills (`/fi:hourly-wage`, `/fi:track-flow`, `/fi:three-questions`, `/fi:wallchart`, `/fi:crossover`, `/fi:redirect`) read from the holdings file and produce their own analyses.
 
 ## Repo structure
 
@@ -80,8 +80,7 @@ FI-skill-suite/
 │   ├── holdings-scaffold/        ← /fi:holdings-scaffold — flagship #1, YMOYL Step 1
 │   ├── fu-money-readout/         ← /fi:fu-money-readout — flagship #2 (FU = "fuck-you money," intentional)
 │   ├── hourly-wage/              ← /fi:hourly-wage — YMOYL Step 2a (mode-aware)
-│   ├── track-spending/           ← /fi:track-spending — YMOYL Step 2b
-│   ├── monthly-tabulation/       ← /fi:monthly-tabulation — YMOYL Step 3
+│   ├── track-flow/               ← /fi:track-flow — YMOYL Step 2b + 3 (unified capture + tabulation)
 │   ├── three-questions/          ← /fi:three-questions — YMOYL Step 4
 │   ├── wallchart/                ← /fi:wallchart — YMOYL Step 5
 │   ├── crossover/                ← /fi:crossover — YMOYL Step 8

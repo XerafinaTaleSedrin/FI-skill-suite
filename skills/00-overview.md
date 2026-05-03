@@ -12,8 +12,7 @@ All skills are namespaced under the `fi` plugin and invoked as `/fi:<skill-name>
 |---|---|---|---|
 | 1 — Make peace with the past | Current net worth (the "weather report" framing) | [`/fi:holdings-scaffold`](holdings-scaffold/SKILL.md) | draft |
 | 2 — Be in the present (a) | Real hourly wage (life-energy math) | [`/fi:hourly-wage`](hourly-wage/SKILL.md) | scaffold |
-| 2 — Be in the present (b) | Track every dollar | [`/fi:track-spending`](track-spending/SKILL.md) | scaffold |
-| 3 — Where is it all going? | Monthly tabulation by category | [`/fi:monthly-tabulation`](monthly-tabulation/SKILL.md) | scaffold |
+| 2 + 3 — Track every dollar / Monthly tabulation | Unified flow capture + categorization + tabulation + neutral pattern detection | [`/fi:track-flow`](track-flow/SKILL.md) | scaffold |
 | 4 — Three questions that will transform your life | Per-category values check | [`/fi:three-questions`](three-questions/SKILL.md) | scaffold |
 | 5 — Make life energy visible | Long-arc wall chart | [`/fi:wallchart`](wallchart/SKILL.md) | scaffold |
 | 6 — Minimizing spending | (chapter of tactics — likely splits across multiple skills) | TBD per tactic | not started |
@@ -70,8 +69,8 @@ Roughly: do these in order. Some skills can run independently once `/fi:holdings
                       ├─→ /fi:redirect
                       └─→ /fi:crossover
                                           │
-/fi:track-spending ─→ /fi:monthly-tabulation ─→ /fi:three-questions
-                                          └────→ /fi:wallchart ────┘
+/fi:track-flow ─→ /fi:three-questions
+              └─→ /fi:wallchart
 
 /fi:audit (runs on any book; outputs to book-audits/)
 ```

@@ -17,7 +17,7 @@ Canonical reordered sequence:
 ```
 1.  /fi:holdings-scaffold     What I have
 2.  /fi:track-flow            Money in + money out (one skill, two outputs)
-3.  /fi:monthly-tabulation    Categorize the spending side
+3.  /fi:track-flow    Categorize the spending side
 4.  /fi:fu-money-readout      Daily/weekly orienting view: % of FI
 5.  /fi:crossover             Formal threshold math, mode-aware
 6.  /fi:hourly-wage           Does my work close the gap? (uses /fi:track-time)
@@ -34,10 +34,10 @@ Capture-layer skills (feed everything above):
 
 Two capture skills feed the analytical layer:
 
-- **`/fi:track-flow`** (renamed from `/fi:track-spending`, broader scope) — captures both income and expense rows from a single data source (aggregator CSV, bank statements, walkthrough). Auto-classifies. Outputs monthly income total, monthly expense total, by-month time series.
+- **`/fi:track-flow`** (renamed from `/fi:track-flow`, broader scope) — captures both income and expense rows from a single data source (aggregator CSV, bank statements, walkthrough). Auto-classifies. Outputs monthly income total, monthly expense total, by-month time series.
 - **`/fi:track-time`** (NEW) — captures hours by client/project. Auto-track-from-conversation pattern; light periodic confirmation; end-of-day total; weekly aggregation in Saturday review.
 
-Why combined `/fi:track-flow` instead of parallel `/fi:track-income` + `/fi:track-spending`: aggregator exports include both income and expense rows in one file. Two parallel skills would force the user to import the same file twice. The combined skill handles classification internally.
+Why combined `/fi:track-flow` instead of parallel `/fi:track-income` + `/fi:track-flow`: aggregator exports include both income and expense rows in one file. Two parallel skills would force the user to import the same file twice. The combined skill handles classification internally.
 
 ### 3. "Everything flowing" interrogation pattern
 
@@ -128,7 +128,7 @@ Marika has a Google Sheets annual-budget template she likes; will add the name t
 
 ## Encoding queue (tomorrow morning)
 
-1. Rename `/fi:track-spending` → `/fi:track-flow` with broader scope (income + expense, single data source, "everything flowing" interrogation pass)
+1. Rename `/fi:track-flow` → `/fi:track-flow` with broader scope (income + expense, single data source, "everything flowing" interrogation pass)
 2. New `/fi:track-time` skill scaffold (hours capture; parallel to track-flow; auto-from-conversation; weekly aggregation)
 3. Reorder skills in `00-overview.md` + `CLAUDE.md` to canonical sequence
 4. Update `/fi:fu-money-readout` SKILL.md: gap-first output, three-state status, tone guideline, no-jargon-labels, % now + projected % at retirement

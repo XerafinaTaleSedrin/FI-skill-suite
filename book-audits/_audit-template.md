@@ -56,7 +56,7 @@ status: (draft | complete)
 
 **Read it if**: [specific reader profile — e.g., "you're 25-35, US-based, currently feel financially overwhelmed, and have never tried a category-by-category spending audit"]
 
-**Skip it if**: [specific reader profile — e.g., "you've already done holdings-scaffold + monthly-tabulation work; the rest of this book is rhetorical reinforcement of moves you've made"]
+**Skip it if**: [specific reader profile — e.g., "you've already done holdings-scaffold + track-flow work; the rest of this book is rhetorical reinforcement of moves you've made"]
 
 ---
 

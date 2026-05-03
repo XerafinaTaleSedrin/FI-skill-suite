@@ -124,7 +124,7 @@ For each frame, the readout uses different language and different math. The outp
 - [ ] Implement the four retirement-frame variants of the crossover math.
 - [ ] Define the tone-options.md content (grounding-sentence pool per tone).
 - [ ] Worked examples in `examples/` for each retirement frame.
-- [ ] Cross-skill: define how `/fi:track-spending` feeds the monthly-expense baseline this skill needs.
+- [ ] Cross-skill: define how `/fi:track-flow` feeds the monthly-expense baseline this skill needs.
 
 ---
 
