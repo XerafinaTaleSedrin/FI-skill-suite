@@ -117,4 +117,4 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md). Short version:
 - **Kate Chapman ([@wonderchook](https://github.com/wonderchook), [Untangling Systems](https://github.com/Untangling-Systems))** — `FI-skill-suite` is built on the architectural pattern Kate worked out in her [flywheel](https://github.com/Untangling-Systems/flywheel) skills repo. The `AGENTS.md` cross-skill rules layer, the per-skill `SKILL.md` + `SCHEMA.md` discipline, the `references/` separation, the namespace-as-plugin-name move — all of those structural decisions are hers, generously made open. This repo wouldn't exist in its current shape without that example. Thank you.
 - **Vicki Robin & Joe Dominguez** — *Your Money or Your Life*, the load-bearing source for the FI program these skills implement.
 - **Morgan Housel, Bill Perkins, Nick Maggiulli, Mike Michalowicz** — concepts to be audited and folded in.
-- **The federal civil service folks** who taught Marika what *enough* looks like in practice, before USAID was dismantled.
+- **The Foreign Service folks** who taught Marika what *enough* looks like in practice, before USAID was dismantled.
