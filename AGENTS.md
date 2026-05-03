@@ -10,6 +10,7 @@ Rules that apply across every skill in `FI-skill-suite`. If you find yourself co
 2. **Never auto-commit user financial files to git.** All skills that write to `holdings.md`, transaction logs, or monthly tabs must check for `.gitignore` coverage before writing — and add the file to `.gitignore` if not already covered. If the user's working directory is not a git repo, write a clear "DO NOT COMMIT" warning header at the top of the file.
 3. **Never log sensitive content to debug output.** Account balances, account names, transaction details, net-worth figures — these are PHI-equivalent for personal finance. Don't print them outside the skill's intended user-facing output.
 4. **Never include user financial details in error messages or stack traces.** If a skill crashes mid-flow, the error should describe the failure shape, not the data shape.
+5. **Never embed user-specific data in `SKILL.md` files or other public skill artifacts.** SKILL.md goes to GitHub. Account names, balances, vendor patterns, transaction history, dollar amounts, and other user-identifying financial details belong in the user's own machine, in gitignored paths only. When documenting validation, design findings, or worked examples in the public skill files, use generic placeholders (`<personal checking>`, `$X`, `<vendor>`) — never the real values from a specific user's data. User-specific test artifacts and design logs live in the user's private repo at gitignored paths (e.g., `life/finances/_<skill>-validation-YYYY-MM-DD.md`), never in the FI-skill-suite repo.
 
 ---
 
