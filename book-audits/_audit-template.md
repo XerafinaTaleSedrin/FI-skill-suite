@@ -8,12 +8,6 @@ hearth_verdict: (one of: nap-worthy / hiss-worthy / windowsill-approved / would-
 status: (draft | complete)
 ---
 
-# Audit: [Book Title]
-
-> Output of the `/fi:audit` skill. Strips persona, surfaces load-bearing mechanic, separates layers, delivers Hearth's verdict.
-
----
-
 ## 1. The premise in one paragraph (no jargon)
 
 [2-4 sentences. What is this book actually about, in plain terms? No jargon, no marketing copy.]
