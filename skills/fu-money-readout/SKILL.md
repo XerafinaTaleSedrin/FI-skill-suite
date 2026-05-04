@@ -91,6 +91,10 @@ Crossover headline (cadence: [every readout / Mondays / monthly / on-request]):
 - **Two-scenario nuclear runway for streams with reduced/full eligibility ages.** When a stream offers an early-reduced option (e.g., FERS deferred annuity at 57 with 25% reduction vs full at 62), run the simulation twice and report both. Often counterintuitive: the early-reduced scenario produces *longer* nuclear runway because more months of income > higher monthly amount over fewer months. The two-scenario frame surfaces the time-arbitrage decision honestly.
 - **Crossover % reframe.** The default crossover % uses cash-yielding income only (HYSA interest, dividends paid to checking, rental net). For users whose portfolios auto-reinvest most yield, this number reads brutally low. Surface a parenthetical: *"X% if portfolio reinvest were toggled off"* — honest framing of latent capacity. Frame as optionality, not recommendation (toggling reinvest stops compounding). Computes via `gross_yield - cash_yield_already_counted` from track-flow's per-month yield breakdown.
 - **Pending-stream caveat.** If `future-income-streams.md` declares a stream type but the data fields are empty (e.g., government retirement income placeholder with no estimates yet — US SSA, UK State Pension, Canadian CPP/OAS, Australian Age Pension, French régime général, etc.), flag the depletion-age numbers as conservative. They almost certainly extend further once the missing data is filled in. Surface the gap explicitly with a locale-appropriate prompt (e.g., "pull statement at ssa.gov" for US users); don't silently treat empty as zero. Government retirement income is the most common pending-stream case for users who haven't yet pulled their projection statement; the skill should specifically prompt for it on first run when the user's declared country has such a system.
+
+- **Future expense reductions (mortgage, auto loan, student loan payoffs).** Symmetric to future income streams. At a known future date (computed via amortization formula), the monthly burn drops by the P&I portion of the payment. For mortgages with escrow, only P&I drops — taxes and insurance continue as direct payments after payoff. Treat as a "future income stream" mathematically (positive offset to burn at activation date) but tag with `type: future-expense-reduction` for honest framing. The skill should specifically prompt for mortgage on first run for any user with `holdings.md` showing a mortgage liability, since the payoff event often falls in bridge years and meaningfully changes the FI math. Common case: 30-year mortgage taken at age 35 pays off at 65, just as SSA stacks with pension — the combined effect (mortgage drops + FERS/SSA/equivalent stacks) often closes any remaining FI gap entirely.
+
+- **Active-income baseline forward-projection.** The historical median active income from `/fi:track-flow` may be inflated by finite income sources (UI benefits, severance, a contract job that's ending). Before using the historical median in nuclear-runway or bridge calcs, ask the user: *"Are there any income sources in this median that will end soon? UI benefits, severance, a contract ending, a side gig you're winding down?"* If yes, recompute a "post-cliff" baseline excluding those sources. The bridge math should run against the post-cliff baseline, not the inflated historical median. This is a common case for recently-RIFed federal employees (UI ends 6-12 months after filing), severance recipients (severance covers a defined period), and contract-to-perm transitions.
 - **Present-tense vs. future-tense discipline.** The readout's primary numbers (Runway, Recurring, Crossover %) are STRICTLY present-tense — they do NOT include future pension/annuity/SSA streams. The Nuclear line and the Future Income footer are where future streams show up. The crossover skill is where future streams do their FI-threshold math. Mixing tenses in the present-tense numbers makes today's anxiety answer unreliable; keeping them clean keeps the readout honest.
 - **Crossover headline echo.** If `/fi:crossover` has run, its load-bearing answer is saved to `~/finances/profile/crossover-headline.md`. The readout echoes that line at user-configured cadence (every readout / Mondays / first-of-month / quarterly / on-request). The readout never recomputes the crossover; it just repeats. Decouples slow sensitivity math from fast daily orientation.
 - **Tone selectable**: matter-of-fact / warm / blunt. User picks at setup. The skill offers grounding sentence variants in the chosen tone (kept in `tone-options.md` per the skill folder).
@@ -148,7 +152,24 @@ last_pulled: YYYY-MM-DD
   amount_monthly: <USD>
   starts_age: <age>
   ends_age: <age|null>
+
+## Future expense reductions (amortizing debt with payoff date)
+- type: mortgage|auto-loan|student-loan|other-amortizing
+  balance: <USD as of last_balance_check>
+  rate_apr: <%, e.g. 3.65>
+  monthly_payment_pi: <USD>             # principal + interest portion
+  monthly_payment_total: <USD>          # PITI for mortgages: P&I + tax/insurance escrow
+  escrow_continues_after_payoff: true|false  # for mortgages, T&I doesn't disappear when loan ends
+  payoff_date_estimated: YYYY-MM         # auto-computed from balance + rate + payment
+  last_balance_check: YYYY-MM-DD
 ```
+
+The skill computes payoff date from amortization formula:
+`months = log(P / (P - rL)) / log(1 + r)` where P = monthly P&I payment, r = monthly rate, L = current balance.
+
+At payoff, monthly burn drops by `monthly_payment_pi` (or `monthly_payment_total` if no escrow continues). For mortgages with escrow, drop only the P&I portion — taxes and insurance continue as direct payments.
+
+**Why this matters:** for users with a mortgage payoff in their bridge years, the post-payoff drop in burn (often $1,000-$3,000/mo) is meaningful. A 30-year mortgage taken at age 35 pays off at 65 — right when SSA stacks. The combined effect (mortgage drops + FERS/SSA stacks) often closes any remaining FI gap entirely.
 
 ### `~/finances/profile/retirement-frame.md`
 
@@ -230,6 +251,8 @@ End-to-end-validated against real user data 2026-05-03. Findings encoded back in
 3. Crossover % reframe with auto-reinvest-toggled-off parenthetical (otherwise crossover reads brutally low for users whose portfolios reinvest)
 4. Pending-stream caveat (locale-neutral — US SSA, UK State Pension, CA CPP/OAS, etc.; don't let empty government-retirement-income fields silently understate runway)
 5. Crossover headline echo from `/fi:crossover` — readout repeats, doesn't recompute (decouples slow sensitivity math from fast daily orientation)
+6. Mortgage payoff event modeled as future-expense-reduction (symmetric to future-income-stream); often falls in bridge years and meaningfully closes the FI gap
+7. Active-income baseline forward-projection (don't use UI-inflated or severance-inflated historical median for bridge math; ask user about ending income sources before computing)
 
 User-specific test artifacts live on the user's machine in their gitignored finance directory. They do not get published.
 
