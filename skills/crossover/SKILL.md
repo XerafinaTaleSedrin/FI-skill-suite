@@ -21,14 +21,20 @@ Reads holdings + monthly spending baseline + future-income-streams + future-expe
 
 ## The concept (decades-stable)
 
-The crossover point is when monthly investment income exceeds monthly expenses. After that point, work for money becomes optional. YMOYL framed this as a single threshold; in 2026 reality, **the crossover is often a bridge problem, not a perpetual-portfolio problem.**
+The crossover point is when monthly fixed retirement income (pension + government retirement + any other annuity income) exceeds monthly expenses. After that point, work for money becomes optional and the portfolio's job is bridge-only, not perpetual.
+
+**Critical framing — compute the crossover, don't ask the user to set it.** YMOYL and most FI guides ask the user to pick a target year ("when do you want to retire?") and then evaluate whether they'll get there. This skill inverts that: **based on current numbers, here is your crossover age. The bridge years are then defined backwards from that computed answer.**
+
+The user does not pick "FI target year." The skill computes "FI crossover age" as an output and then names the bridge years that fall between today (or the user's optional desired-action age) and that crossover.
+
+For some users, the answer is: *"You are already past the FI threshold. You're FI now."* The skill should state this clearly when it's true, rather than burying the finding in sensitivity tables. Many users with employer pensions + government retirement income + a paid-down mortgage + reasonable savings cross the threshold earlier than they realize.
 
 For users with future income streams that activate at known ages (employer pension, deferred annuity, Social Security / state pension equivalent), the FI math has two phases:
 
-1. **Bridge years**: from FI target year to the activation age of the largest fixed-income stream. Portfolio funds the gap between active income (if any) and cost-of-living.
-2. **Stacked-income years**: when fixed income streams (pension + government retirement income + any other annuities) exceed cost-of-living. Portfolio stops draining, may even grow.
+1. **Bridge years**: from today (or desired-action age) to the FI crossover age. Portfolio funds any gap between active income and cost-of-living. May be zero years if the user is already past crossover.
+2. **Post-crossover years**: when fixed income streams alone cover cost-of-living. Portfolio stops draining, may even grow. Active work becomes optional.
 
-The bridge math is often easier than the perpetual-portfolio math because the bridge is finite. A user whose projected fixed income (pension + government retirement) at full retirement age covers their cost-of-living doesn't need their portfolio to support spending forever — only to bridge from FI target year to full retirement age.
+The bridge math is often easier than the perpetual-portfolio math because the bridge is finite. A user whose projected fixed income at full retirement age covers their cost-of-living doesn't need their portfolio to support spending forever — only to bridge from today to that activation age.
 
 YMOYL hard-coded a 1992-era 15% bond yield. In 2026 (and forever after), the skill must pull current rates dynamically rather than trust any number embedded in the source.
 
@@ -68,19 +74,23 @@ Output is two-tier:
 
 5. **Runtime freshness check**: pulls current 10-year Treasury yield (for safe-withdrawal-rate sensitivity), current S&P historical real return (for portfolio growth assumption), current inflation rate. **Does NOT hard-code these.** When WebFetch is unavailable, prompts user for current values.
 
-6. **Computes the bridge analysis**:
-   - **Year-of-stop**: when does monthly drainage stop? (active income + first activated future income ≥ expenses)
+6. **Computes the crossover analysis** (computed outputs, not user inputs):
+   - **FI crossover age**: the age at which fixed retirement income alone (pension + government retirement + any annuities) covers cost-of-living. May be in the past — meaning the user is already FI.
+   - **Already-FI check**: is the user currently past the FI crossover threshold? If yes, the headline answer is *"You are already FI."* Don't bury this in sensitivity tables.
+   - **Year-of-stop**: when does monthly portfolio drainage stop? (active income + first activated future income ≥ expenses)
    - **Year-of-break-even**: when does monthly net hit zero or positive on cashflow basis?
-   - **Year-of-stacked-income**: when does fixed income alone (no active income, no portfolio drawdown) cover cost-of-living?
-   - **Bridge gap**: cumulative drawdown from FI target year to year-of-stacked-income, in nominal and real dollars.
-   - **Available bridge capital**: accessible accounts (cash + brokerage taxable + Roth contributions if declared) at FI target year, after compounding.
-   - **Bridge ratio**: available bridge capital / required bridge gap. >1.0 = bridge math works. <1.0 = bridge math is short by some amount.
+   - **Bridge years (computed, not user-set)**: from today (or the user's optional desired-action age) to the FI crossover age. May be zero years if already FI.
+   - **Bridge gap**: cumulative drawdown across the bridge years, in nominal and real dollars. May be negative (surplus) if already FI.
+   - **Available bridge capital**: accessible accounts (cash + brokerage taxable + Roth contributions if declared) at start of bridge, after compounding.
+   - **Bridge ratio**: available bridge capital / required bridge gap. >1.0 = bridge math works. <1.0 = short by some amount. N/A if already FI.
+
+   **Optional user input**: a *desired-action age* — when the user wants to stop being *required* to earn. Distinct from FI crossover age. A user may have computed FI crossover at age <X> but choose to keep working actively until age <Y> because they enjoy the work. The desired-action age is for behavior planning; the FI crossover age is the underlying math.
 
 7. **Sensitivity table** — vary the load-bearing assumptions, show how the answer shifts:
    - Real return on portfolio: ±1% from baseline (typically 5% real)
    - Spending baseline: ±10%
    - High-3 / pension multiplier: per the confidence interval declared in `future-income-streams.md`
-   - Government retirement timing: early / full / late (e.g., SSA at 62 / 67 / 70)
+   - Government retirement timing: early / full / late (locale-aware — US SSA at 62/67/70, UK State Pension at State Pension Age with 1% deferral bonus per 9 weeks, Canada CPP at 60-70 with adjustments per month, etc.)
    - Trust-fund haircut: locale-aware; for US, model SSA 2034 -19% scenario per current law; for UK, model State Pension means-testing scenarios; etc.
    - Mortgage payoff timing: as-amortized vs accelerated curtailments
    - Active income through bridge: zero / current-rate / declining 5%/yr / etc.
@@ -91,11 +101,23 @@ Output is two-tier:
    - Income downshift: 40-60%?
    - Coast FI: existing invested × expected real return → reach target by year N?
 
-9. **Writes the load-bearing headline** to `~/finances/profile/crossover-headline.md`. One line, plain text, computed from the bridge analysis. Format examples (placeholders, not user data):
-   - *"Bridge math is solved. Portfolio holds indefinitely under both early and late activation scenarios."*
-   - *"Bridge math is short by $X. Need active income of $Y/mo through age <pension-age> to close the gap."*
-   - *"You hit FI threshold at age <est> under baseline assumptions; sensitivity shows <range> across the assumption space."*
-   - *"Coast FI test passes: existing $X invested compounds to FI threshold by <target-year> with no further contributions."*
+9. **Writes the load-bearing headline** to `~/finances/profile/crossover-headline.md`. One line, plain text, computed from the crossover analysis. The headline should be honest and direct about which case applies. Format examples (placeholders, not user data):
+
+   **Already-FI case (headline must state this clearly):**
+   - *"You are already FI under your chosen frame. Maintain trajectory; bridge math is solved."*
+   - *"FI threshold already passed. Active work is optional from here."*
+
+   **Future-crossover case (state the age, not the gap):**
+   - *"FI crossover at age <est> under baseline assumptions; sensitivity shows <range> across the assumption space. Bridge from today to crossover: <N> years."*
+   - *"FI crossover at age <est>. Bridge gap: $<X> cumulative; available bridge capital: $<Y>. Ratio: <ratio>."*
+
+   **Trajectory-deficit case (state what's needed to close the gap):**
+   - *"Current trajectory does not cross FI threshold within sensitivity range. Gap: <specifics>. Closing the gap requires active income of $<Y>/mo through age <X> OR spending reduction of $<Z>/mo OR additional savings of $<W>."*
+
+   **Coast FI case:**
+   - *"Coast FI test passes: existing $<X> invested compounds to FI threshold by <target-year> with no further contributions."*
+
+   The skill should NEVER write a stale or demoralizing version when the already-FI case applies. State the win directly.
 
 10. **Writes the full report** to `~/finances/crossover-YYYY-MM-DD.md`. Sensitivity table, scenario breakdowns, assumption log, year-by-year bridge cashflow projection.
 
@@ -130,22 +152,27 @@ high-confidence: true|false
 ## Headline
 <one-line answer>
 
-## Bridge analysis
+## Bridge analysis (rows depend on user's declared streams + reductions)
+
 | Phase | Age range | Active income | Fixed income | Burn | Net |
 |---|---|---|---|---|---|
-| Pre-bridge | <FI-target> to <pre-payoff> | $A | $0 | $E | -$gap |
-| Mortgage payoff | <payoff age> | $A | $0 | $E - $P&I | ... |
-| Early pension activation | <pension age> | $A | $pension | ... | ... |
-| Stacked income | <full-age>+ | $0 (assumed) | $pension + $govt-retirement | $E | +$surplus or breakeven |
+| Today through first event | age <today> to age <X> | $<active> | $0 | $<expense> | <net> |
+| <Each future-expense-reduction event, e.g. mortgage payoff> | age <X> | $<active> | $0 | $<expense> minus reduction | <net> |
+| <Each future-income activation, e.g. pension reduced> | age <Y> | $<active> | $<stream-amt> | $<adjusted-expense> | <net> |
+| <Subsequent stream activations> | age <Z> | $<active> | $<combined-streams> | ... | ... |
+| Post-crossover (fixed income covers expenses) | age <FI-crossover>+ | $0 (assumed) | $<combined-streams> | $<expense> | breakeven or surplus |
+
+The actual rows render dynamically per the user's profile — users without a mortgage, or without an employer pension, or without government retirement, will see different phases. The skill names whatever events apply.
 
 ## Sensitivity table
-| Variable | Baseline | -1σ | +1σ | Effect on FI year |
+
+| Variable | Baseline | -1σ | +1σ | Effect on FI crossover age |
 |---|---|---|---|---|
-| Real portfolio return | 5% | 4% | 6% | 50 → 53, 50 → 47 |
-| Spending baseline | $X/mo | -10% | +10% | ... |
-| Pension high-3 | $X | low estimate | high estimate | ... |
-| Government retirement timing | full age | early | late | ... |
-| Trust-fund-haircut scenario | scheduled | -19% | scheduled | ... |
+| Real portfolio return | <baseline %> | <-1%> | <+1%> | <crossover age shifts: ±N years> |
+| Spending baseline | $<baseline>/mo | -10% | +10% | <crossover age shifts: ±N years> |
+| Pension/annuity multiplier | <baseline> | low estimate | high estimate | <effect> |
+| Government retirement timing | full age | early-reduced | delayed | <effect> |
+| Trust-fund-haircut scenario (locale-aware) | scheduled benefits | per current law (e.g., US SSA -19% from 2034; UK State Pension means-testing; etc.) | scheduled | <effect> |
 
 ## Assumption log
 - ...
@@ -158,11 +185,17 @@ high-confidence: true|false
 
 ## Architectural features
 
+- **Compute the crossover, don't ask the user to set it.** The skill INVERTS the standard FI question. Standard FI guides ask: *"When do you want to retire? Will you make it?"* — this skill asks no such thing. Instead it computes: *"Based on your current numbers, here is your FI crossover age."* The user does not pick a target year; the skill names their position. This produces honest answers, especially the *"you are already FI"* case which standard target-driven framings tend to bury.
+
+- **Bridge years are derived, not specified.** "Bridge years" = the period between today (or the user's optional desired-action age) and the computed FI crossover age. Bridge years may be zero (already FI), positive (years of active income still needed), or negative-relevance (the user already crossed and may not have realized).
+
+- **State the already-FI case clearly when it's true.** Many users with employer pension + government retirement + paid-down mortgage + reasonable savings cross the FI threshold earlier than they think. The skill must surface this directly: *"You are already FI."* No buried-in-sensitivity-tables. No qualifying language. Direct and honest. Treat it as a first-class output, not a special case.
+
 - **Bridge math, not perpetual-portfolio math.** When future fixed-income streams exceed cost-of-living at activation, the portfolio's job is to bridge — not support spending forever. This is often the more honest frame than the textbook "4% rule" perpetual-portfolio model. The skill defaults to bridge-math framing if `future-income-streams.md` declares any stream ≥ 50% of expense baseline.
 
 - **Headline written here, echoed in fu-money-readout.** Decouples slow sensitivity math (run periodically) from fast daily orientation (echoed every readout). The headline file is the contract between skills.
 
-- **Two-scenario for streams with reduced/full eligibility ages.** Same pattern as fu-money-readout — for FERS-deferred-annuity-style streams with both an early-reduced and waited-full option, run the analysis under both. Surface the time-arbitrage decision honestly. Counterintuitively, early-reduced often produces better bridge math in nuclear scenarios.
+- **Two-scenario for streams with reduced/full eligibility ages.** Same pattern as fu-money-readout — for any stream that offers both an early-reduced option (e.g., taking benefits at reduced amount before full eligibility age) and a waited-full option (e.g., waiting for unreduced amount), run the analysis under both. Surface the time-arbitrage decision honestly. Common in employer pensions (US FERS, UK final-salary schemes, etc.), government retirement income (US SSA early at 62 / FRA at 67 / max at 70), and some annuities. Counterintuitively, early-reduced often produces better bridge math in nuclear scenarios.
 
 - **Trust-fund-haircut sensitivity (locale-aware).** Government retirement systems have known funding risks documented in their official statements. US SSA Trust Fund per current law: ~81% of scheduled benefits payable from 2034. UK State Pension: means-testing risk under future legislation. The skill surfaces the haircut scenario in the sensitivity table — does the FI math still work if scheduled benefits are reduced? Not a prediction; a sensitivity test.
 
@@ -200,7 +233,7 @@ User-specific test artifacts and design logs live on the user's machine in their
 
 ## Validation
 
-Bridge-math framing emerged paired with `/fi:fu-money-readout` validation 2026-05-03. Findings encoded back into both SKILL.mds as design rules. The validation case: a user with both employer pension (US-FERS-style deferred annuity) and government retirement income (US SSA) where the perpetual-portfolio frame produced misleading "FI by mid-50s" answers when the bridge frame more honestly captured that fixed income at retirement age exceeds cost-of-living, making the portfolio's job temporally bounded rather than perpetual.
+Bridge-math framing emerged paired with `/fi:fu-money-readout` validation 2026-05-03. Findings encoded back into both SKILL.mds as design rules. The validation case: a user with both an employer-deferred pension and government retirement income where the perpetual-portfolio frame produced a misleading future-target FI age when the bridge frame more honestly captured that fixed income at retirement age exceeds cost-of-living, making the portfolio's job temporally bounded rather than perpetual. The validation also surfaced the deeper insight: target-driven framings ("when do you want to retire?") buried the fact that the user was already past the FI crossover threshold; computing the crossover as an output and naming the bridge backwards from it reveals "already-FI" cases that target-driven framings miss.
 
 ---
 
@@ -223,4 +256,4 @@ Bridge-math framing emerged paired with `/fi:fu-money-readout` validation 2026-0
 
 - **Vicki Robin & Joe Dominguez**, *Your Money or Your Life* (1992; rev. 2018). Step 8 (capital and the crossover point). The 1992 framing assumed a single perpetual-portfolio threshold; the 2026 reframing as bridge-math acknowledges that most users have non-portfolio future income streams that change the shape of the answer.
 - **Mr. Money Mustache** (online, 2012). The 4% rule popularized for FI; folded in as one of several real-return assumptions for sensitivity testing, not as the load-bearing answer.
-- **Marika Olson** (2026). Design refinements: bridge math vs perpetual-portfolio math (acknowledges that FERS/SSA-equivalent streams change the shape of FI from "support spending forever" to "bridge to retirement age"); load-bearing headline written here and echoed in fu-money-readout (decouples slow sensitivity math from fast daily orientation); shared profile files with fu-money-readout (single source of truth for future-income-streams + future-expense-reductions); two-scenario sensitivity for streams with early-reduced and waited-full options; trust-fund-haircut sensitivity for government retirement; future-expense-reductions (mortgage payoff symmetric to future-income-streams); active-income forward-projection (don't trust UI-inflated medians for bridge math); compute-payoff-from-current-payment rule (lender-stated maturity unreliable when user paid above minimum scheduled P&I); mode-aware target thresholds (frame-specific success criteria, not universal 100%).
+- **Marika Olson** (2026). Design refinements: **compute-the-crossover-don't-ask-the-user-to-set-it** (invert the standard "when do you want to retire?" target-driven framing — the skill computes the user's FI crossover age as an OUTPUT and names the bridge years backwards from that; many users find they are already FI and standard framings bury this); **state-the-already-FI-case-clearly** (first-class output, not special case); **bridge-years-derived-not-specified** (period between today/desired-action-age and computed FI crossover age); **desired-action age vs FI crossover age** (separate concepts — FI crossover is the math, desired-action age is the behavior plan); bridge math vs perpetual-portfolio math (acknowledges that FERS/SSA-equivalent streams change the shape of FI from "support spending forever" to "bridge to retirement age"); load-bearing headline written here and echoed in fu-money-readout (decouples slow sensitivity math from fast daily orientation); shared profile files with fu-money-readout (single source of truth for future-income-streams + future-expense-reductions); two-scenario sensitivity for streams with early-reduced and waited-full options; trust-fund-haircut sensitivity for government retirement; future-expense-reductions (mortgage payoff symmetric to future-income-streams); active-income forward-projection (don't trust UI-inflated medians for bridge math); compute-payoff-from-current-payment rule (lender-stated maturity unreliable when user paid above minimum scheduled P&I); mode-aware target thresholds (frame-specific success criteria, not universal 100%).
