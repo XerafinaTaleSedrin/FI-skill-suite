@@ -1,14 +1,16 @@
 ---
 name: fu-money-readout
-description: Optional daily ground-state report — net direction, runway, recurring passive income, crossover %, nuclear runway. Reads from holdings.md. ("FU" in the skill name is intentional FI-community slang for "fuck-you money" — having enough to walk away from any situation. Not a typo of "FI money.")
+description: Optional daily ground-state report — net direction, runway, recurring passive income, crossover %, nuclear runway. Reads from holdings.md + track-flow's _trend-totals.csv + future-income-streams profile. ("FU" in the skill name is intentional FI-community slang for "fuck-you money" — having enough to walk away from any situation. Not a typo of "FI money.")
 layer: concept+pattern
 ymoyl_step: 8
 mode_aware: true
-status: scaffold
+status: draft
 sources:
   - book: Your Money or Your Life
     contribution: "Crossover-point concept (Step 8) — when investment income covers expenses"
-last-reviewed: 2026-05-02
+  - author: Marika Olson
+    contribution: "2026 design refinements — Nuclear runway mandatory; future-income-streams profile shared with /fi:crossover; context footer for future income streams without folding into present-tense math"
+last-reviewed: 2026-05-03
 ---
 
 # /fi:fu-money-readout
@@ -36,20 +38,24 @@ A short daily readout, rendered in the terminal or saved to a log file, produced
 ## What the skill does at runtime
 
 1. **Reads `holdings.md`.** Validates schema. Reports if the file is missing — points at `/fi:holdings-scaffold` to create one.
-2. **Checks freshness.** Flags warm if last-updated is >14 days ago; flags stale if >30 days.
-3. **Pulls the user's "retirement frame"** from a saved profile. Frame options:
+2. **Reads `~/finances/monthly-tabs/_trend-totals.csv`** (output from `/fi:track-flow`). Pulls recent-3-month median for active cashflow income, gross expenses, net cashflow, gross yield. If file missing, points at `/fi:track-flow`.
+3. **Reads `~/finances/profile/future-income-streams.md`** (shared with `/fi:crossover` — see schema below). Captures pension/annuity/SSA estimates with eligibility ages. If file missing on first run, prompts the user to create it.
+4. **Checks freshness.** Flags `holdings.md` warm if last-updated >14 days ago; stale if >30 days. Flags `_trend-totals.csv` stale if last month is >2 months old.
+5. **Pulls the user's "retirement frame"** from `~/finances/profile/retirement-frame.md`. Frame options:
    - **Full stop**: traditional retirement, all income from passive sources.
    - **Location-time flexibility**: working, but able to choose where and when.
    - **Income downshift**: working, but at lower income because non-money values are weighted higher.
    - **Coast FI**: invested enough that compounding alone gets to FI by traditional retirement age, even with no further contributions.
-4. **Computes the readout fields:**
-   - **Net positive/negative direction** (this month vs. last month, expenses-vs-income).
-   - **Runway** in months from liquid savings if all income stopped.
-   - **Recurring passive income** (dividends, rental net, interest) — list sources.
-   - **Crossover %** of monthly expenses currently covered by passive income.
-   - **Nuclear runway** — if all income stopped AND all liquid savings exhausted, how many years could the user sustain by drawing down sequentially (cash → brokerage → Roth contributions → IRA penalty-eligible → etc.) before depletion. Also reports the user's age at depletion.
-5. **Renders the readout** in the user's chosen tone (matter-of-fact / warm / blunt).
-6. **Logs it** to `~/finances/fu-money-log/YYYY-MM-DD.md` so the user has a history.
+6. **Computes the readout fields (PRESENT-TENSE only — no future income folded in):**
+   - **Net direction**: this month vs. last month (active cashflow income − gross expenses; windfalls noted separately if present).
+   - **Runway**: months of expenses covered by liquid savings (cash + CDs + brokerage taxable assets) if all income stopped today.
+   - **Recurring passive income**: current-month rate from HYSA interest + non-reinvesting dividends + rental net + cash-yielding investments. NOT future pension/SSA; NOT auto-reinvested portfolio yield (that's capacity, not active cashflow).
+   - **Crossover %**: recurring passive income ÷ monthly expense baseline. Present-tense only.
+   - **Nuclear runway**: if all active income stopped AND drawdown begins, how many years until portfolio depleted. **This calc DOES incorporate future income offsets** — at age 57 (or wherever pension/annuity activates), monthly burn against the portfolio drops by the annuity amount, extending nuclear runway. Reports the user's age at depletion.
+7. **Renders the readout** in the user's chosen tone (matter-of-fact / warm / blunt).
+8. **Footer: future income streams context line.** Names the streams (pension at age X, SSA at 62-70, etc.) without folding into present-tense math.
+9. **Optional: load-bearing crossover line.** If `/fi:crossover` has run and saved a "load-bearing answer" to `~/finances/profile/crossover-headline.md`, echo it in the readout at user-chosen cadence. Examples: *"Until 2031 to grow MOC to $5K/mo for the bridge years"* or *"You're 60% to the FI threshold; another $X invested closes the gap"*. The readout doesn't recompute — `/fi:crossover` writes the line, readout repeats it. Cadence options: every readout / Mondays only / first-of-month / quarterly / on-request only. User picks at setup.
+9. **Logs it** to `~/finances/fu-money-log/YYYY-MM-DD.md` so the user has a history.
 
 ---
 
@@ -63,6 +69,15 @@ Runway:       XX months from liquid savings
 Recurring:    $X,XXX/mo passive (list sources)
 Crossover %:  XX% of monthly expenses covered passively
 Nuclear:      XX years at full burn, zero income, before depleted (age you'd be: XX)
+              Pension/annuity offsets activated: at age X, burn drops by $Y/mo
+
+Future income streams (context — not in above):
+  • [Pension/annuity 1, eligibility year, est. amount]
+  • [SSA at 62/FRA/70 estimate]
+  • See /fi:crossover for the FI-threshold math
+
+Crossover headline (cadence: [every readout / Mondays / monthly / on-request]):
+  → "[Load-bearing answer from last /fi:crossover run]"
 
 [One grounding sentence — chosen from user's tone preference]
 ---
@@ -72,7 +87,12 @@ Nuclear:      XX years at full burn, zero income, before depleted (age you'd be:
 
 ## Architectural features
 
-- **Mandatory Nuclear line.** This is the anxiety answer. Even if everything fails, here's how long the user lasts. Not a plan — a grounding number. Calculated from the full draw-down sequence the user defines (savings → cash → brokerage → Roth contributions → Trad IRA penalty-eligible → real estate liquidation → etc.).
+- **Mandatory Nuclear line.** This is the anxiety answer. Even if everything fails, here's how long the user lasts. Not a plan — a grounding number. Calculated from the full draw-down sequence the user defines (savings → cash → brokerage → Roth contributions → Trad IRA penalty-eligible → real estate liquidation → etc.). **Future income offsets are incorporated**: at the eligibility age for any future income stream (pension, deferred annuity, SSA), the monthly burn against the portfolio drops by that stream's amount, extending nuclear runway. Reports the activation year(s) and the offset amount(s) inline.
+- **Two-scenario nuclear runway for streams with reduced/full eligibility ages.** When a stream offers an early-reduced option (e.g., FERS deferred annuity at 57 with 25% reduction vs full at 62), run the simulation twice and report both. Often counterintuitive: the early-reduced scenario produces *longer* nuclear runway because more months of income > higher monthly amount over fewer months. The two-scenario frame surfaces the time-arbitrage decision honestly.
+- **Crossover % reframe.** The default crossover % uses cash-yielding income only (HYSA interest, dividends paid to checking, rental net). For users whose portfolios auto-reinvest most yield, this number reads brutally low. Surface a parenthetical: *"X% if portfolio reinvest were toggled off"* — honest framing of latent capacity. Frame as optionality, not recommendation (toggling reinvest stops compounding). Computes via `gross_yield - cash_yield_already_counted` from track-flow's per-month yield breakdown.
+- **SSA-pending caveat.** If `future-income-streams.md` lacks SSA data, flag the depletion-age numbers as conservative — they almost certainly extend further once SSA at 62/67/70 is folded in. SSA reduces post-62 burn meaningfully for most US users with substantial earnings history. Don't assume zero just because the file is empty; surface the gap.
+- **Present-tense vs. future-tense discipline.** The readout's primary numbers (Runway, Recurring, Crossover %) are STRICTLY present-tense — they do NOT include future pension/annuity/SSA streams. The Nuclear line and the Future Income footer are where future streams show up. The crossover skill is where future streams do their FI-threshold math. Mixing tenses in the present-tense numbers makes today's anxiety answer unreliable; keeping them clean keeps the readout honest.
+- **Crossover headline echo.** If `/fi:crossover` has run, its load-bearing answer is saved to `~/finances/profile/crossover-headline.md`. The readout echoes that line at user-configured cadence (every readout / Mondays / first-of-month / quarterly / on-request). The readout never recomputes the crossover; it just repeats. Decouples slow sensitivity math from fast daily orientation.
 - **Tone selectable**: matter-of-fact / warm / blunt. User picks at setup. The skill offers grounding sentence variants in the chosen tone (kept in `tone-options.md` per the skill folder).
 - **Runtime freshness**: pulls `holdings.md`'s `last-updated` date; flags if stale.
 - **Pluggable into session start**: optional; default OFF. User opts in. If opted in, the readout fires on first session of the day after any other session-start rituals.
@@ -81,6 +101,84 @@ Nuclear:      XX years at full burn, zero income, before depleted (age you'd be:
   - Location-time flexibility: crossover% target is 60-80% (working partially).
   - Income downshift: crossover% target is 40-60% (downshift while working).
   - Coast FI: crossover% target is 0% (just need invested enough to compound).
+
+---
+
+## Profile files (shared with /fi:crossover)
+
+### `~/finances/profile/future-income-streams.md`
+
+User declares each future income stream once; both `/fi:fu-money-readout` and `/fi:crossover` read this file. Schema:
+
+```yaml
+---
+last-updated: YYYY-MM-DD
+schema-version: 1
+---
+
+# Future income streams
+
+## Pension / Deferred Annuity 1
+type: pension|deferred-annuity|annuity-purchased
+source: <employer or institution>
+status: vested|partially-vested|projected
+eligibility_age_full: <age, e.g. 62>
+eligibility_age_reduced: <age, e.g. 57>
+estimated_monthly_full: <USD/mo at full eligibility>
+estimated_monthly_reduced: <USD/mo at reduced eligibility>
+confidence: high|medium|low
+notes: |
+  <free text — assumptions, pending verifications, etc.>
+
+## SSA
+projected_monthly_at_62: <USD>
+projected_monthly_at_FRA: <USD>
+projected_monthly_at_70: <USD>
+fra_age: <age>  # Full Retirement Age per SSA — varies by birth year
+last_pulled_from_ssa: YYYY-MM-DD
+
+## Other (rental net, royalties, etc.)
+- type: <kind>
+  amount_monthly: <USD>
+  starts_age: <age>
+  ends_age: <age|null>
+```
+
+### `~/finances/profile/retirement-frame.md`
+
+```yaml
+---
+frame: full-stop|location-time-flexibility|income-downshift|coast-fi
+target_crossover_pct: <0-100>  # auto-derived from frame; user can override
+target_age: <age>
+notes: |
+  <user's working definition of retirement>
+---
+```
+
+### `~/finances/profile/crossover-headline.md`
+
+Written by `/fi:crossover`. One line, plain text. Read by `/fi:fu-money-readout` for the headline echo.
+
+```
+Until <year> to grow <income stream> to $<amount>/mo for the bridge years.
+```
+
+### `~/finances/profile/readout-config.md`
+
+```yaml
+---
+tone: matter-of-fact|warm|blunt
+crossover_echo_cadence: every-readout|mondays|first-of-month|quarterly|on-request
+nuclear_drawdown_sequence:
+  - cash-and-cd
+  - brokerage-taxable
+  - roth-contributions
+  - trad-ira-after-59-and-half
+  - real-estate-equity
+  - vehicle
+---
+```
 
 ---
 
@@ -117,18 +215,36 @@ For each frame, the readout uses different language and different math. The outp
 
 ---
 
+## Validation
+
+End-to-end-validated against real user data 2026-05-03. Findings encoded back into SKILL.md as design rules:
+
+1. Present-tense vs future-tense discipline (don't fold pension/SSA into present-tense Crossover %)
+2. Two-scenario nuclear runway for streams with reduced/full eligibility ages — counterintuitively, early-reduced often outperforms waited-full because of time arbitrage
+3. Crossover % reframe with auto-reinvest-toggled-off parenthetical (otherwise crossover reads brutally low for users whose portfolios reinvest)
+4. SSA-pending caveat (don't let empty SSA fields silently understate runway)
+5. Crossover headline echo from `/fi:crossover` — readout repeats, doesn't recompute (decouples slow sensitivity math from fast daily orientation)
+
+User-specific test artifacts live on the user's machine in their gitignored finance directory. They do not get published.
+
+**Privacy posture**: this SKILL.md describes the procedure in general terms. User-specific data (account names, dollar amounts, vendor patterns, transaction counts) is never embedded in the public skill files. All user data writes go to gitignored paths on the user's machine.
+
+---
+
 ## TODO
 
-- [ ] Define the schema for the user's profile file (retirement frame + tone preference + draw-down sequence).
+- [x] Define the schema for the user's profile files (retirement frame + tone preference + draw-down sequence + future-income-streams + crossover-headline + readout-config) — done in this draft
 - [ ] Build the headless cron-friendly entry point.
 - [ ] Implement the four retirement-frame variants of the crossover math.
 - [ ] Define the tone-options.md content (grounding-sentence pool per tone).
 - [ ] Worked examples in `examples/` for each retirement frame.
-- [ ] Cross-skill: define how `/fi:track-flow` feeds the monthly-expense baseline this skill needs.
+- [x] Cross-skill: define how `/fi:track-flow` feeds the monthly-expense baseline — reads `_trend-totals.csv` per the new schema
+- [ ] Roth contribution tracking — currently nuclear runway omits the Roth-contributions-only pool because it requires user-declared contribution history. Add a `roth-contributions.md` profile entry with annual contribution log so the penalty-free pre-59.5 pool can be computed.
+- [ ] Aggregator-style ingestion of HYSA/CD APYs from holdings.md so recurring-passive-income calc auto-refreshes when rates change.
 
 ---
 
 ## Sources
 
 - **Vicki Robin & Joe Dominguez**, *Your Money or Your Life* (1992; rev. 2018). Crossover point as Step 8.
-- **Marika Olson** (2026). The "Nuclear runway" concept is an addition not in YMOYL — captures a worst-case grounding number that addresses anxiety more than crossover% alone does.
+- **Marika Olson** (2026). Design refinements: the "Nuclear runway" concept (worst-case grounding number addressing anxiety more than crossover% alone); present-tense-vs-future-tense discipline (don't fold pension/SSA into Crossover %); two-scenario nuclear runway for streams with early-reduced and waited-full options (time-arbitrage decision surfaced explicitly); crossover-% reframe with auto-reinvest-toggled-off parenthetical; SSA-pending caveat; crossover-headline echo pattern (decouples slow sensitivity math from fast daily orientation); future-income-streams profile shared with `/fi:crossover`.
