@@ -101,23 +101,25 @@ Output is two-tier:
    - Income downshift: 40-60%?
    - Coast FI: existing invested × expected real return → reach target by year N?
 
-9. **Writes the load-bearing headline** to `~/finances/profile/crossover-headline.md`. One line, plain text, computed from the crossover analysis. The headline should be honest and direct about which case applies. Format examples (placeholders, not user data):
+9. **Writes the load-bearing headline** to `~/finances/profile/crossover-headline.md`. One line plus optional caveat acknowledgment, computed from the crossover analysis. The headline should be honest and direct about which case applies — AND must acknowledge material caveats inline (see "State the already-FI case clearly with caveats" below). Format examples (placeholders, not user data):
 
-   **Already-FI case (headline must state this clearly):**
-   - *"You are already FI under your chosen frame. Maintain trajectory; bridge math is solved."*
-   - *"FI threshold already passed. Active work is optional from here."*
+   **Already-FI case with caveats acknowledged:**
+   - *"You are already FI under your chosen frame, assuming current conditions hold. Known caveats: <government-retirement trust fund risk, e.g., US SSA -19% from 2034>, <pension high-3 pending verification>, <other material risks>."*
+   - *"FI threshold already passed at scheduled-law assumptions. Under combined haircut scenarios, margin reduced but still positive."*
 
-   **Future-crossover case (state the age, not the gap):**
-   - *"FI crossover at age <est> under baseline assumptions; sensitivity shows <range> across the assumption space. Bridge from today to crossover: <N> years."*
-   - *"FI crossover at age <est>. Bridge gap: $<X> cumulative; available bridge capital: $<Y>. Ratio: <ratio>."*
+   **Already-FI case with no material caveats:**
+   - *"You are already FI under your chosen frame. All caveats immaterial (none shift the answer by >5%). Maintain trajectory."*
 
-   **Trajectory-deficit case (state what's needed to close the gap):**
-   - *"Current trajectory does not cross FI threshold within sensitivity range. Gap: <specifics>. Closing the gap requires active income of $<Y>/mo through age <X> OR spending reduction of $<Z>/mo OR additional savings of $<W>."*
+   **Future-crossover case (state the age + range + caveats):**
+   - *"FI crossover at age <est> under baseline assumptions; sensitivity shows <range> across the assumption space. Bridge from today to crossover: <N> years. Caveats: <list>."*
+
+   **Trajectory-deficit case (state what's needed):**
+   - *"Current trajectory does not cross FI threshold within sensitivity range. Gap: <specifics>. Closing the gap requires <active income / spending reduction / additional savings>."*
 
    **Coast FI case:**
-   - *"Coast FI test passes: existing $<X> invested compounds to FI threshold by <target-year> with no further contributions."*
+   - *"Coast FI test passes: existing $<X> invested compounds to FI threshold by <target-year> with no further contributions, assuming <real-return assumption>."*
 
-   The skill should NEVER write a stale or demoralizing version when the already-FI case applies. State the win directly.
+   The skill should NEVER write a stale or demoralizing version when the already-FI case applies. State the win directly. AND never write an unqualified already-FI headline when material caveats exist — surface them in the same line.
 
 10. **Writes the full report** to `~/finances/crossover-YYYY-MM-DD.md`. Sensitivity table, scenario breakdowns, assumption log, year-by-year bridge cashflow projection.
 
@@ -132,11 +134,22 @@ Output is two-tier:
 last-computed: YYYY-MM-DD
 computed-against: holdings.md (YYYY-MM-DD), _trend-totals.csv (YYYY-MM), future-income-streams.md (YYYY-MM-DD)
 frame: <retirement-frame>
+position: already-fi | future-crossover | trajectory-deficit | coast-fi-passing | coast-fi-failing
+material-caveats-count: <integer>
 ---
-<one-line load-bearing answer>
+
+# Headline
+<one-line load-bearing answer with material caveats acknowledged inline>
+
+# Material caveats (full detail)
+- **<caveat-name>**: <description and how it shifts the answer; magnitude in % or $ terms>
+- **<caveat-name>**: ...
+
+# Immaterial caveats (logged but not in headline)
+- ...
 ```
 
-Read by `/fi:fu-money-readout` for the headline echo.
+Read by `/fi:fu-money-readout` for the headline echo. Readout echoes the headline line; full-caveat detail available via `/fi:crossover` re-run or by reading the file directly.
 
 ### `~/finances/crossover-YYYY-MM-DD.md`
 
@@ -189,7 +202,20 @@ The actual rows render dynamically per the user's profile — users without a mo
 
 - **Bridge years are derived, not specified.** "Bridge years" = the period between today (or the user's optional desired-action age) and the computed FI crossover age. Bridge years may be zero (already FI), positive (years of active income still needed), or negative-relevance (the user already crossed and may not have realized).
 
-- **State the already-FI case clearly when it's true.** Many users with employer pension + government retirement + paid-down mortgage + reasonable savings cross the FI threshold earlier than they think. The skill must surface this directly: *"You are already FI."* No buried-in-sensitivity-tables. No qualifying language. Direct and honest. Treat it as a first-class output, not a special case.
+- **State the already-FI case clearly when it's true — with material caveats acknowledged inline.** Many users with employer pension + government retirement + paid-down mortgage + reasonable savings cross the FI threshold earlier than they think. The skill must surface this directly. BUT the headline must also acknowledge known caveats that could materially shift the answer:
+  - Government retirement trust-fund solvency (e.g., US SSA -19% from 2034 per current law if Congress doesn't act)
+  - Pension-fund solvency for any user-declared employer pension
+  - Inflation creep on expense baseline outpacing COLA on income streams
+  - Sequence-of-returns risk during bridge years
+  - High-3 / pension multiplier still pending verification (e.g., user hasn't confirmed actual benefit estimate yet)
+
+  **Format**: state the position, then the qualifier. Examples:
+  - *"You are already FI under your chosen frame, **assuming current conditions hold**. Known caveats: SSA trust fund 2034 (-19% haircut still leaves you FI but with reduced margin); pension high-3 still pending verification."*
+  - *"You are already FI under your chosen frame **at scheduled-law assumptions**. Under SSA-2034-haircut scenario: still FI, margin tighter. Under combined haircut + spending +10%: borderline."*
+
+  When all caveats are immaterial (each shifts the answer by less than ~5%), the headline can be unqualified. When any caveat shifts the position-status (already-FI → not-FI, or not-FI → already-FI), it MUST be in the headline. When caveats reduce margin without shifting status, acknowledge in the headline ("with reduced margin under <scenario>") rather than burying.
+
+  The principle: the user should not be surprised by a caveat later that they could have known about now. The headline carries the load.
 
 - **Bridge math, not perpetual-portfolio math.** When future fixed-income streams exceed cost-of-living at activation, the portfolio's job is to bridge — not support spending forever. This is often the more honest frame than the textbook "4% rule" perpetual-portfolio model. The skill defaults to bridge-math framing if `future-income-streams.md` declares any stream ≥ 50% of expense baseline.
 
@@ -256,4 +282,4 @@ Bridge-math framing emerged paired with `/fi:fu-money-readout` validation 2026-0
 
 - **Vicki Robin & Joe Dominguez**, *Your Money or Your Life* (1992; rev. 2018). Step 8 (capital and the crossover point). The 1992 framing assumed a single perpetual-portfolio threshold; the 2026 reframing as bridge-math acknowledges that most users have non-portfolio future income streams that change the shape of the answer.
 - **Mr. Money Mustache** (online, 2012). The 4% rule popularized for FI; folded in as one of several real-return assumptions for sensitivity testing, not as the load-bearing answer.
-- **Marika Olson** (2026). Design refinements: **compute-the-crossover-don't-ask-the-user-to-set-it** (invert the standard "when do you want to retire?" target-driven framing — the skill computes the user's FI crossover age as an OUTPUT and names the bridge years backwards from that; many users find they are already FI and standard framings bury this); **state-the-already-FI-case-clearly** (first-class output, not special case); **bridge-years-derived-not-specified** (period between today/desired-action-age and computed FI crossover age); **desired-action age vs FI crossover age** (separate concepts — FI crossover is the math, desired-action age is the behavior plan); bridge math vs perpetual-portfolio math (acknowledges that FERS/SSA-equivalent streams change the shape of FI from "support spending forever" to "bridge to retirement age"); load-bearing headline written here and echoed in fu-money-readout (decouples slow sensitivity math from fast daily orientation); shared profile files with fu-money-readout (single source of truth for future-income-streams + future-expense-reductions); two-scenario sensitivity for streams with early-reduced and waited-full options; trust-fund-haircut sensitivity for government retirement; future-expense-reductions (mortgage payoff symmetric to future-income-streams); active-income forward-projection (don't trust UI-inflated medians for bridge math); compute-payoff-from-current-payment rule (lender-stated maturity unreliable when user paid above minimum scheduled P&I); mode-aware target thresholds (frame-specific success criteria, not universal 100%).
+- **Marika Olson** (2026). Design refinements: **compute-the-crossover-don't-ask-the-user-to-set-it** (invert the standard "when do you want to retire?" target-driven framing — the skill computes the user's FI crossover age as an OUTPUT and names the bridge years backwards from that; many users find they are already FI and standard framings bury this); **state-the-already-FI-case-clearly-with-caveats-acknowledged** (first-class output, not special case; never an unqualified already-FI headline when material caveats exist — surface them inline so the user is not surprised by a foreseeable risk later); **bridge-years-derived-not-specified** (period between today/desired-action-age and computed FI crossover age); **desired-action age vs FI crossover age** (separate concepts — FI crossover is the math, desired-action age is the behavior plan); bridge math vs perpetual-portfolio math (acknowledges that FERS/SSA-equivalent streams change the shape of FI from "support spending forever" to "bridge to retirement age"); load-bearing headline written here and echoed in fu-money-readout (decouples slow sensitivity math from fast daily orientation); shared profile files with fu-money-readout (single source of truth for future-income-streams + future-expense-reductions); two-scenario sensitivity for streams with early-reduced and waited-full options; trust-fund-haircut sensitivity for government retirement; future-expense-reductions (mortgage payoff symmetric to future-income-streams); active-income forward-projection (don't trust UI-inflated medians for bridge math); compute-payoff-from-current-payment rule (lender-stated maturity unreliable when user paid above minimum scheduled P&I); mode-aware target thresholds (frame-specific success criteria, not universal 100%).
