@@ -17,7 +17,7 @@ All skills are namespaced under the `fi` plugin and invoked as `/fi:<skill-name>
 | 5 — Make life energy visible | Long-arc wall chart | [`/fi:wallchart`](wallchart/SKILL.md) | scaffold |
 | 6 — Minimizing spending | (chapter of tactics — likely splits across multiple skills) | TBD per tactic | not started |
 | 7 — Maximizing income | (chapter of tactics — likely splits across multiple skills) | TBD per tactic | not started |
-| 8 — Capital and the crossover point | FI threshold (incl. SSA-benefit projection input) | [`/fi:crossover`](crossover/SKILL.md) | scaffold |
+| 8 — Capital and the crossover point | FI threshold (bridge-math vs perpetual-portfolio frame; writes load-bearing headline that fu-money-readout echoes) | [`/fi:crossover`](crossover/SKILL.md) | draft |
 | 5 + 9 — Redirect surplus / Manage capital | Debt paydown AND investment deployment, weighed against each other (question-asking) | [`/fi:redirect`](redirect/SKILL.md) | scaffold |
 
 > **YMOYL Step 1 — what we don't implement.** YMOYL prescribes Step 1 as having two halves: current net worth AND total lifetime earnings reconstruction. We implement only the first. The lifetime-earnings half was load-bearing in 1992 (single career, regular paycheck, motivated by guilt-prompted action) but lands in 2026 as a shame mechanic that distorts dignified non-paycheck years (caregiving, immigration, illness, recovery, RIF, federal service capped at the SSA wage base). See `book-audits/2026-05-01-ymoyl.md` §8 for full reasoning. The operational pieces survive elsewhere: SSA benefit projection folds into `/fi:crossover` as a single prompt; SSA earnings-record audit is a one-time task documented but not skilled.
@@ -29,7 +29,7 @@ All skills are namespaced under the `fi` plugin and invoked as `/fi:<skill-name>
 | Skill | Purpose | Status |
 |---|---|---|
 | [`/fi:holdings-scaffold`](holdings-scaffold/SKILL.md) | Builds the user's local `holdings.md` from scratch — every account, every holding, asset-class roll-up, net worth, gitignore enforcement | **draft** ← first runnable skill |
-| [`/fi:fu-money-readout`](fu-money-readout/SKILL.md) | Optional daily ground-state report: net direction, runway, recurring passive income, crossover %, nuclear runway. **"FU" is intentional — established FI slang for "fuck-you money" (enough to walk away from any situation). Not a typo of "FI."** | scaffold |
+| [`/fi:fu-money-readout`](fu-money-readout/SKILL.md) | Optional daily ground-state report: net direction, runway, recurring passive income, crossover %, nuclear runway. **"FU" is intentional — established FI slang for "fuck-you money" (enough to walk away from any situation). Not a typo of "FI."** | draft |
 
 `/fi:holdings-scaffold` is the prerequisite for almost every other skill. `/fi:fu-money-readout` is the engagement habit that keeps the holdings file fresh.
 
@@ -87,4 +87,4 @@ Roughly: do these in order. Some skills can run independently once `/fi:holdings
 
 ---
 
-*Last updated: 2026-05-02 (folder rename + plugin packaging — all skills now namespaced under `/fi:`).*
+*Last updated: 2026-05-03 (track-flow + fu-money-readout + crossover all promoted to draft after end-to-end validation against real user data).*
