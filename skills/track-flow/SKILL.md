@@ -89,6 +89,14 @@ After ingest, before classification, ask the user about each account in the data
 
 User declares per-account roles. Skill applies bucket and treatment rules accordingly. The Profit First architecture (one main + multiple sub-accounts: federal taxes / B&O tax / sales tax / profit pool) is a common pattern; handle each sub-account per its declared purpose.
 
+**Persist declarations to user profile.** All account-purpose declarations are written to `~/finances/profile/account-purposes.md` (gitignored). On first run, walk all accounts. On subsequent runs, read the profile silently and only prompt for accounts that are NEW (appearing in the data but not yet declared). User can re-walk anytime via `--rewalk-accounts`.
+
+**First-run friction reducer:** before walking each account, count them and offer the choice:
+
+> *"You have N accounts in this data. Want to walk through each (~30 seconds per account, gives precise classification), or skip and use aggregator defaults (faster, but I'll surface anomalies as I find them during classification)?"*
+
+Either path persists declarations to the profile so subsequent runs are silent.
+
 Also ask:
 
 > *"Are there any accounts that AREN'T in this data that we should add or know about?"*
@@ -97,6 +105,8 @@ Also ask:
 > - *Accounts intentionally not connected (paper-only, cash boxes)*
 > - *Brand new accounts opened recently*
 > - *Accounts your aggregator can't reach (small credit unions, fintech that doesn't expose data)*
+
+**Common-easy-to-forget checklist** (offer if user hesitates): PayPal, Venmo, Wise, Cash App, Zelle history-only flows, foreign account, prior-employer 401k, HSA, FSA, custodial accounts for kids, Robinhood, crypto exchange, savings bond holdings, employee stock purchase plans, paid-out gift cards.
 
 ### Step 3 — "Everything flowing" interrogation
 
@@ -160,12 +170,19 @@ Apply in this order. **Category overrides account.** User declarations override 
 
 **Preserve discretionary categories verbatim**: aggregator's "Hobbies" stays "Hobbies"; "Movies" stays "Movies"; "Horses" stays "Horses"; user's project-specific tags stay. No forced normalization on discretionary — different users have different texture in their lives, and the texture matters for `/fi:three-questions` later.
 
-**Mixed-purpose vendor reclassification**: vendors that sell across categories (Walmart, Amazon, Costco, Target) are tagged inconsistently by aggregators. Ask the user upfront:
+**Mixed-purpose vendor reclassification**: vendors that sell across categories (Walmart, Amazon, Costco, Target) are tagged inconsistently by aggregators.
 
-> *"Walmart / Amazon / Costco / Target sell across multiple categories. Aggregators tag them inconsistently. Tell me your default for each:*
-> - *Walmart → mostly Groceries? mostly Shopping? other?*
-> - *Amazon → mostly Shopping? mostly Electronics? mixed?*
-> - *etc."*
+**First-run friction reducer:** count detected mixed-purpose vendors and offer the choice:
+
+> *"I found N mixed-purpose vendors in your data (Walmart, Amazon, Costco, Target, etc.). Want to declare a default for each (~10 seconds per vendor, more accurate categorization), or skip and leave each in its aggregator-assigned category (faster, less accurate)?"*
+
+If user walks: ask one default per vendor.
+
+> *"Walmart → mostly Groceries? mostly Shopping? other?*
+> *Amazon → mostly Shopping? mostly Electronics? mixed?*
+> *etc."*
+
+**Persist declarations to user profile.** Defaults written to `~/finances/profile/vendor-defaults.md` (gitignored). On subsequent runs, read silently and only prompt for new vendors. User can re-walk via `--rewalk-vendors`.
 
 User declares one default per mixed-purpose vendor. Skill auto-reclassifies on import. Most users have a 70-80% / 20-30% split for these vendors; the dominant-category default catches the bulk pattern, and the drift averages into noise.
 
@@ -266,6 +283,16 @@ Patterns worth flagging:
 
 **The user-confirmation principle:** any anomaly the skill detects but can't resolve confidently — large windfall, unmatched refund, principal sale that may have exited an investment account, account-purpose ambiguity — surface to the user for disambiguation. The skill does not silently assume; it asks.
 
+**Anomaly grouping (avoid serial interrogation):** when multiple anomalies are present, batch them by type rather than walking serially. Order:
+
+1. All one-time-large income flags first (severance, settlement, RSU, inheritance, lump-sum gift) — single pass
+2. All cross-period / unmatched refund flags second — single pass
+3. All investment redemption / principal-sale anomalies third — single pass
+4. All phantom-paycheck candidates fourth
+5. All account-purpose ambiguities last
+
+Within each group, allow batch-confirm where the answer is consistent (e.g., *"all 4 of these refunds from this airline are for the same canceled trip — treat all as windfall?"*). User answers groups, not individual rows.
+
 After computing patterns, ask:
 
 > *"Patterns detected: [N]. Surface them now or save for /fi:three-questions?"*
@@ -279,7 +306,7 @@ Default: save (respects energy; patterns are still in the output file when wante
 
 ### Step 10 — Write outputs
 
-Five artifacts. **Idempotent**: re-running mid-month overwrites/refreshes the current month's row.
+Five artifacts plus profile files. **Idempotent**: re-running mid-month overwrites/refreshes the current month's row.
 
 ```
 ~/finances/transactions/YYYY-MM.csv             # Clean per-row transactions
@@ -287,20 +314,44 @@ Five artifacts. **Idempotent**: re-running mid-month overwrites/refreshes the cu
 ~/finances/monthly-tabs/_trend-categories.csv   # Month × category × stats (for /fi:wallchart)
 ~/finances/monthly-tabs/_trend-totals.csv       # Month × {personal/business income+expense+net} (for /fi:crossover)
 ~/finances/monthly-tabs/_patterns-detected.md   # Cumulative pattern log (for /fi:three-questions)
+~/finances/profile/account-purposes.md          # User's per-account declarations (Step 2 — persisted across runs)
+~/finances/profile/vendor-defaults.md           # User's mixed-purpose vendor defaults (Step 6 — persisted across runs)
 ```
+
+**Gitignore enforcement (mandatory, every run):**
+
+Before writing any output, the skill verifies that `~/finances/` is covered by the user's repo `.gitignore`. Three outcomes:
+
+1. **Already gitignored** (`git check-ignore` returns coverage) — proceed silently.
+2. **Not in a git repo** — write a "DO NOT COMMIT" header banner at the top of every file generated.
+3. **In a git repo but not gitignored** — STOP. Add `life/finances/` (or equivalent path) to the user's `.gitignore`, commit the gitignore change with a clear message, then proceed. Never write user financial data to a path that could land in git history.
+
+The skill also verifies via `git log --all --follow -- <path>` that no historical version of any output file exists in git history. If a leaked version is found, surface it loudly: *"Found prior version of this file in git history at commit X. This is a privacy leak — investigate and consider history-rewrite (force-push) before proceeding."*
 
 Trend files use `complete: true|false` column so consumers can filter on stable months only if they want.
 
 ### Step 11 — Closing
 
 Show:
-- Where the files are
-- This month's headlines: real cashflow income / expenses / net (from Step 7's honest definition)
-- Month-closed-at combined net (personal + business)
+- Where the files are (and confirm gitignore enforcement, see "Privacy" below)
+- This month's headlines: active cashflow income / gross expenses / refund-netting / net cashflow / windfalls / gross investment yield
+- Month-closed-at combined net (personal + business + windfalls)
 - Currency mix (if multi-currency)
-- "Patterns are saved in [path] — run `/fi:three-questions` when ready to walk through values-fit"
-- "Net worth (with market moves on holdings) lives in `holdings.md` — this skill is cashflow-only"
-- "Run me again next week / month with the new data; I'll refresh in place"
+- Patterns saved in `_patterns-detected.md`
+- Net worth (with market moves on holdings) lives in `holdings.md` — this skill is cashflow-only
+
+**Cycle explanation + next-step menu** (only on first run, or when explicitly asked):
+
+> *"Now that flow is captured (and assuming holdings are in via `/fi:holdings-scaffold`), here's where the suite goes from here. Pick what feels useful right now:*
+>
+> - *`/fi:fu-money-readout` — bird's-eye view: net direction, runway, recurring passive income, crossover %, nuclear runway. Quick orientation, ~2 min.*
+> - *`/fi:three-questions` — values-fit walkthrough per category. Slow, reflective work; pulls from this run's patterns. Best for clarifying what's working vs what's drift.*
+> - *`/fi:wallchart` — long-arc income vs spending visualization across the months you've tracked.*
+> - *`/fi:crossover` — FI threshold math: how much portfolio do you need to cover your spending baseline? Reads holdings + this run's expense median + (if declared) pension floor.*
+> - *`/fi:redirect` — where does surplus go? Debt paydown vs additional investment, weighed against the bridge-years math.*
+> - *`/fi:hourly-wage` — real hourly wage (life-energy math) — what your time is actually worth after subtractions for commute, work-clothes, recovery time, etc.*
+>
+> *No wrong order. Run me again next week / month with fresh data; I'll refresh in place."*
 
 ---
 
