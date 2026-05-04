@@ -90,7 +90,7 @@ Crossover headline (cadence: [every readout / Mondays / monthly / on-request]):
 - **Mandatory Nuclear line.** This is the anxiety answer. Even if everything fails, here's how long the user lasts. Not a plan — a grounding number. Calculated from the full draw-down sequence the user defines (savings → cash → brokerage → Roth contributions → Trad IRA penalty-eligible → real estate liquidation → etc.). **Future income offsets are incorporated**: at the eligibility age for any future income stream (pension, deferred annuity, SSA), the monthly burn against the portfolio drops by that stream's amount, extending nuclear runway. Reports the activation year(s) and the offset amount(s) inline.
 - **Two-scenario nuclear runway for streams with reduced/full eligibility ages.** When a stream offers an early-reduced option (e.g., FERS deferred annuity at 57 with 25% reduction vs full at 62), run the simulation twice and report both. Often counterintuitive: the early-reduced scenario produces *longer* nuclear runway because more months of income > higher monthly amount over fewer months. The two-scenario frame surfaces the time-arbitrage decision honestly.
 - **Crossover % reframe.** The default crossover % uses cash-yielding income only (HYSA interest, dividends paid to checking, rental net). For users whose portfolios auto-reinvest most yield, this number reads brutally low. Surface a parenthetical: *"X% if portfolio reinvest were toggled off"* — honest framing of latent capacity. Frame as optionality, not recommendation (toggling reinvest stops compounding). Computes via `gross_yield - cash_yield_already_counted` from track-flow's per-month yield breakdown.
-- **SSA-pending caveat.** If `future-income-streams.md` lacks SSA data, flag the depletion-age numbers as conservative — they almost certainly extend further once SSA at 62/67/70 is folded in. SSA reduces post-62 burn meaningfully for most US users with substantial earnings history. Don't assume zero just because the file is empty; surface the gap.
+- **Pending-stream caveat.** If `future-income-streams.md` declares a stream type but the data fields are empty (e.g., government retirement income placeholder with no estimates yet — US SSA, UK State Pension, Canadian CPP/OAS, Australian Age Pension, French régime général, etc.), flag the depletion-age numbers as conservative. They almost certainly extend further once the missing data is filled in. Surface the gap explicitly with a locale-appropriate prompt (e.g., "pull statement at ssa.gov" for US users); don't silently treat empty as zero. Government retirement income is the most common pending-stream case for users who haven't yet pulled their projection statement; the skill should specifically prompt for it on first run when the user's declared country has such a system.
 - **Present-tense vs. future-tense discipline.** The readout's primary numbers (Runway, Recurring, Crossover %) are STRICTLY present-tense — they do NOT include future pension/annuity/SSA streams. The Nuclear line and the Future Income footer are where future streams show up. The crossover skill is where future streams do their FI-threshold math. Mixing tenses in the present-tense numbers makes today's anxiety answer unreliable; keeping them clean keeps the readout honest.
 - **Crossover headline echo.** If `/fi:crossover` has run, its load-bearing answer is saved to `~/finances/profile/crossover-headline.md`. The readout echoes that line at user-configured cadence (every readout / Mondays / first-of-month / quarterly / on-request). The readout never recomputes the crossover; it just repeats. Decouples slow sensitivity math from fast daily orientation.
 - **Tone selectable**: matter-of-fact / warm / blunt. User picks at setup. The skill offers grounding sentence variants in the chosen tone (kept in `tone-options.md` per the skill folder).
@@ -130,12 +130,18 @@ confidence: high|medium|low
 notes: |
   <free text — assumptions, pending verifications, etc.>
 
-## SSA
-projected_monthly_at_62: <USD>
-projected_monthly_at_FRA: <USD>
-projected_monthly_at_70: <USD>
-fra_age: <age>  # Full Retirement Age per SSA — varies by birth year
-last_pulled_from_ssa: YYYY-MM-DD
+## Government Retirement Income
+# US: Social Security (SSA). UK: State Pension. Canada: CPP/OAS. Australia: Age Pension.
+# France: régime général. Etc. Schema is locale-neutral; prompt copy adapts to user's country.
+type: government-retirement
+country: <ISO 3166-1 alpha-2, e.g. US, GB, CA>
+projected_monthly_at_early: <local currency>     # e.g. SSA at 62, UK at 66 (approx)
+projected_monthly_at_full: <local currency>      # e.g. SSA at FRA, UK at State Pension Age
+projected_monthly_at_late: <local currency>      # e.g. SSA at 70, UK delayed-pension-bonus
+early_age: <age>
+full_age: <age>
+late_age: <age>
+last_pulled: YYYY-MM-DD
 
 ## Other (rental net, royalties, etc.)
 - type: <kind>
@@ -222,7 +228,7 @@ End-to-end-validated against real user data 2026-05-03. Findings encoded back in
 1. Present-tense vs future-tense discipline (don't fold pension/SSA into present-tense Crossover %)
 2. Two-scenario nuclear runway for streams with reduced/full eligibility ages — counterintuitively, early-reduced often outperforms waited-full because of time arbitrage
 3. Crossover % reframe with auto-reinvest-toggled-off parenthetical (otherwise crossover reads brutally low for users whose portfolios reinvest)
-4. SSA-pending caveat (don't let empty SSA fields silently understate runway)
+4. Pending-stream caveat (locale-neutral — US SSA, UK State Pension, CA CPP/OAS, etc.; don't let empty government-retirement-income fields silently understate runway)
 5. Crossover headline echo from `/fi:crossover` — readout repeats, doesn't recompute (decouples slow sensitivity math from fast daily orientation)
 
 User-specific test artifacts live on the user's machine in their gitignored finance directory. They do not get published.
@@ -247,4 +253,4 @@ User-specific test artifacts live on the user's machine in their gitignored fina
 ## Sources
 
 - **Vicki Robin & Joe Dominguez**, *Your Money or Your Life* (1992; rev. 2018). Crossover point as Step 8.
-- **Marika Olson** (2026). Design refinements: the "Nuclear runway" concept (worst-case grounding number addressing anxiety more than crossover% alone); present-tense-vs-future-tense discipline (don't fold pension/SSA into Crossover %); two-scenario nuclear runway for streams with early-reduced and waited-full options (time-arbitrage decision surfaced explicitly); crossover-% reframe with auto-reinvest-toggled-off parenthetical; SSA-pending caveat; crossover-headline echo pattern (decouples slow sensitivity math from fast daily orientation); future-income-streams profile shared with `/fi:crossover`.
+- **Marika Olson** (2026). Design refinements: the "Nuclear runway" concept (worst-case grounding number addressing anxiety more than crossover% alone); present-tense-vs-future-tense discipline (don't fold pension/government-retirement income into Crossover %); two-scenario nuclear runway for streams with early-reduced and waited-full options (time-arbitrage decision surfaced explicitly); crossover-% reframe with auto-reinvest-toggled-off parenthetical; locale-neutral pending-stream caveat; crossover-headline echo pattern (decouples slow sensitivity math from fast daily orientation); future-income-streams profile shared with `/fi:crossover`.
