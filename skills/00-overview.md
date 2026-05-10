@@ -11,14 +11,14 @@ All skills are namespaced under the `fi` plugin and invoked as `/fi:<skill-name>
 | YMOYL step | Concept | Skill | Status |
 |---|---|---|---|
 | 1 — Make peace with the past | Current net worth (the "weather report" framing) | [`/fi:holdings-scaffold`](holdings-scaffold/SKILL.md) | draft |
-| 2 — Be in the present (a) | Real hourly wage (life-energy math) | [`/fi:hourly-wage`](hourly-wage/SKILL.md) | scaffold |
+| 2 — Be in the present (a) | Real hourly wage (life-energy math) | [`/fi:hourly-wage`](hourly-wage/SKILL.md) | **draft** |
 | 2 + 3 — Track every dollar / Monthly tabulation | Unified flow capture + classification (bucket / source-type / category) + tabulation + neutral pattern detection | [`/fi:track-flow`](track-flow/SKILL.md) | draft |
-| 4 — Three questions that will transform your life | Per-category values check | [`/fi:three-questions`](three-questions/SKILL.md) | scaffold |
-| 5 — Make life energy visible | Long-arc wall chart | [`/fi:wallchart`](wallchart/SKILL.md) | scaffold |
+| 4 — Three questions that will transform your life | Per-category values check | [`/fi:three-questions`](three-questions/SKILL.md) | **draft** |
+| 5 — Make life energy visible | Long-arc wall chart | [`/fi:wallchart`](wallchart/SKILL.md) | **draft** |
 | 6 — Minimizing spending | (chapter of tactics — likely splits across multiple skills) | TBD per tactic | not started |
 | 7 — Maximizing income | (chapter of tactics — likely splits across multiple skills) | TBD per tactic | not started |
 | 8 — Capital and the crossover point | FI threshold (bridge-math vs perpetual-portfolio frame; writes load-bearing headline that fu-money-readout echoes) | [`/fi:crossover`](crossover/SKILL.md) | draft |
-| 5 + 9 — Redirect surplus / Manage capital | Debt paydown AND investment deployment, weighed against each other (question-asking) | [`/fi:redirect`](redirect/SKILL.md) | scaffold |
+| 5 + 9 — Redirect surplus / Manage capital | Debt paydown AND investment deployment, weighed against each other (question-asking) | [`/fi:redirect`](redirect/SKILL.md) | **draft** |
 
 > **YMOYL Step 1 — what we don't implement.** YMOYL prescribes Step 1 as having two halves: current net worth AND total lifetime earnings reconstruction. We implement only the first. The lifetime-earnings half was load-bearing in 1992 (single career, regular paycheck, motivated by guilt-prompted action) but lands in 2026 as a shame mechanic that distorts dignified non-paycheck years (caregiving, immigration, illness, recovery, RIF, federal service capped at the SSA wage base). See `book-audits/2026-05-01-ymoyl.md` §8 for full reasoning. The operational pieces survive elsewhere: SSA benefit projection folds into `/fi:crossover` as a single prompt; SSA earnings-record audit is a one-time task documented but not skilled.
 
@@ -87,4 +87,4 @@ Roughly: do these in order. Some skills can run independently once `/fi:holdings
 
 ---
 
-*Last updated: 2026-05-03 (track-flow + fu-money-readout + crossover all promoted to draft after end-to-end validation against real user data).*
+*Last updated: 2026-05-09 (hourly-wage + three-questions + wallchart + redirect promoted scaffold → draft, per the MD-first build strategy. 8 of 9 skills now at draft; only `audit` remains at scaffold. None of the new drafts have been validated against a second user yet — that's the next gate.)*
