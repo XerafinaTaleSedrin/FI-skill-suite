@@ -47,15 +47,15 @@ This reframe — *owner pay is a real wage that must be paid first, not a residu
 
 ### Layer tagging
 
-| Move | Layer | Why |
-|---|---|---|
-| "Owner is the key employee; business must pay owner a living wage minimum" | **Concept** (decades-stable) | A business that can't pay its owner isn't deferring success — it's failing at a slow speed |
-| Parkinson's-Law inversion of the accounting equation | **Concept** (decades-stable) | The behavioral physics don't drift |
-| Multi-line-item allocation structure | **Pattern** (~5-year stable) | The structure holds even as banking UX evolves |
-| Separate-banks-for-friction approach | **Tool** (year-bound) | Already dated in 2026 — see §4 |
-| Twice-monthly cadence at the 10th + 25th | **Tool** (year-bound) | Tied to a specific payment-infrastructure assumption (paper checks, A/P clerks) |
-| TAP table numerical values | **Tool** (year-bound) | Economic context and sector-margin reality drift; see §4 |
-| Quarterly 50/50 owner reward | **Pattern** (~5-year stable) | The shape is durable; the proportion is tunable |
+Tagging each move by which layer it belongs in (**Concept** = decades-stable; **Pattern** = ~5-year stable; **Tool** = year-bound, will rot first):
+
+- **"Owner is the key employee; business must pay owner a living wage minimum"** — *Concept (decades-stable).* A business that can't pay its owner isn't deferring success — it's failing at a slow speed.
+- **Parkinson's-Law inversion of the accounting equation** — *Concept (decades-stable).* The behavioral physics don't drift.
+- **Multi-line-item allocation structure** — *Pattern (~5-year stable).* The structure holds even as banking UX evolves.
+- **Quarterly 50/50 owner reward** — *Pattern (~5-year stable).* The shape is durable; the proportion is tunable.
+- **Separate-banks-for-friction approach** — *Tool (year-bound).* Already dated in 2026 — see §4.
+- **Twice-monthly cadence at the 10th + 25th** — *Tool (year-bound).* Tied to a specific payment-infrastructure assumption (paper checks, A/P clerks).
+- **TAP table numerical values** — *Tool (year-bound).* Economic context and sector-margin reality drift; see §4.
 
 The book's persona-heavy testimonial layer is decoration, not mechanic. It buries the operational detail and inflates the page count without strengthening the load-bearing claim.
 
@@ -133,14 +133,6 @@ A few prescriptions in the book are not just dated but **actively harmful in 202
 ### The book reads like a timeshare-condo sales pitch
 
 Across the interior chapters, the book repeatedly references **"find Profit First [X] at his website"** — additional resources, the assessment tool, the certified-Profit-First-Professional network, the workbook companion. The cumulative effect is a sales-funnel layer that competes with the operational content for the reader's attention. The mechanic is in there; the book wraps it in marketing for the author's broader product ecosystem. That's not in itself disqualifying — many business-book authors do this — but the *density* of the cross-references here crosses into distracting.
-
----
-
----
-
-## 4. What aged poorly *and is no longer suited to current realities*
-
-[PENDING]
 
 ---
 
