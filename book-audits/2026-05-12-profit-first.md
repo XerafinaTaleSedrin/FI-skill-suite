@@ -37,7 +37,7 @@ Operationally, what the book actually wants the reader to do, in order:
 1. **Set up five line items for business cash** — Income, Profit, Owner's Pay, Tax, OpEx. (Some businesses will reasonably need more — splitting federal vs. state tax is sensible, and adds a seventh; multi-jurisdictional businesses may need more still.) Whether these are five separate bank accounts or five sub-accounts/buckets inside one bank is operationally less important than the book insists.
 2. **Allocate from Income to the other four on a fixed cadence** — the book prescribes twice-monthly (10th + 25th); the right cadence depends on the business's revenue and payment timing.
 3. **Use Target Allocation Percentages (TAPs)** by revenue bracket to set the splits. The TAP concept is load-bearing; the specific 2017 numbers are not.
-4. **Distribute profit quarterly**, half kept in the business and half taken as the owner's reward — with one important override: if there's high-rate debt, that profit goes to debt paydown first (the book's own caveat, which Marika endorses; see §3 on snowball-vs-avalanche nuance in §4).
+4. **Distribute profit quarterly**, half kept in the business and half taken as the owner's reward — with one important override: if there's high-rate debt, that profit goes to debt paydown first (the book's own caveat, which I endorse; see §3 on snowball-vs-avalanche nuance in §4).
 
 ### The foundational principle underneath all four moves
 
@@ -75,7 +75,7 @@ Page 106 has the cleanest single sentence in the book, and it's worth quoting ve
 
 > "There is a possibility that you will not have enough money in your accounts to pay bills or to pay yourself what you need to make. This should be a major wake-up call. When you don't have enough money to pay your bills it is your business screaming at the top of its lungs warning you that you can't afford the bills you are incurring."
 
-That's the load-bearing claim in one paragraph — owner pay and tax allocation as the canary in the cashflow coal mine. The fact that it's buried in 300 surrounding pages of persona is part of the book's structural problem (see §4 and §6).
+That's the load-bearing claim in one paragraph — owner pay and tax allocation as the canary in the cashflow coal mine. The fact that it's buried in nearly 200 surrounding pages of persona is part of the book's structural problem (see §4 and §6).
 
 ---
 
@@ -221,7 +221,7 @@ The only readers for whom I'd suggest engaging the body of the book at all:
 - **You're already running clean separation and consistent owner pay.** Fewer net-new mechanics; harvest the foundational principle (owner is the key employee) as a frame for conversations with newer operators, and move on.
 - **You're in a sector with thin margins or non-trivial cashflow timing** (B2B with net-30/60, project-based with lumpy receipts, low-margin food/retail). The TAP tables will mis-calibrate you. Take the *concept* of TAPs and build your own table for your sector and cycle. Use the appendix; ignore the numbers.
 - **You're a non-US operator.** The bank/tax infrastructure assumptions don't transfer cleanly. Take the appendix mechanic and adapt for your context.
-- **You're allergic to bro voice or sales-funnel marketing.** The book will exhaust you before it pays off. The mechanic can be taught in two pages without 300 surrounding ones; this audit's §2 and §7 give you those two pages.
+- **You're allergic to bro voice or sales-funnel marketing.** The book will exhaust you before it pays off. The mechanic can be taught in two pages without nearly 200 surrounding ones; this audit's §2 and §7 give you those two pages.
 
 ### What to actually read if you do read
 
@@ -325,6 +325,12 @@ Hearth's read: the operational core is real and worth keeping. The packaging is 
 
 - *Profit First* — 2017 revised and expanded edition (Mike Michalowicz, Portfolio / Penguin) — read in full.
 - Original 2014 edition not audited; this audit speaks only to the 2017 revision.
+
+---
+
+## Rogue Reads attribution footer (paste into Substack)
+
+> *I did the reading. The audit was structured and edited with the `/fi:audit` skill from the FI Skill Suite, an open-source set of personal-finance and small-business-finance skills I'm building. Repo: [github.com/XerafinaTaleSedrin/FI-skill-suite](https://github.com/XerafinaTaleSedrin/FI-skill-suite).*
 
 ---
 
