@@ -8,6 +8,8 @@ status: draft
 sources:
   - book: Your Money or Your Life
     contribution: "Step 9 — managing your finances (foundation; their specific advice is dated). 1992 original prescribed Treasuries-only; 2018 revision added the case for low-cost index funds (VTSAX-class) and SRI-screened options. The 'redirect' verb itself recurs throughout YMOYL (especially around Steps 4-6 and 9) — the freed-up dollars from the values-fit audit get redirected to debt or investments. Treat both editions as concept-layer; runtime freshness pulls current rates and platforms."
+  - book: Profit First (Michalowicz, 2017)
+    contribution: "Business-level debt-vs-investment logic. Profit First's reflex ('high-interest debt first, then profit distribution') is correct at the business level but mis-applies at the household level when the debt is low-rate (e.g., a 3.5% mortgage vs. expected 7-10% equity returns). This skill surfaces that distinction explicitly so a user doesn't carry the Profit First business-side reflex into household-level decisioning. Also flagged: Profit First's snowball-vs-avalanche framing is insufficient for 25%+ APR credit-card debt where avalanche dominates."
   - book: Just Keep Buying
     contribution: "Front-loading vs. dollar-cost averaging; tail-event handling"
   - book: Psychology of Money

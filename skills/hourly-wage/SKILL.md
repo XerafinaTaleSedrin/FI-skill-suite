@@ -8,9 +8,11 @@ status: draft
 sources:
   - book: Your Money or Your Life
     contribution: "Step 2 — real hourly wage formula (life-energy math). 1992 original assumed an office commuter; the formula structure (subtract work-related costs, add work-related hours, divide) carries forward."
+  - book: Profit First (Michalowicz, 2017)
+    contribution: "Owner-as-key-employee principle: the small-business owner deserves a real wage for their labor, separate from any profit return on bearing risk. Naturalizes the real-hourly-wage calculation for the business-owner case where 'wage' might otherwise be conflated with owner draw or treated as a residual. Adds a 'owner as employee' branch to the skill so the math works for business owners, not only W-2 / 1099 workers."
   - author: Marika Olson
     contribution: "2026 design refinements: work-mode branching (remote / hybrid / on-site / gig), AI-tooling OpEx as a load-bearing line item, blurred-boundary hours for remote workers, multi-stream income handling (W-2 + 1099 + side hustle + UI / severance simultaneously), user-extensible category capture, dated output for trend-over-time analysis."
-last-reviewed: 2026-05-09
+last-reviewed: 2026-05-12
 ---
 
 # /fi:hourly-wage

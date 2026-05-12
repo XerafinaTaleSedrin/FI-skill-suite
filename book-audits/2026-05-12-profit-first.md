@@ -269,19 +269,6 @@ If you've decided to engage at all:
 - **If you read the body:** start at page 39, read end-of-chapter take-action steps, skip the testimonials and persona, and use this audit's §4 as a filter against the actively-bad advice (cancel credit cards, "cutting expenses is easy," stop all autopay, etc.).
 - **Treat it as a workbook companion to YMOYL, not a standalone.** The Profit First "lifestyle" the book describes — spend less than you make, allocate by purpose, keep saving — is in significant part the YMOYL framework applied to business cash. If you've already done the YMOYL work, you have most of the conceptual ground; Profit First gives you the business-side operational structure.
 
-### Cross-skill report (private, repo wiring)
-
-When the audit is committed, the following `fi-*` skills should add Profit First to their `sources:` frontmatter:
-
-- **`/fi:three-questions`** — adds Profit First as a secondary source for the expense-awareness discipline (the business-side mirror of YMOYL's question 4).
-- **`/fi:redirect`** — adds Profit First for the debt-payoff-vs-investment logic, with the explicit note that Profit First's business-level reflex ("all debt first") differs from the household-level math.
-- **`/fi:hourly-wage`** — adds Profit First for the owner-as-key-employee principle; the real-hourly-wage calculation for a small-business owner is a natural extension.
-- **`/fi:fu-money-readout`** — already has YMOYL; add Profit First for the operating-reserve / three-month-vault concept as a business-level runway equivalent.
-
-**Recommended new skill (not in this run):** `/fi:allocation-buckets` is already listed in the overview index as "planned." This audit confirms Profit First as its primary source. Worth promoting from planned → scaffold in a future session — the operational substance is in this audit's §2 and §7 ready for a skill draft.
-
-**Candidate next book for the audit pipeline:** a book specifically on **client acquisition and duplication patterns for service businesses**. Profit First waves at "duplicate your best clients" without telling you how. That's a different book — perhaps Mike Weinberg's *New Sales. Simplified.*, Bob Burg's *Endless Referrals*, or a more current option. Worth surfacing as a candidate.
-
 ---
 
 ## 8. Hearth's verdict — *always trust the cat*

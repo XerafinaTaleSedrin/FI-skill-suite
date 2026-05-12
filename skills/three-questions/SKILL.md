@@ -8,9 +8,11 @@ status: draft
 sources:
   - book: Your Money or Your Life
     contribution: "Step 4 — the three questions that will transform your life. Original phrasing preserved (with optional modernization) because the original carries weight in the YMOYL community and gentle paraphrase loses substance."
+  - book: Profit First (Michalowicz, 2017)
+    contribution: "Business-side mirror of the YMOYL expense-awareness discipline. The Profit First OpEx 'cut what you don't need, be aware' move is the business-cash version of the YMOYL spending-awareness question 4. Surfaces in this skill for users who run a business — apply the same three questions to OpEx line items."
   - author: Marika Olson
     contribution: "2026 design refinements: energy-aware pacing (resumable mid-walk), real-hourly-wage anchoring (life-energy in actual hours not abstract concept), pattern-surfacing from /fi:track-flow as scaffolding for each category prompt, AuDHD-aware support for users who can't sit through 30+ category prompts in one go."
-last-reviewed: 2026-05-09
+last-reviewed: 2026-05-12
 ---
 
 # /fi:three-questions
