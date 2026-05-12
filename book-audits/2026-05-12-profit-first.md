@@ -6,6 +6,8 @@ audited: 2026-05-12
 auditor: Marika Olson
 hearth_verdict: would-knock-off-the-desk (book) / windowsill-approved (appendix only)
 status: complete
+published_at: https://theroguebureaucrat.substack.com/p/book-audit-profit-first-2017-ed
+published_on: 2026-05-12
 ---
 
 ## 0. Reader's note — why I picked this up
