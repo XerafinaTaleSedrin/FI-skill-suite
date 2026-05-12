@@ -39,7 +39,7 @@ All skills are namespaced under the `fi` plugin and invoked as `/fi:<skill-name>
 
 | Skill | Purpose | Status |
 |---|---|---|
-| [`/fi:audit`](audit/SKILL.md) | Book audit pipeline — extracts the load-bearing mechanics from a finance/business book, separated by layer (concept / pattern / tool), with Hearth's verdict | scaffold |
+| [`/fi:audit`](audit/SKILL.md) | Book audit pipeline — extracts the load-bearing mechanics from a finance/business book, separated by layer (concept / pattern / tool), with Hearth's verdict | **alpha** |
 
 ---
 
@@ -87,4 +87,4 @@ Roughly: do these in order. Some skills can run independently once `/fi:holdings
 
 ---
 
-*Last updated: 2026-05-09 (hourly-wage + three-questions + wallchart + redirect promoted scaffold → draft, per the MD-first build strategy. 8 of 9 skills now at draft; only `audit` remains at scaffold. None of the new drafts have been validated against a second user yet — that's the next gate.)*
+*Last updated: 2026-05-12 (audit promoted scaffold → draft → alpha in the same day. Second worked example shipped: Profit First. Rough edges that emerged during the run: persona-critique patterns surfaced organically rather than from a fixed prompt; cross-book observations earned a place in the audit format and should be added to the SKILL.md as a recognized section.)*

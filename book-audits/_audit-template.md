@@ -8,6 +8,12 @@ hearth_verdict: (one of: nap-worthy / hiss-worthy / windowsill-approved / would-
 status: (draft | complete)
 ---
 
+## 0. Reader's note — why I picked this up *(optional, 3-4 sentences max)*
+
+[Optional preface. Include when there's a real reason worth naming: who recommended the book, where you got it, what other reading led here, what about it made you want to write this audit. Keep it tight — 3 to 4 sentences. Skip entirely when no genuine motivation story exists; not every book has one.]
+
+---
+
 ## 1. The premise in one paragraph
 
 [2-4 sentences. What is this book actually about, in plain terms? No jargon, no marketing copy.]

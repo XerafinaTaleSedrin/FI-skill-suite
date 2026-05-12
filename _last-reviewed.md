@@ -6,7 +6,7 @@ This file tracks the last full review of the repo's contents. The intent: at any
 
 ## Most recent review
 
-- **2026-05-01** — Initial scaffold by Marika Olson. README + ARCHITECTURE + AGENTS + CONTRIBUTING + 11 skill stubs + reference/tool/book-audit templates. Status: scaffold, not yet implementable.
+- **2026-05-12** — `audit` skill promoted scaffold → draft → alpha in the same day. Second worked example shipped: *Profit First* (Michalowicz, 2017 revised), Hearth verdict `would-knock-off-the-desk` (book) / `windowsill-approved` (appendix). Marika as auditor of record. Rough edges observed during the run will inform the next SKILL.md tightening.
 
 ---
 
@@ -14,7 +14,10 @@ This file tracks the last full review of the repo's contents. The intent: at any
 
 (Reverse chronological; append at top.)
 
-- **2026-05-01**: Initial scaffold. All skills at `status: scaffold`.
+- **2026-05-12** PM: `audit` draft → alpha. Profit First audit complete. All 9 skills with at least one real-world run now reach alpha: holdings-scaffold, fu-money-readout, track-flow, crossover, audit.
+- **2026-05-12** AM: `audit` scaffold → draft.
+- **2026-05-09**: `hourly-wage` + `three-questions` + `wallchart` + `redirect` scaffold → draft.
+- **2026-05-01**: Initial scaffold. All skills at `status: scaffold`. Inaugural Rogue Reads audit shipped same day: YMOYL, Hearth verdict `nap-worthy` (book) / `windowsill-approved` (tools).
 
 ---
 
