@@ -6,7 +6,7 @@ This file tracks the last full review of the repo's contents. The intent: at any
 
 ## Most recent review
 
-- **2026-05-12** — `audit` skill promoted scaffold → draft → alpha in the same day. Second worked example shipped: *Profit First* (Michalowicz, 2017 revised), Hearth verdict `would-knock-off-the-desk` (book) / `windowsill-approved` (appendix). Marika as auditor of record. Rough edges observed during the run will inform the next SKILL.md tightening.
+- **2026-05-14** — `hourly-wage` tightening pass (no new features). Added gitignore enforcement to Step 8 (parity with track-flow Step 10 and holdings-scaffold Step 3 — was a real privacy gap), deduped PTO valuation between Steps 3 and 3.5, removed speculative `/fi:track-flow` canonical-category names from Step 4 that didn't match the actual contract in AGENTS.md, added `Validation status` section + privacy footer (parity with track-flow). Skill remains at `draft` pending a real-data walkthrough on at least one work mode — that walkthrough is the next promotion gate.
 
 ---
 
@@ -14,6 +14,7 @@ This file tracks the last full review of the repo's contents. The intent: at any
 
 (Reverse chronological; append at top.)
 
+- **2026-05-14**: `hourly-wage` tightening pass — gitignore enforcement, dedup, contract honesty, validation-status section. No new features. Still draft.
 - **2026-05-12** PM: `audit` draft → alpha. Profit First audit complete. All 9 skills with at least one real-world run now reach alpha: holdings-scaffold, fu-money-readout, track-flow, crossover, audit.
 - **2026-05-12** AM: `audit` scaffold → draft.
 - **2026-05-09**: `hourly-wage` + `three-questions` + `wallchart` + `redirect` scaffold → draft.

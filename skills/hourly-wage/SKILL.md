@@ -12,7 +12,7 @@ sources:
     contribution: "Owner-as-key-employee principle: the small-business owner deserves a real wage for their labor, separate from any profit return on bearing risk. Naturalizes the real-hourly-wage calculation for the business-owner case where 'wage' might otherwise be conflated with owner draw or treated as a residual. Adds a 'owner as employee' branch to the skill so the math works for business owners, not only W-2 / 1099 workers."
   - author: Marika Olson
     contribution: "2026 design refinements: work-mode branching (remote / hybrid / on-site / gig), AI-tooling OpEx as a load-bearing line item, blurred-boundary hours for remote workers, multi-stream income handling (W-2 + 1099 + side hustle + UI / severance simultaneously), user-extensible category capture, dated output for trend-over-time analysis."
-last-reviewed: 2026-05-12
+last-reviewed: 2026-05-14
 ---
 
 # /fi:hourly-wage
@@ -92,7 +92,7 @@ Also ask:
 
 This is the **denominator anchor** — the official hour count we'll add unpaid work-related hours TO.
 
-**PTO and paid holidays note**: if the user includes PTO/vacation/holiday weeks in their "declared hours" (counting all 52 weeks at full hours), that's the simplest treatment and the skill defaults to it. If the user wants to be more precise — declared hours = working weeks × hours/week (e.g., 48 weeks × 40 = 1920) — capture that separately. Either approach is honest; just don't mix.
+**PTO and paid holidays**: handled in Step 3.5 below — default treats PTO as part of declared hours (52 weeks × full hours). The precise alternative is covered there.
 
 ### Step 3.5 — Capture employer-sponsored benefits and special compensation
 
@@ -185,7 +185,7 @@ Frame each prompt with the same template:
 
 > *"[Line item]: roughly $X/year (or N hours/week) — does that fit, lower, higher, or N/A for you?"*
 
-Use the user's last-12-months actuals where available (from `/fi:track-flow` if present — read the trend CSV for relevant categories like Transportation, Subscription-AI, Restaurants-work-meals). Otherwise, ask.
+Use the user's last-12-months actuals where available — read from `/fi:track-flow`'s trend output per the cross-skill contract in AGENTS.md. Track-flow's canonical categories don't 1:1 map every line item here (e.g., there's no canonical "Subscription-AI" — it lives under aggregator-discretionary), so some prompts still ask. Wiring up the auto-pull where the mapping IS clean is on the TODO list.
 
 #### YMOYL-classic adjustments (apply for on-site, hybrid, gig site-visit days)
 
@@ -358,6 +358,18 @@ The W-2 pays $R_a real per hour. The gig pays $R_b real per hour.
 
 ### Step 8 — Write output
 
+**Gitignore enforcement (mandatory, every run):**
+
+Before writing any output, the skill verifies that the output directory is covered by the user's repo `.gitignore`. Three outcomes (matching the rule in AGENTS.md §Privacy posture and the procedure in `/fi:track-flow` Step 10):
+
+1. **Already gitignored** (`git check-ignore` returns coverage for `~/finances/hourly-wage/`) — proceed silently.
+2. **Not in a git repo** — write a "DO NOT COMMIT" header banner at the top of every file generated (both the dated wage file and `~/finances/profile/hourly-wage-custom-categories.md`).
+3. **In a git repo but not gitignored** — STOP. Add `~/finances/` (or the user's equivalent path) to `.gitignore`, commit the gitignore change, then proceed. Never write wage data or custom-categories profile to a path that could land in git history.
+
+Also verify via `git log --all --follow -- <path>` that no historical version of any output file exists in git history. If a leaked version is found, surface loudly: *"Found prior version of this file in git history at commit X. Consider history-rewrite before proceeding."*
+
+**File path and schema:**
+
 Write to `~/finances/hourly-wage/YYYY-MM-DD.md` (creating the dir if needed). Schema:
 
 ```markdown
@@ -491,15 +503,26 @@ The skill also catches a particular failure mode common to gig workers: counting
 
 ---
 
+## Validation status
+
+Pre-validation. Unlike `/fi:track-flow` and `/fi:holdings-scaffold`, this skill has not yet been run end-to-end against real user data. Design points to date are derived from the source-book formula structure plus 2026 line-item additions reasoned from first principles. The next promotion (draft → alpha) requires a real-data walkthrough on at least one work mode; refinements surfaced by that run get folded back here under the same convention the other skills use.
+
+**Until validation runs, additions to this skill should be conservative.** New conceptual modes (marginal-hour, quitting-math) and structural reorganizations belong to the post-validation pass — they are listed in TODO but should not be drafted in detail until at least one user's friction points are known.
+
+**Privacy posture**: this SKILL.md describes the procedure in general terms. User-specific data (employer name, dollar amounts, line-item values, real-wage numbers) is never embedded in the public skill files. All user data writes go to gitignored paths on the user's machine per Step 8.
+
+---
+
 ## TODO
 
-- [ ] Validate against multiple users in different work modes — refine line-item lists based on what's missed
-- [ ] Country-aware tax differential rules (US: SE tax; UK: NI; etc.)
-- [ ] Worked examples for each work mode in `examples/`
-- [ ] Output format: SVG / PDF version for printing / sharing with a partner
-- [ ] Integration with `/fi:track-flow` — auto-pull last-12-months actuals for transportation / restaurants-work-meals / subscription-AI categories rather than asking the user to estimate
-- [ ] "Marginal hour" mode — what's the real hourly wage of the *next* hour you work overtime, given fixed costs are already paid?
-- [ ] "Quitting math" mode — what real hourly wage would make this stream worth keeping vs not? (Threshold mode for users considering whether to drop a stream.)
+- [ ] **First real-data walkthrough** — run the existing draft on a single work mode end-to-end; capture friction in `_design-log/`; fold refinements back into the public SKILL.md as generic patterns.
+- [ ] Validate against multiple users in different work modes — refine line-item lists based on what's missed.
+- [ ] Country-aware tax differential rules (US: SE tax; UK: NI; etc.) — promote to `references/tax/<COUNTRY>.md` matching `/fi:redirect`'s pattern.
+- [ ] Worked examples for each work mode — fully fictional per AGENTS.md §5 (no real-user dollar amounts in public files).
+- [ ] Output format: SVG / PDF version for printing / sharing with a partner.
+- [ ] Integration with `/fi:track-flow` — auto-pull last-12-months actuals for the line items where the canonical-category mapping is clean.
+- [ ] "Marginal hour" mode — what's the real hourly wage of the *next* hour you work overtime, given fixed costs are already paid? (Post-validation.)
+- [ ] "Quitting math" mode — what real hourly wage would make this stream worth keeping vs not? Threshold mode for users considering whether to drop a stream. (Post-validation.)
 
 ---
 
