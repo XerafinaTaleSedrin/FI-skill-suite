@@ -10,7 +10,7 @@ status: draft
 
 ## 0. Reader's note — why I picked this up *(optional, 3-4 sentences max)*
 
-[pending]
+I went looking for exit-planning material I could build clean FI skills from, and kept not finding it — the Exit Planning Institute's marketing reads to me more like an MLM pitch than an actual skill-building institute. So I turned to the library for anything better. *The Business Exit Companion* was one of the first books I hit that was actually clean — structured enough to extract usable tools from, without fighting the author's ego for the substance.
 
 ---
 
