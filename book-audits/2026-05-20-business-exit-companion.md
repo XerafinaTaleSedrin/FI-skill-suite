@@ -22,7 +22,14 @@ Any business, in any sector, can be scored against a fixed set of generic, high-
 
 ## 2. The load-bearing mechanics
 
-[pending]
+Stripped of the motivational framing, the book asks the reader to make the business *legible* — to themselves first, then to a future buyer:
+
+1. **Get clear on the data.** Know what your numbers actually show and where money moves inside the business — not a vague sense, a precise one.
+2. **Map the structure.** Lay out roles and responsibilities explicitly across staff and family members, so the business's operation is documented rather than living in the owner's head.
+3. **Run the question sets chapter by chapter.** Each chapter is a domain of generic, high-level questions; score the business against each, and identify the gaps the scores expose.
+4. **Work the gaps.** Use the exposed gaps as a worklist for making the business more efficient and more robust.
+
+**The deeper single mechanic:** every surface move is an angle on one thing — turning an owner-dependent business into a legible, documented, owner-*independent* one. A business you fully understand and have written down is, by definition, a business someone else can value and run. But the payoff is not only sale value: making roles and family involvement explicit *stops fights before they start*. Ambiguity about who does what — especially across family members — is the conflict that surfaces during a transition; documenting it early defuses it. Exit-readiness, operational strength, and family-conflict prevention are the same project.
 
 ---
 
