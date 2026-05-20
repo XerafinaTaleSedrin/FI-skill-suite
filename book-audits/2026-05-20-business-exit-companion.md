@@ -52,7 +52,9 @@ This is a nitpick section, not a teardown — the book holds up. But there is on
 - **"Update your business" sits too late in the list (step 11 of 14)** *(pattern layer)* — Technology currency is parked near the bottom of the value enhancers. For a 2026 business it belongs much earlier. Tech currency is no longer a finishing polish you apply once the fundamentals are sorted; it is now part of the fundamentals.
 - **The technology examples are 2015-vintage** *(tool layer)* — Chapter 4 offers moves like "set up Google Alerts" as modernization. That genuinely read as *updating your business* in 2015. It does not now — Google Alerts is not new technology, and the move no longer signals a modern operation. The 2026 equivalent of that step is the standard digital-operations stack: Google Search Console, Google Business Profile monitoring, Meta Business Suite, and basic analytics. The book has the right *instinct* — watch and own your digital footprint — but points the reader at a tool that has since become trivial.
 
-The caveat matters: the rest of Chapter 4 is strong, with clear and concrete steps for raising business value. The weakness is narrow — it misses the *direction* technology has travelled since 2015, not the logic of the chapter.
+- **The "3X financial model" is an era-bound multiple** *(pattern layer)* — Chapter 4's 3X valuation heuristic reflects a 2015 read of what a business is worth. Valuation multiples are not stable across time or sector: recurring-revenue and software-flavoured businesses now command far higher multiples, while others have compressed. A flat 3X applied across all businesses is exactly the kind of era-bound math an audit should flag — treat it as an illustrative frame, not a number to bank on.
+
+The caveat matters: the rest of Chapter 4 is strong, with clear and concrete steps for raising business value. The weakness is narrow — it misses the *direction* technology has travelled since 2015, and the valuation math has moved on, but not the logic of the chapter.
 
 ---
 
