@@ -60,7 +60,10 @@ The caveat matters: the rest of Chapter 4 is strong, with clear and concrete ste
 
 ## 5. What's missing (things the book ignores that matter now)
 
-[pending]
+- **Sector-level future-proofing.** The book asks whether *the business* is keeping up — step 11 of the value enhancers covers modernizing and keeping current — but never asks whether *the sector itself* still has a future. A 2026 exit assessment has to weigh AI displacement and structural decline at the industry level, because a buyer is purchasing the sector's next decade, not just this business's current books. "Keep up with the times" is not the same question as "will this kind of business still exist."
+- **Cybersecurity.** Not meaningfully mentioned. In 2026 it is a standard due-diligence line item — weak security posture is both a valuation hit and a liability that transfers with the sale. Its absence is a real gap for any business that holds customer data.
+- **The range of financial models and capital structures.** The book's financial guidance reduces to two sound but narrow moves: clear your debt, and promote positive cash flow. It does not engage with the variety of financing structures a modern business might actually run on, so a reader whose business is built on something other than retained earnings gets little to work with.
+- **Venture capital.** Barely discussed — understandably, given the SME and family businesses Kruger was writing for in 2015 were not VC-shaped. But for any tech-flavoured business, the exit conversation now lives partly in VC/PE territory: cap tables, preference stacks, investor-driven exit timelines. The book has nothing for that reader.
 
 ---
 
