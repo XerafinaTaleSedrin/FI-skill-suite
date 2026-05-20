@@ -71,7 +71,11 @@ The caveat matters: the rest of Chapter 4 is strong, with clear and concrete ste
 
 ## 6. The honest verdict — who should read it, who should skip it
 
-[pending]
+**Read it if**: you own or run a standard non-tech, non-VC business with one or two people in charge, maximum — a mom-and-pop operation, a family business, an owner-operator SME. It is especially for the owner whose business currently lives inside their own head, where roles have never been written down. You do not need an exit on the calendar; the book is most valuable *before* one is, and it works whether the business is established or still being built.
+
+**Skip it if**: you are a VC-backed or VC-track tech founder — the book has nothing for you on cap tables, preference stacks, or investor-driven exit timelines (see §5), and its 3X valuation frame and 2015-vintage technology steps will read as off-target. Also skip the mechanics if you run a larger business, or one governed by a board rather than a single CEO: the question sets and structure-mapping assume one or two decision-makers, and the model does not scale to distributed governance. And if you are already deep in a formal exit-planning engagement with a fiduciary advisor, you are past this — the book is the on-ramp to that conversation, not a substitute for it.
+
+**One caveat that crosses both columns**: the *psychology* of the book — exit as a design constraint from day one, the business as something that must be legible to someone other than you — is useful for essentially every business owner, even those who should skip the mechanics. A board-run company's CEO would still benefit from the mindset; they just shouldn't run the worksheets.
 
 ---
 
