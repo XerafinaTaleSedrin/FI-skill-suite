@@ -46,7 +46,13 @@ The honest answer: nearly all of it — and the reason *is* the reason. This boo
 
 ## 4. What aged poorly *and is no longer suited to current realities*
 
-[pending]
+This is a nitpick section, not a teardown — the book holds up. But there is one real soft spot, and it is concentrated entirely in **Chapter 4 ("Increasing your business value")** and its **14 value enhancers**.
+
+- **Social media is under-weighted as a value lever** *(tool / pattern layer)* — Step 1 of the value enhancers, "making your business attractive," covers brand *positioning* but never breaks out social-media branding as a distinct lever. In 2015 that was a defensible omission. In 2026 social presence is not a sub-point of brand positioning — it is a primary channel, and for many buyers a primary indicator of business health. The book leaves it buried inside a broader point.
+- **"Update your business" sits too late in the list (step 11 of 14)** *(pattern layer)* — Technology currency is parked near the bottom of the value enhancers. For a 2026 business it belongs much earlier. Tech currency is no longer a finishing polish you apply once the fundamentals are sorted; it is now part of the fundamentals.
+- **The technology examples are 2015-vintage** *(tool layer)* — Chapter 4 offers moves like "set up Google Alerts" as modernization. That genuinely read as *updating your business* in 2015. It does not now — Google Alerts is not new technology, and the move no longer signals a modern operation. The 2026 equivalent of that step is the standard digital-operations stack: Google Search Console, Google Business Profile monitoring, Meta Business Suite, and basic analytics. The book has the right *instinct* — watch and own your digital footprint — but points the reader at a tool that has since become trivial.
+
+The caveat matters: the rest of Chapter 4 is strong, with clear and concrete steps for raising business value. The weakness is narrow — it misses the *direction* technology has travelled since 2015, not the logic of the chapter.
 
 ---
 
