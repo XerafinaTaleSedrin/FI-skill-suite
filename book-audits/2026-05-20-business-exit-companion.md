@@ -16,7 +16,7 @@ I went looking for exit-planning material I could build clean FI skills from, an
 
 ## 1. The premise in one paragraph
 
-[pending]
+Any business, in any sector, can be scored against a fixed set of generic, high-level questions — generic by necessity, because the scoring has to hold across every industry. The claim is that working deliberately to improve your score on each question produces a measurably stronger business with sounder underlying practices. Crucially, Kruger frames exit planning not as something you do when a sale is near, but as something you build in from the day the business starts — the exit is a design constraint on the business from formation onward, not a late-stage event.
 
 ---
 
