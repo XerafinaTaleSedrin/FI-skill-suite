@@ -81,7 +81,13 @@ The caveat matters: the rest of Chapter 4 is strong, with clear and concrete ste
 
 ## 7. The takeaway parts I found useful
 
-[pending]
+If a reader did only these three things and skipped the rest of the book, they would still get the load-bearing benefit.
+
+1. **Build for the exit from day one.** Treat sale-readiness as a design constraint on the business, not a late-stage scramble. This is the single most useful idea in the book, and it applies to every owner at every stage — the day-one founder and the thirty-year veteran both benefit from it.
+2. **Make the business legible and documented — including roles and responsibilities.** Get precise on where money moves, and write down who does what, so the business does not live in one person's head. Documenting roles and responsibilities is not just operational hygiene; done early, it stops the fights — especially family fights — before they start. This is an absolute requirement for any business, exit or no exit.
+3. **Score, find the gaps, work the gaps.** Run the business against a fixed question set, treat the low scores as a worklist, and improve them. This is the engine — it is *how you get better*, as opposed to items 1 and 2, which are how you set up.
+
+**`fi-*` cross-reference**: none of the current suite skills implement these moves. The FI suite is built on the *personal* side of financial independence (holdings, flow, crossover); *The Business Exit Companion* sits on the *business* side. The closest conceptual cousin is `/fi:track-flow` — "get clear on where money moves" — but that tracks a household, not a business. This audit surfaces a genuine gap rather than a match (see the post-audit note to Marika).
 
 ---
 
