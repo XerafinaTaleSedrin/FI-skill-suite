@@ -35,7 +35,12 @@ Stripped of the motivational framing, the book asks the reader to make the busin
 
 ## 3. What aged well and is still *at least mostly* applicable
 
-[pending]
+The honest answer: nearly all of it — and the reason *is* the reason. This book aged well because it was written as a manual, not as a New York Times bestseller. There is no persona to date, no 2015-flavoured cultural reference to wince at, no author-as-brand performance that reads as stale a decade on.
+
+- **The manual format itself** *(concept layer)* — Built to be worked, not consumed. The majority of the text is spent explaining the *intent* behind the end-of-chapter question sets, not telling stories about the author. Explained-intent doesn't rot the way anecdote does.
+- **The question-driven structure** *(pattern layer)* — Because the questions are generic and high-level by necessity (they must hold across every sector), they don't tie themselves to era-specific tools, tax codes, or platforms. A question like "where does money move inside the business and who can see it" is as true in 2026 as in 2015.
+- **Exit-as-design-constraint-from-formation** *(concept layer)* — The framing that exit planning starts at business formation, not near a sale, is timeless. It is a stance on how to build, and stances don't expire.
+- **Business legibility as the core** *(concept layer)* — Making an owner-dependent business into a documented, owner-independent one is a decades-stable idea. It survives any change in the surrounding finance toolset.
 
 ---
 
