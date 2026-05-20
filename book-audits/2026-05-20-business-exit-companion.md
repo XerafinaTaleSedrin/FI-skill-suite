@@ -4,8 +4,8 @@ author: Koos Kruger
 published: 2015
 audited: 2026-05-20
 auditor: Marika Olson
-hearth_verdict: (pending)
-status: draft
+hearth_verdict: windowsill-approved
+status: complete
 ---
 
 ## 0. Reader's note — why I picked this up *(optional, 3-4 sentences max)*
@@ -91,15 +91,31 @@ If a reader did only these three things and skipped the rest of the book, they w
 
 ---
 
-## 8. Hearth's verdict
+## 8. Hearth's verdict — *always trust the cat*
 
-[pending]
+> *Hearth sniffs the cover, finds no author flailing for attention, and approves on principle. Settles onto Chapter 4 because it holds still — bats once at the Google Alerts paragraph, the only thing in the room that moved — and stays put. A book that doesn't perform is a book a cat can sit on.*
+
+**Verdict**: **windowsill-approved**
+
+Hearth's read: this one doesn't make her work. No persona thrashing around demanding to be noticed, so no need to knock it off the desk to make it stop. She bats at the dated tech — the single soft spot — and settles anyway. A working manual earns the windowsill; this is a working manual.
 
 ---
 
 ## Citations
 
-[pending]
+Edition reviewed: *The Business Exit Companion*, Koos Kruger, 2015 (full read).
+
+- **Premise — exit planning as a design constraint from business formation** — opening chapters; framing carried throughout.
+- **Load-bearing mechanics — scoring the business against end-of-chapter question sets** — structural across all chapters; each chapter closes with its own question domain.
+- **Chapter 4, "Increasing your business value" — the 14 value enhancers** — including step 1 ("making your business attractive," covering brand positioning) and step 11 ("update your business," covering modernization).
+- **The "set up Google Alerts" modernization example** — Chapter 4, value enhancer step 11.
+- **The 3X financial model** — Chapter 4.
+- **Retirement planning, investment risk, and diversification** — the book's retirement-planning section; market-volatility framing and "diversification is key."
+- **Referral to fiduciary exit-planning specialists and certified financial planners** — the book directs the reader to independent professional advice rather than to the author.
+
+External sources referenced in this audit:
+
+- **Exit Planning Institute** — named in §0 as the material the auditor was working through when she went looking for a cleaner alternative. Not a source for the book's claims; context for why the audit was written.
 
 ---
 
