@@ -93,7 +93,7 @@ If a reader did only these three things and skipped the rest of the book, they w
 
 ## 8. Hearth's verdict — *always trust the cat*
 
-> *Hearth sniffs the cover, finds no author flailing for attention, and approves on principle. Settles onto Chapter 4 because it holds still — bats once at the Google Alerts paragraph, the only thing in the room that moved — and stays put. A book that doesn't perform is a book a cat can sit on.*
+> *Hearth sniffs the cover, finds no author flailing for attention, and approves on principle. Settles onto Chapter 4 because it holds still — bats once at the Google Alerts paragraph, the only thing in the room that moved — and stays put. A book that is functional, not performative, is a book a cat can sit on.*
 
 **Verdict**: **windowsill-approved**
 
