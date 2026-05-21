@@ -39,7 +39,7 @@ The honest answer: nearly all of it — and the reason *is* the reason. This boo
 
 - **The manual format itself** *(concept layer)* — Built to be worked, not consumed. The majority of the text is spent explaining the *intent* behind the end-of-chapter question sets, not telling stories about the author. Explained-intent doesn't rot the way anecdote does.
 - **The question-driven structure** *(pattern layer)* — Because the questions are generic and high-level by necessity (they must hold across every sector), they don't tie themselves to era-specific tools, tax codes, or platforms. A question like "where does money move inside the business and who can see it" is as true in 2026 as in 2015.
-- **Exit-as-design-constraint-from-formation** *(concept layer)* — The framing that exit planning starts at business formation, not near a sale, is timeless. It is a stance on how to build, and stances don't expire.
+- **Exit-as-design-constraint-from-formation** *(concept layer)* — The framing that exit planning starts at business formation, not near a sale, is timeless. It is a stance on how to build, and stances like that rarely expire.
 - **Business legibility as the core** *(concept layer)* — Making an owner-dependent business into a documented, owner-independent one is a decades-stable idea. It survives any change in the surrounding finance toolset.
 - **It routes you to a fiduciary, not to itself** *(pattern layer)* — The book sends the reader toward fiduciary exit-planning specialists and certified financial planners rather than positioning the author or a proprietary program as the destination. That is consistent with the non-ego manual posture, and the advice itself ages well: "go get independent, fiduciary-grade advice" does not expire.
 
