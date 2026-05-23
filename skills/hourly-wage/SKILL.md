@@ -4,7 +4,10 @@ description: Compute the user's real hourly wage — life-energy math. Takes inc
 layer: concept+pattern
 ymoyl_step: 2
 mode_aware: true
-status: draft
+status: alpha
+status-history:
+  - 2026-05-20: draft (initial 2026 modernization complete)
+  - 2026-05-23: alpha (content review pass — multi-stream, mode-aware, employer-benefits, load-phase tagging, shared-expense allocation, pipeline mode, output template, privacy validation, worked example, sources all complete; remaining gap to "stable" is one real non-Marika beta-test run + any iteration on real-world findings)
 sources:
   - book: Your Money or Your Life
     contribution: "Step 2 — the real-hourly-wage calculation. Subtract every cost incurred because of the job; add every hour spent because of the job; divide. The classic on-site line items carry forward; the 1992 list assumed an office commuter."
@@ -12,7 +15,7 @@ sources:
     contribution: "Owner-as-key-employee principle and purpose-bound treatment of business expenses — informs the shared-expense allocation across multiple income streams, and naturalizes a real wage for the business-owner case where 'wage' might otherwise be conflated with owner draw."
   - author: Marika Olson
     contribution: "2026 design refinements — work-mode branching (remote/hybrid/on-site/gig), AI/SaaS OpEx as a load-bearing line item, contracted-vs-cash income basis, explicit denominator-policy capture, load-phase tagging, shared-expense allocation, multi-stream per-engagement wages with a blended number, pro bono reported as its own line, dated-output trend tracking, headless pipeline mode."
-last-reviewed: 2026-05-20
+last-reviewed: 2026-05-23
 ---
 
 # /fi:hourly-wage

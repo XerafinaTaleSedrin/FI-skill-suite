@@ -10,15 +10,15 @@ All skills are namespaced under the `fi` plugin and invoked as `/fi:<skill-name>
 
 | YMOYL step | Concept | Skill | Status |
 |---|---|---|---|
-| 1 — Make peace with the past | Current net worth (the "weather report" framing) | [`/fi:holdings-scaffold`](holdings-scaffold/SKILL.md) | draft |
-| 2 — Be in the present (a) | Real hourly wage (life-energy math) | [`/fi:hourly-wage`](hourly-wage/SKILL.md) | **draft** |
-| 2 + 3 — Track every dollar / Monthly tabulation | Unified flow capture + classification (bucket / source-type / category) + tabulation + neutral pattern detection | [`/fi:track-flow`](track-flow/SKILL.md) | draft |
-| 4 — Three questions that will transform your life | Per-category values check | [`/fi:three-questions`](three-questions/SKILL.md) | **draft** |
-| 5 — Make life energy visible | Long-arc wall chart | [`/fi:wallchart`](wallchart/SKILL.md) | **draft** |
+| 1 — Make peace with the past | Current net worth (the "weather report" framing) | [`/fi:holdings-scaffold`](holdings-scaffold/SKILL.md) | **alpha** |
+| 2 — Be in the present (a) | Real hourly wage (life-energy math) | [`/fi:hourly-wage`](hourly-wage/SKILL.md) | **alpha** |
+| 2 + 3 — Track every dollar / Monthly tabulation | Unified flow capture + classification (bucket / source-type / category) + tabulation + neutral pattern detection | [`/fi:track-flow`](track-flow/SKILL.md) | **alpha** |
+| 4 — Three questions that will transform your life | Per-category values check | [`/fi:three-questions`](three-questions/SKILL.md) | draft |
+| 5 — Make life energy visible | Long-arc wall chart | [`/fi:wallchart`](wallchart/SKILL.md) | draft |
 | 6 — Minimizing spending | (chapter of tactics — likely splits across multiple skills) | TBD per tactic | not started |
 | 7 — Maximizing income | (chapter of tactics — likely splits across multiple skills) | TBD per tactic | not started |
-| 8 — Capital and the crossover point | FI threshold (bridge-math vs perpetual-portfolio frame; writes load-bearing headline that fu-money-readout echoes) | [`/fi:crossover`](crossover/SKILL.md) | draft |
-| 5 + 9 — Redirect surplus / Manage capital | Debt paydown AND investment deployment, weighed against each other (question-asking) | [`/fi:redirect`](redirect/SKILL.md) | **draft** |
+| 8 — Capital and the crossover point | FI threshold (bridge-math vs perpetual-portfolio frame; writes load-bearing headline that fu-money-readout echoes) | [`/fi:crossover`](crossover/SKILL.md) | **alpha** |
+| 5 + 9 — Redirect surplus / Manage capital | Debt paydown AND investment deployment, weighed against each other (question-asking) | [`/fi:redirect`](redirect/SKILL.md) | draft |
 
 > **YMOYL Step 1 — what we don't implement.** YMOYL prescribes Step 1 as having two halves: current net worth AND total lifetime earnings reconstruction. We implement only the first. The lifetime-earnings half was load-bearing in 1992 (single career, regular paycheck, motivated by guilt-prompted action) but lands in 2026 as a shame mechanic that distorts dignified non-paycheck years (caregiving, immigration, illness, recovery, RIF, federal service capped at the SSA wage base). See `book-audits/2026-05-01-ymoyl.md` §8 for full reasoning. The operational pieces survive elsewhere: SSA benefit projection folds into `/fi:crossover` as a single prompt; SSA earnings-record audit is a one-time task documented but not skilled.
 
@@ -28,8 +28,8 @@ All skills are namespaced under the `fi` plugin and invoked as `/fi:<skill-name>
 
 | Skill | Purpose | Status |
 |---|---|---|
-| [`/fi:holdings-scaffold`](holdings-scaffold/SKILL.md) | Builds the user's local `holdings.md` from scratch — every account, every holding, asset-class roll-up, net worth, gitignore enforcement | **draft** ← first runnable skill |
-| [`/fi:fu-money-readout`](fu-money-readout/SKILL.md) | Optional daily ground-state report: net direction, runway, recurring passive income, crossover %, nuclear runway. **"FU" is intentional — established FI slang for "fuck-you money" (enough to walk away from any situation). Not a typo of "FI."** | draft |
+| [`/fi:holdings-scaffold`](holdings-scaffold/SKILL.md) | Builds the user's local `holdings.md` from scratch — every account, every holding, asset-class roll-up, net worth, gitignore enforcement | **alpha** ← first runnable skill; run on real data |
+| [`/fi:fu-money-readout`](fu-money-readout/SKILL.md) | Optional daily ground-state report: net direction, runway, recurring passive income, crossover %, nuclear runway. **"FU" is intentional — established FI slang for "fuck-you money" (enough to walk away from any situation). Not a typo of "FI."** | **alpha** |
 
 `/fi:holdings-scaffold` is the prerequisite for almost every other skill. `/fi:fu-money-readout` is the engagement habit that keeps the holdings file fresh.
 
@@ -40,6 +40,14 @@ All skills are namespaced under the `fi` plugin and invoked as `/fi:<skill-name>
 | Skill | Purpose | Status |
 |---|---|---|
 | [`/fi:audit`](audit/SKILL.md) | Book audit pipeline — extracts the load-bearing mechanics from a finance/business book, separated by layer (concept / pattern / tool), with Hearth's verdict | **alpha** |
+
+---
+
+## Cadence companions
+
+| Skill | Cadence | Purpose | Status |
+|---|---|---|---|
+| [`/fi:money-date`](money-date/SKILL.md) | Weekly (~5 min) | Counterweight ritual to the hoarding instinct. Three honest questions — pay self, ease, joy — surfaced against the user's actual flow. Designed for owners whose risk pattern is under-spending, not over. Pairs with `/fi:track-flow` (weekly companion) and `/fi:three-questions` (when an outflow surprised the user). | draft |
 
 ---
 
@@ -87,4 +95,6 @@ Roughly: do these in order. Some skills can run independently once `/fi:holdings
 
 ---
 
-*Last updated: 2026-05-12 (audit promoted scaffold → draft → alpha in the same day. Second worked example shipped: Profit First. Rough edges that emerged during the run: persona-critique patterns surfaced organically rather than from a fixed prompt; cross-book observations earned a place in the audit format and should be added to the SKILL.md as a recognized section.)*
+*Last updated: 2026-05-22 (per-skill status audit — corrected stale status fields that were never updated as skills got used. Five skills moved draft → alpha on real-run evidence: `holdings-scaffold` (run on real holdings, put in front of others for review), `fu-money-readout` (end-to-end validated against real user data 2026-05-03, validation findings encoded as design rules), `track-flow` (end-to-end validated on real multi-stream multi-currency aggregator data, 14 validation findings), `crossover` (bridge-math validated paired with fu-money-readout 2026-05-03). `audit` was already alpha and stays there — 3 shipped book-audits (YMOYL, Profit First, Business Exit Companion). `hourly-wage`, `three-questions`, `wallchart`, `redirect` remain draft — complete runnable procedures but no evidence of a real run yet (`hourly-wage` has one worked example but no live-invocation validation). Note: `_last-reviewed.md` claimed "all 9 skills" reach alpha but then named only 5 — that claim was both wrong and internally inconsistent; this audit grades each skill individually.)*
+
+*Prior: 2026-05-12 (audit promoted scaffold → draft → alpha in the same day. Second worked example shipped: Profit First.)*
