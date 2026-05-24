@@ -12,7 +12,12 @@ sources:
     contribution: "Sub-account allocation pattern — operational checking, tax reserves, profit pool. Categorization rules respect the sub-account purposes (pass-through vs reserve vs profit) when a user is running this architecture."
   - author: Marika Olson
     contribution: "2026 design refinements surfaced by running the skill end-to-end on real aggregator data: phantom-paycheck filter, account-purpose interrogation, mixed-purpose vendor reclassification, income source-type split, Profit First sub-account architecture recognition."
-last-reviewed: 2026-05-03
+last-reviewed: 2026-05-23
+status-history:
+  - 2026-05-03: draft (initial 2026 design — unified capture+tabulation, source-type classification, phantom-paycheck filter, mixed-purpose vendor handling, cross-period refund attribution, investment-account internal-flow exclusion, anomaly grouping, gitignore enforcement)
+  - 2026-05-23: draft + time-bound-benefit handling tightened. Step 3 previously said "capture amount + end date" — singular end date. Real UI / severance / similar benefits have TWO end boundaries (calendar end date AND funds-exhaustion date computed from remaining ÷ per-period-amount); the binding one is `min(calendar_end, today + remaining/period_rate)`. Skill now captures payment unit (weekly/biweekly/monthly), per-period amount, calendar end, and funds remaining; computes effective-end honestly. Caught when a real UI capture (~$1,152/week, $3,712 remaining, calendar year end Oct 31 2026) revealed funds would exhaust ~June 2026 — 4 months before the stated end date.
+  - 2026-05-23: draft + step ordering — currency handling moved from Step 4 to Step 2 (right after ingest, before account-purpose and everything-flowing interrogations). Reason: account-purpose questions and missed-flow questions are currency-aware in multi-currency users; asking currency fourth meant the first three steps assumed single-currency implicitly. Renumbered: was Step 2 Account-purpose → now Step 3; was Step 3 Everything-flowing → now Step 4; was Step 4 Currency → now Step 2. Steps 5–11 unchanged. Caught when a multi-currency user (USD base + EUR foreign account) noted that the currency question should have come earlier in the walkthrough.
+  - 2026-05-23: draft + mixed-purpose vendor default inverted. Was: skill forces user to declare a single dominant category per vendor (Walmart → Groceries) under the assumption that 70-80%/20-30% splits dominate. Real users routinely have 50/50 vendors (Amazon, Walmart) where any single default is wrong half the time. Now: default behavior is "trust the aggregator's per-transaction call" — the per-row category is the best signal available for genuinely-mixed vendors. Vendor-level overrides become opt-in per vendor, with "no override" as a first-class answer. Verification step only runs when overrides were declared (nothing to verify if nothing changed). Caught when a real user reported Costco=food (clear dominant, override valuable), Walmart=split (no dominant), Amazon=50/50 (no dominant) — two of three vendors didn't fit the forced-default pattern.
 ---
 
 # /fi:track-flow
@@ -71,7 +76,19 @@ If ambiguous, ask which aggregator the export came from.
 
 Mixing regimes pollutes the trend analysis. Pre-RIF DC-area expenses don't belong in the same average as post-RIF cabin life. Default behavior: process all data; user can name a cutoff to filter.
 
-### Step 2 — Account-purpose interrogation
+### Step 2 — Currency handling
+
+Ask: *"What's your base currency? Are all transactions in this currency, or do you have transactions in multiple currencies?"*
+
+**Why this runs before account-purpose and everything-flowing interrogation:** multi-currency users have currency-aware accounts (an EUR account has different flows than a USD account) and currency-aware missed flows (the "everything flowing" interrogation needs to know which currency lens to apply). Without the base currency settled first, Steps 3–4 silently assume single-currency, which mis-frames the conversation for any user who isn't.
+
+For multi-currency users:
+- Tag every transaction with its native currency
+- FX-at-read-time: convert non-base currencies to base using current ECB rate (`api.frankfurter.dev`); never trust frozen aggregator conversions
+- Frontmatter declares `base-currency` and `currencies-present`
+- Summary lines report in base-currency with footnote noting FX conversion
+
+### Step 3 — Account-purpose interrogation
 
 After ingest, before classification, ask the user about each account in the data. Common specialist account types:
 
@@ -108,7 +125,7 @@ Also ask:
 
 **Common-easy-to-forget checklist** (offer if user hesitates): PayPal, Venmo, Wise, Cash App, Zelle history-only flows, foreign account, prior-employer 401k, HSA, FSA, custodial accounts for kids, Robinhood, crypto exchange, savings bond holdings, employee stock purchase plans, paid-out gift cards.
 
-### Step 3 — "Everything flowing" interrogation
+### Step 4 — "Everything flowing" interrogation
 
 After CSV import (or before walkthrough), surface what aggregators systematically miss:
 
@@ -119,19 +136,17 @@ After CSV import (or before walkthrough), surface what aggregators systematicall
 - **Missed accounts/channels**: Venmo / Cash App / Zelle / PayPal flows; reimbursements; loans in/out
 - **Forgotten/dormant accounts**: surfaced in Step 2 above
 - **One-time / annual flows**: tax refunds, bonuses, RSU vesting, insurance reimbursements, settlements, lump-sum gifts received
-- **Time-bound government benefits**: UI, severance, disability, COBRA subsidies — capture amount + end date
+- **Time-bound government benefits**: UI, severance, disability, COBRA subsidies. Capture four fields per benefit so the effective end is computed honestly, not assumed:
+  - **payment unit** — weekly (most US state UI), biweekly (some gig-UI programs), monthly (most disability, COBRA)
+  - **per-period amount** (in the unit above)
+  - **calendar end date** — the official benefit year end / eligibility end
+  - **funds remaining** at last check (where applicable — UI and severance both have this; disability typically doesn't)
+
+  **Effective end** = `min(calendar_end_date, today + funds_remaining ÷ per_period_amount)`. Many users hit the funds boundary well before the calendar boundary (e.g., UI year is 52 weeks but the benefit-pool is ~26 weeks of payments — once exhausted, no payments even though the eligibility window remains open). The skill computes both and surfaces the binding one.
+
+  Render as monthly-equivalent in cashflow rollups: `per_period_amount × periods_per_month` (4.33 for weekly, 2.17 for biweekly, 1.0 for monthly). The monthly-equivalent figure is what flows into `personal_active_income` for `_trend-totals.csv`, but the run's effective-end date drives the active-income forward-projection cliff (see Step 7 / cashflow rollup).
 
 Capture as monthly-equivalent. Documenting "considered and zero" is honest data.
-
-### Step 4 — Currency handling
-
-Ask: *"What's your base currency? Are all transactions in this currency, or do you have transactions in multiple currencies?"*
-
-For multi-currency users:
-- Tag every transaction with its native currency
-- FX-at-read-time: convert non-base currencies to base using current ECB rate (`api.frankfurter.dev`); never trust frozen aggregator conversions
-- Frontmatter declares `base-currency` and `currencies-present`
-- Summary lines report in base-currency with footnote noting FX conversion
 
 ### Step 5 — Bucket assignment
 
@@ -170,23 +185,24 @@ Apply in this order. **Category overrides account.** User declarations override 
 
 **Preserve discretionary categories verbatim**: aggregator's "Hobbies" stays "Hobbies"; "Movies" stays "Movies"; "Horses" stays "Horses"; user's project-specific tags stay. No forced normalization on discretionary — different users have different texture in their lives, and the texture matters for `/fi:three-questions` later.
 
-**Mixed-purpose vendor reclassification**: vendors that sell across categories (Walmart, Amazon, Costco, Target) are tagged inconsistently by aggregators.
+**Mixed-purpose vendor reclassification**: vendors that sell across categories (Walmart, Amazon, Costco, Target, Ikea, Home Depot) are tagged inconsistently by aggregators.
 
-**First-run friction reducer:** count detected mixed-purpose vendors and offer the choice:
+**Default behavior: trust the aggregator's per-transaction categorization.** For most users with most mixed-purpose vendors, the aggregator's per-row call (sometimes Groceries, sometimes Shopping, sometimes Pharmacy) is the best signal available. Forcing a single vendor-wide default is wrong half the time on genuinely-mixed vendors — empirically, many real users have 50/50 vendors (Amazon, Walmart) where neither category dominates and any single override would mis-classify the other half.
 
-> *"I found N mixed-purpose vendors in your data (Walmart, Amazon, Costco, Target, etc.). Want to declare a default for each (~10 seconds per vendor, more accurate categorization), or skip and leave each in its aggregator-assigned category (faster, less accurate)?"*
+**Opt-in vendor-default override** (for vendors where the user knows a clear dominant pattern): after import, surface detected mixed-purpose vendors and offer the choice:
 
-If user walks: ask one default per vendor.
+> *"I found N mixed-purpose vendors in your data (Walmart, Amazon, Costco, Target, etc.). For most of them, your aggregator's per-transaction call is fine — but if any vendor has a clear dominant category (e.g., 'Costco is almost always food' or 'Home Depot is always household'), you can declare a default and I'll auto-reclassify. Want to walk the list, or skip entirely?"*
 
-> *"Walmart → mostly Groceries? mostly Shopping? other?*
-> *Amazon → mostly Shopping? mostly Electronics? mixed?*
+If user walks: ask one default per vendor with **"no override — keep aggregator's per-transaction call"** as a first-class answer for each.
+
+> *"Costco → mostly food? mostly household? **no override (keep aggregator's call)**?*
+> *Walmart → mostly groceries? mostly shopping? **no override**?*
+> *Amazon → mostly shopping? mostly electronics? **no override**?*
 > *etc."*
 
-**Persist declarations to user profile.** Defaults written to `~/finances/profile/vendor-defaults.md` (gitignored). On subsequent runs, read silently and only prompt for new vendors. User can re-walk via `--rewalk-vendors`.
+**Persist declarations to user profile.** Vendor-level overrides written to `~/finances/profile/vendor-defaults.md` (gitignored) — empty file is fine if the user declined all overrides; on subsequent runs, read silently and only prompt for NEW mixed-purpose vendors that appear in the data. User can re-walk via `--rewalk-vendors`.
 
-User declares one default per mixed-purpose vendor. Skill auto-reclassifies on import. Most users have a 70-80% / 20-30% split for these vendors; the dominant-category default catches the bulk pattern, and the drift averages into noise.
-
-**User verification step**: render the proposed mapping, ask *"these look right?"* Wave-through if yes; point-corrections if no.
+**User verification step (only when overrides were declared)**: render the proposed mapping, ask *"these look right?"* Wave-through if yes; point-corrections if no. Skip the verification step entirely if no overrides were declared (nothing changed from aggregator defaults).
 
 ### Step 7 — Income source-type classification
 
