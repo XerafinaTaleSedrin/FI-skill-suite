@@ -10,7 +10,11 @@ sources:
     contribution: "Step 1 framing — current net worth as 'making peace with the past'. (YMOYL prescribes a second half — lifetime earnings reconstruction — which this suite deliberately does not implement; see book-audits/2026-05-01-ymoyl.md for reasoning.)"
   - author: Marika Olson
     contribution: "2026 generalization of the holdings-file structure she built for personal use; the FX-at-read-time rule from the Monarch failure case"
-last-reviewed: 2026-05-02
+last-reviewed: 2026-05-23
+status-history:
+  - 2026-05-02: draft (initial 2026 design — full procedure, schema, privacy enforcement, cross-skill contracts)
+  - 2026-05-23: draft + `purpose` field added (cash/CD/ladder/earmarked accounts — surfaces user-intent so downstream skills don't flatten emergency-fund and growth-cash into one undifferentiated pool; observed during real-data walkthrough when a CD ladder's "one-year emergency fund + behavioral guardrail" purpose had no schema home)
+  - 2026-05-23: draft + walkthrough pass (7 gaps from a real-data fresh-build run) — (1) Step 1a update-mode now asks balance-vs-structural-vs-both before walking the file, plus a life-event check; (2) Step 2 file-location gains a third default for dedicated life-ops repos (the work-vs-personal binary missed users with a "personal OS" repo); (3) Step 4a source-format table distinguishes Monarch's snapshot / history / holdings / dashboard-paste shapes and prescribes wrong-shape handling; (4) `status` field — active / dormant / closed — with dormant preserving row for traceability while zeroing roll-ups; (5) `sync_status` field — adds the manual-only case for federal accounts and similar chronic-disconnect items, distinct from open/closed; (6) hidden-accounts prompt added to the anomaly-surface list (most aggregators hide accounts users forget about); (7) `ladder_state` + `ladder_target_size` fields — captures in-progress ladders (1-of-12 built) vs steady-state. Output schema template updated to match.
 ---
 
 # /fi:holdings-scaffold
@@ -77,13 +81,17 @@ If an existing `holdings.md` is provided:
 
 1. Read the file. Verify the `holdings-schema-version` matches the current schema (currently `1`). If the version is older, note the diff and migrate the structure as part of the update.
 2. Confirm the existing file is gitignored (Step 3 still runs — re-verify, don't assume the prior author got it right).
-3. Walk through the existing file with the user:
-   - Which accounts have changed balances? (refresh)
-   - Which accounts are now stale (last-verified > 30 days)? (refresh or prune)
-   - Are there new accounts to add since the last update? (add)
-   - Are there closed/old accounts to remove? (prune; note in a removed-accounts comment)
-4. Skip Step 2 (file location is already chosen) and Step 4a/4b's bulk-import-vs-walkthrough question (just iterate over what changed). Step 3 still runs. Step 5 (compute roll-ups) and Step 6 (write file) still run.
-5. Preserve the file's prior `last-updated` value as a comment at the top, then overwrite with today's date.
+3. **Ask the user what kind of update this is** — don't assume balance-refresh is the goal. Three common shapes:
+   - **Balance refresh only** — same accounts, new numbers. The fast monthly cadence.
+   - **Structural changes only** — add/remove accounts, change a rate, fix a tag, mark something dormant. No balance re-pull.
+   - **Both** — balance refresh AND structural changes (rarer; usually triggered by a life event or a quarterly cleanup).
+   Branch the walkthrough on the answer. Don't drag a user who only wants a structural change through a per-account refresh sweep.
+4. Walk through the existing file with the user, scoped to what they chose in (3):
+   - *(balance-refresh paths)* Which accounts have changed balances? Which are stale (last-verified > 30 days)?
+   - *(structural-change paths)* Are there new accounts to add? Are any now dormant (zero out, keep row) or closed (remove)? Any rates, tags, or purposes to update?
+5. **Life-event check.** Before completing, ask once: *"Has anything material changed in your life since the last update — job change, RIF, pension status change, marriage, new dependent, inheritance, major health diagnosis, geographic move, significant runway shift?"* If yes, flag that downstream skills (`/fi:crossover`, `/fi:fu-money-readout`) should be re-run end-to-end, not just refreshed — the assumptions they're computing against may have shifted.
+6. Skip Step 2 (file location is already chosen) and Step 4a/4b's bulk-import-vs-walkthrough question (just iterate over what changed). Step 3 still runs. Step 5 (compute roll-ups) and Step 6 (write file) still run.
+7. Preserve the file's prior `last-updated` value as a comment at the top, then overwrite with today's date.
 
 #### 1b. Fresh-build mode (no existing file)
 
@@ -93,12 +101,13 @@ Proceed to Step 2.
 
 ### Step 2 — Pick the file location
 
-Suggest two defaults and let the user pick:
+Suggest three defaults and let the user pick:
 
-- **`~/finances/holdings.md`** — outside any project repo; lives in the user's home directory; suitable when the user wants their financial data fully separate from work projects.
-- **`<current-repo>/finances/holdings.md`** — inside the user's currently-active project; suitable when the user is comfortable with one specific repo holding personal data AND that repo is private OR has aggressive `.gitignore` coverage.
+- **`~/finances/holdings.md`** — outside any project repo; lives in the user's home directory; suitable when the user wants their financial data fully separate from any project.
+- **`<current-repo>/finances/holdings.md`** — inside the user's currently-active project; suitable when the user is comfortable with one specific work repo holding personal data AND that repo is private OR has aggressive `.gitignore` coverage.
+- **A dedicated personal-ops / life-ops repo** (e.g. `<life-ops-repo>/finances/holdings.md`) — a private repo the user already uses to track personal data (todos, journals, health, relationships, finances) with established gitignore patterns. This pattern is common among technical users who keep a single "operating system for my life" repo and want financial data to live there alongside the rest. Ask the user whether they have such a repo before defaulting to the home-dir option — the framing "work or personal" misses this case.
 
-If neither fits, accept a custom path. **Do not write the file yet.** Privacy enforcement runs first.
+If none fits, accept a custom path. **Do not write the file yet.** Privacy enforcement runs first.
 
 ### Step 3 — Enforce no-commit posture (LOAD-BEARING — never skip this)
 
@@ -158,6 +167,10 @@ For each account the user owns, capture:
 | `maturity_date` | YYYY-MM-DD | required for CDs / Treasuries / I-Bonds | When the time-locked instrument matures and principal becomes accessible. Critical for cash-flow planning and ladder strategies. |
 | `term` | string | optional, helpful for CDs / Treasuries | Original term length (e.g., `3-month`, `12-month`, `5-year`). Helps the user reason about ladder structures. |
 | `ladder_role` | string | optional | If this account is part of a laddered strategy (CD ladder, Treasury ladder), name the ladder (e.g., `RB-12mo-CD-ladder-month-1`) so the skill can roll up ladder-level positions. |
+| `purpose` | string | optional, recommended for cash + CDs + ladders + earmarked accounts | Why the position exists. Common values: `emergency-fund`, `runway`, `sinking-fund-<target>` (e.g., `sinking-fund-house-repair`), `tax-reserve`, `sabbatical-reserve`, `behavioral-guardrail`, `long-term-growth`, `bridge-income`. Capture the user's own phrasing if they have one — the field is descriptive, not enumerated. |
+| `status` | string | yes (default `active`) | One of: `active` (counts in roll-ups), `dormant` (keep row for record but treat as $0 in roll-ups — used for old aggregator entries the user wants traceability on without including in net-worth math), `closed` (remove from active holdings; move to a `## Removed accounts` audit section at the bottom of the file with the date removed and the last-known balance). |
+| `sync_status` | string | optional | One of: `aggregator-synced` (aggregator currently has live auth), `aggregator-disconnected` (aggregator lost auth — DOES NOT MEAN CLOSED), `manual-only` (account is active but chronically hard to keep in any aggregator — federal accounts like TSP, some pensions, foreign banks; manual refresh is the realistic cadence). Distinct from `status` — a `manual-only sync_status` account is fully active, the sync mechanism is just different. |
+| `ladder_state` | string | optional, only when `ladder_role` is set | One of: `building` (the ladder is being constructed — current count < target count) or `steady-state` (target count reached, fully rotating). Pair with `ladder_target_size` (integer, e.g., `12` for a monthly 12-month CD ladder). Lets downstream skills surface "ladder is N/M rungs built, M-N remaining" vs. assuming the ladder is fully populated. |
 | `holdings` | list | optional (deferred to `/fi:redirect`) | If the account has discrete holdings (stocks, funds, etc.), capture each: ticker, shares, native price-per-share, asset-class tag. Most users won't have this on first run. |
 | `last_updated` | YYYY-MM-DD | yes | When the user last verified this balance |
 
@@ -168,6 +181,20 @@ For each account the user owns, capture:
 > *"This looks like a [CD / Treasury] ladder — rolling N-month maturities at $X each. Want me to capture the ladder as a unit and surface the maturity calendar in `/fi:fu-money-readout`?"*
 
 When `ladder_role` is populated, downstream skills (`/fi:fu-money-readout`, `/fi:crossover`) treat the ladder as a single composite position with a maturity-stream income property — useful for runway planning. This is the YMOYL Step 8 capital pattern in current-rate-environment form: laddered fixed-income preserves principal, captures rate-environment shifts within the term, and provides predictable monthly liquidity.
+
+**Why capture `purpose`:** an emergency fund and a long-term growth position
+might both be $50k in a HYSA, but they're not interchangeable. Purpose tells
+downstream skills how the position should be treated — an emergency fund
+should not be the first source for opportunistic redeployment; a tax reserve
+shouldn't show up as net liquidity in a runway calc; a behavioral guardrail
+(money parked in a CD ladder specifically to add friction against impulse
+spending) is data for `/fi:fu-money-readout` to surface as such, not noise.
+Without this field, every cash position looks the same to downstream skills,
+and the user's deliberate structure becomes invisible. Ask for it whenever
+the user volunteers a reason ("this is my emergency fund," "this is for
+quarterly taxes") and offer it explicitly for CDs, ladders, and any account
+the user describes as earmarked. Investment accounts (brokerage, IRAs, 401k)
+can default to `long-term-growth` and don't need an explicit prompt.
 
 **Branch on input style.** Ask the user upfront:
 
@@ -193,16 +220,20 @@ When the user picks (a) or (c):
 
 2. **Detect the source format**. Common aggregator export formats:
 
-   | Aggregator | Export format | Key columns |
+   | Aggregator | Export shape | Key columns |
    |---|---|---|
-   | **Monarch** | CSV | Account, Type, Institution, Balance, Currency, AsOf |
+   | **Monarch (snapshot)** | "By Account" CSV | Account, Type, Institution, Balance, Currency, AsOf |
+   | **Monarch (balance history)** | "Balances" CSV | Date, Balance, Account |
    | **Monarch (holdings detail)** | CSV | Account, Symbol, Quantity, Price, Value, Cost Basis |
+   | **Monarch (dashboard paste)** | Pasted text | Section headers (Cash/Investments/etc.) + per-account rows with name, type, balance, time-since-update |
    | **Copilot** | CSV / JSON | account, balance, type, institution |
    | **Personal Capital / Empower** | CSV | account_name, institution, balance, type |
    | **Empower (holdings)** | CSV | symbol, description, quantity, price, value |
    | **Plain spreadsheet (no specific source)** | Any | Map heuristically based on column names |
 
-   Detect by header row. If ambiguous, ask the user which aggregator the export came from.
+   Detect by header row. If ambiguous, ask the user which aggregator AND which export view the export came from — most aggregators produce multiple export shapes for the same underlying data (snapshot vs. history vs. holdings detail), and only one is right for this skill.
+
+   **Wrong-shape handling.** If the user provides a *history* export (date-indexed time series) when the skill needs a *snapshot*, do not silently coerce — surface it: *"This is a balance-history export (one row per account per day, ~N rows). I need a snapshot (one row per account, latest balance, with type/institution/currency). I can either (a) derive the snapshot by taking the latest row per account from this file — but that loses type, institution, and currency fields — or (b) you grab the snapshot export instead. Which?"* Same pattern applies to any aggregator with multiple export shapes.
 
 3. **Map source columns → our schema fields**. Build a mapping table once you've identified the format. For each row, extract:
    - Account name
@@ -217,7 +248,8 @@ When the user picks (a) or (c):
    - Currencies other than the user's base currency (confirm; flag for FX handling)
    - Balances that look stale (last-updated > 30 days ago) — ask if the user wants to refresh manually before continuing
    - Duplicate-looking accounts (same institution + same balance — possible sync glitch)
-   - **Disconnected accounts** — aggregators routinely lose auth. *Disconnected ≠ closed.* Ask: *"Is this account still active, or did you close it? If active, do you want to reconnect the aggregator now or update the balance manually?"* — never auto-prune on disconnect alone.
+   - **Disconnected accounts** — aggregators routinely lose auth. *Disconnected ≠ closed.* Ask: *"Is this account still active, did you close it, or is it active-but-chronically-hard-to-sync (federal accounts, foreign banks, some pensions)? If active, do you want to reconnect the aggregator now, update manually, or set `sync_status: manual-only` and refresh on a slower cadence?"* — never auto-prune on disconnect alone, and don't conflate "active but manual" with "disconnected."
+   - **Hidden accounts in the aggregator** — most aggregators let users hide accounts to declutter the dashboard, and the user often forgets they exist. After parsing visible accounts, ask: *"Does your aggregator have any hidden accounts? If yes, are any of them non-zero — old IRAs, dormant business checking, foreign accounts you stopped looking at? If yes, surface them; we'll either include them (active), mark dormant, or close-and-record."* Don't assume hidden = zero.
    - Accounts that should have a `rate` but don't — aggregators rarely export rates. After bulk-import, prompt for rates separately:
      > *"Aggregators don't usually capture interest rates. For each cash account and liability, what's the rate? I'll skip investment accounts since their return is variable."*
      > Walk through cash accounts (APY they earn) and liabilities (APR they cost) one pass.
@@ -381,6 +413,11 @@ holdings-schema-version: 1
 - **maturity-date**: YYYY-MM-DD  *(required for CDs / Treasuries / I-Bonds)*
 - **term**: <e.g., 12-month>  *(optional, helpful for CDs)*
 - **ladder-role**: <ladder-name>  *(optional, when part of a laddered strategy)*
+- **ladder-state**: <building | steady-state>  *(optional, paired with ladder-role)*
+- **ladder-target-size**: <integer>  *(optional, paired with ladder-role — e.g., 12 for a monthly 12-month CD ladder)*
+- **purpose**: <emergency-fund | runway | sinking-fund-<target> | tax-reserve | sabbatical-reserve | behavioral-guardrail | long-term-growth | bridge-income | custom>  *(optional, recommended for cash + CDs + earmarked accounts)*
+- **status**: <active | dormant | closed>  *(default active; dormant = keep row, zero out roll-ups; closed = move to ## Removed accounts section)*
+- **sync-status**: <aggregator-synced | aggregator-disconnected | manual-only>  *(optional; distinct from status)*
 - **last-verified**: YYYY-MM-DD
 - **holdings**:  *(optional — deferred to `/fi:redirect` for most users)*
   - <TICKER>: <shares> shares @ <price> <currency> = <value> <currency> [asset-class: <tag>]
