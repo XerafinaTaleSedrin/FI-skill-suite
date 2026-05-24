@@ -8,13 +8,14 @@ status: alpha
 status-history:
   - 2026-05-20: draft (initial 2026 modernization complete)
   - 2026-05-23: alpha (content review pass — multi-stream, mode-aware, employer-benefits, load-phase tagging, shared-expense allocation, pipeline mode, output template, privacy validation, worked example, sources all complete; remaining gap to "stable" is one real non-Marika beta-test run + any iteration on real-world findings)
+  - 2026-05-23: alpha (real-data walkthrough — added Step 5b tax handling (pre-tax vs after-tax basis, SE + federal-marginal + state guidance), Step 1 labor-only framing (excludes pensions/dividends/rental/royalties), Step 4 shared-hours allocation (parallel to shared-expense), Step 6 sparse-log plausibility check (compare against typical-week / invoice-implied / calendar-implied), Output path made overridable via FI_FINANCES_DIR env var, gitignore validation tightened from "warn" to "refuse")
 sources:
   - book: Your Money or Your Life
     contribution: "Step 2 — the real-hourly-wage calculation. Subtract every cost incurred because of the job; add every hour spent because of the job; divide. The classic on-site line items carry forward; the 1992 list assumed an office commuter."
   - book: Profit First (Michalowicz, 2017)
     contribution: "Owner-as-key-employee principle and purpose-bound treatment of business expenses — informs the shared-expense allocation across multiple income streams, and naturalizes a real wage for the business-owner case where 'wage' might otherwise be conflated with owner draw."
   - author: Marika Olson
-    contribution: "2026 design refinements — work-mode branching (remote/hybrid/on-site/gig), AI/SaaS OpEx as a load-bearing line item, contracted-vs-cash income basis, explicit denominator-policy capture, load-phase tagging, shared-expense allocation, multi-stream per-engagement wages with a blended number, pro bono reported as its own line, dated-output trend tracking, headless pipeline mode."
+    contribution: "2026 design refinements — work-mode branching (remote/hybrid/on-site/gig), AI/SaaS OpEx as a load-bearing line item, contracted-vs-cash income basis, explicit denominator-policy capture, load-phase tagging, shared-expense + shared-hours allocation, multi-stream per-engagement wages with a blended number, pro bono reported as its own line, dated-output trend tracking, headless pipeline mode, labor-only framing (excludes capital and past-work income), Step 5b tax-attributable subtraction with pre-tax/after-tax basis switch, sparse-log plausibility check against typical-week / invoice-implied / calendar baselines, configurable finances directory via FI_FINANCES_DIR."
 last-reviewed: 2026-05-23
 ---
 
@@ -38,6 +39,21 @@ Ask first: **"Do you earn from one job, or several income streams?"**
 - **Several** — run Steps 2–6 once per stream, then Step 7 produces a
   per-engagement wage for each plus a blended wage across all of them. The
   per-engagement numbers are the point: they reveal which work underpays.
+
+**Labor income only.** A stream in this skill is *income earned by the user's
+current labor*. Explicitly exclude — and say so to the user before they list
+streams:
+
+- Pensions, annuities, FERS/Social Security supplements — past-work residuals.
+- Dividends, interest, capital gains — capital working, not the user.
+- Rental income (unless the user is actively managing as a job — then it counts).
+- Royalties, licensing, residuals from prior work — past labor, not current.
+- Trust distributions, gifts, transfers.
+
+These belong in `/fi:holdings-scaffold` and `/fi:crossover`, not here. Mixing
+them into a wage calc produces a meaningless blended number — the wage looks
+inflated by money the work isn't earning. If the user names one of these as a
+stream, name it back to them and ask whether it really fits the labor definition.
 
 For each stream the user names, also ask its **type**: paid, or pro bono /
 civic / unpaid. Pro bono streams are carried through every step but reported
@@ -127,6 +143,16 @@ If the user tracks time in a log or tool, read it for the period and total the
 hours per stream. If not, walk them through estimating each bucket. Either way,
 surface the total and let them correct it before continuing.
 
+**Shared-hours allocation (multi-stream only).** Some hours — cross-cutting
+admin, business development, tooling upkeep, learning, finance/bookkeeping —
+serve every paid stream and can't honestly be charged to one. Ask the user to
+pick an allocation basis **once** (same basis as shared expenses in Step 5
+if both apply): by share of stream-specific hours, or by share of revenue.
+Apply consistently across streams and state the basis in the report. Without
+this, cross-cutting overhead either gets dropped from the denominator
+(inflating every stream's wage) or piled onto one arbitrary stream (cratering
+its wage) — both lie.
+
 **Load-phase check.** Ask whether the period contained a one-time project load
 unusual for the stream — a migration, a setup build, a one-off overhaul. If so,
 tag the period as project-load, not steady-state. A wage measured during a
@@ -162,6 +188,51 @@ user to pick an allocation basis **once**: by share of hours, or by share of
 revenue. Apply it to every shared cost and every stream consistently. State the
 basis in the report.
 
+## Step 5b — Tax attributable to the stream
+
+Tax on the income earned is a real cost of earning it, and ignoring it produces
+a wage that overstates what the work actually buys. Ask the user once which
+basis they want, and apply it consistently:
+
+- **Pre-tax wage** — skip this step entirely. Defensible when comparing wages
+  across streams within the same tax regime, or when a separate income-tax
+  skill handles the after-tax view. State `tax-basis: pre-tax` in the output.
+- **After-tax wage** — subtract estimated tax attributable to each stream.
+
+When subtracting, walk the user through these components per stream (or
+collapse to a single all-in marginal rate if they prefer):
+
+- **Self-employment tax** (gig / sole-prop / 1099 streams) — 15.3% on net
+  self-employment earnings up to the Social Security wage base (~$176,100 in
+  2026; check the current year), 2.9% Medicare with no cap above. The
+  employer-equivalent half is the line item; the self-employment side is
+  baked into the same 15.3% number. Compute on `(stream income − stream
+  expenses)`, not on gross.
+- **Federal income tax** — the user's marginal rate on the next dollar this
+  stream produces, not their effective rate. If they don't know, ask their
+  rough taxable-income band for the year and pick a marginal rate from there.
+  For low-income years (severance gap, sabbatical, ramping business), the
+  marginal rate may be 10–12% or even 0% — don't assume 22%+.
+- **State income tax** — the user's state marginal rate. Zero in WA, TX, FL,
+  TN, NV, SD, WY, AK, NH; check current rules for others.
+- **Payroll tax** (W-2 streams) — FICA already withheld; visible on pay stub.
+  Don't double-count with employer-side numbers from Step 3b.
+
+For each paid stream:
+
+```
+tax for the stream = (stream income − stream job-expenses − allocated shared)
+                   × (SE rate if applicable + federal marginal + state marginal)
+```
+
+Subtract this in Step 7's wage formula as a third bucket alongside expenses
+and allocated shared costs. State `tax-basis: after-tax` and the rates used in
+the output so the wage is interpretable later.
+
+Pro bono / civic streams: skip (no income to tax). Future passes: if the user
+adds a `/fi:tax` skill, this section becomes a thin caller — until then, the
+estimate stays inline so the wage number isn't a lie by omission.
+
 ## Step 6 — User-extensible categories, then verify
 
 Ask: **"Any other costs or hours specific to your situation we should factor
@@ -170,10 +241,29 @@ in?"** Capture each addition against the stream it belongs to. Persist these to
 runs offer them instead of re-asking from scratch.
 
 Before computing, verify both sides cover the same period (Step 3) and that
-neither side is suspiciously thin (e.g. income logged but almost no hours, or a
-period only partly tracked). If a side is incomplete, say so plainly and either
-narrow the period to what's solid or flag the result as provisional. Never
-compute silently over a gap.
+neither side is suspiciously thin. If a side is incomplete, say so plainly and
+either narrow the period to what's solid or flag the result as provisional.
+Never compute silently over a gap.
+
+**Plausibility check on logged hours.** When hours come from a time log, also
+compare against an expected-baseline before computing. Sparse logs are the most
+common silent failure mode: 5 hours logged when 60 were worked produces a wage
+that looks 12× higher than reality. Cross-check with whichever of these the user
+has:
+
+- **Stated typical week** — captured in `~/finances/profile/typical-hours.md`
+  on first run, e.g. "16 hours/week across all paid streams." If logged hours
+  for the period fall below ~50% of expected, flag and ask: under-logged, or a
+  genuinely lighter period?
+- **Invoice-implied billable hours** — for billable-hour streams, divide the
+  period's invoiced revenue by the contracted rate. If logged hours fall short
+  of that, the log is missing billable time at minimum.
+- **Calendar-implied work hours** — if the user keeps a calendar with work
+  blocks, total them as a sanity floor.
+
+If no baseline is available, the skill can still run, but the output must tag
+the hours figure as `hours-source: logged-only, no plausibility check available`
+so the wage isn't read as a settled number.
 
 ## Step 7 — Compute and report
 
@@ -215,9 +305,27 @@ when real income shifts.
 
 ## Output
 
-Write each run to `~/finances/hourly-wage/YYYY-MM-DD.md` (create the directory
-if needed). One file per run — a dated snapshot, never overwritten. Validate
-`.gitignore` coverage before writing; warn if the path is not ignored.
+Write each run to `<finances-dir>/hourly-wage/YYYY-MM-DD.md` (create the
+directory if needed). One file per run — a dated snapshot, never overwritten.
+
+**Resolving `<finances-dir>`:**
+
+1. Check the `FI_FINANCES_DIR` environment variable. If set and the path
+   exists, use it.
+2. Otherwise fall back to `~/finances/`.
+
+Users with a non-standard layout (e.g. a finances folder inside another repo)
+should set `FI_FINANCES_DIR` once in their shell profile. The same resolution
+applies everywhere this skill references `~/finances/` — profile files, output
+files, and the gitignore check below all read from `<finances-dir>` resolved
+through this rule.
+
+**Gitignore validation** before writing: check that `<finances-dir>` (or a
+parent that contains it) is covered by a `.gitignore` rule in the nearest git
+repo. If not, refuse to write and surface a one-line message: "<finances-dir>
+is not gitignored — add it to .gitignore before re-running, or set
+FI_FINANCES_DIR to a path outside any git repo." Do not write user financial
+data into a path that could be committed.
 
 ```markdown
 ---
@@ -225,7 +333,9 @@ date: YYYY-MM-DD
 mode: remote | hybrid | on-site | gig | mixed
 streams: [stream-name, ...]
 income-basis: contracted | cash
+tax-basis: pre-tax | after-tax
 load-phase: steady-state | project-load
+hours-source: time-log | estimated | invoice-derived | logged-only-no-plausibility-check
 generated-by: /fi:hourly-wage
 ---
 
@@ -280,9 +390,11 @@ When invoked by another agent or a scheduled run with no human present:
 
 User-specific data — income, expense amounts, employer names, vendor patterns —
 is never embedded in this skill file or committed to the plugin repo. All user
-data writes go to gitignored paths on the user's machine (`~/finances/`). The
-skill validates `.gitignore` coverage before writing, and warns if no git repo
-exists. See `AGENTS.md` for the cross-skill privacy posture.
+data writes go to gitignored paths on the user's machine — `<finances-dir>`
+resolved per the Output section (defaults to `~/finances/`, overridable via
+`FI_FINANCES_DIR`). The skill validates `.gitignore` coverage before writing
+and refuses to write if the resolved path is not ignored. See `AGENTS.md` for
+the cross-skill privacy posture.
 
 ## Sources
 
