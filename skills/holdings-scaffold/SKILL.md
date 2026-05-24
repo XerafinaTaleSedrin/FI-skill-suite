@@ -18,6 +18,7 @@ status-history:
   - 2026-05-23: draft + variable-rate disambiguation. `rate_type: APY-variable` and `APR-variable` previously conflated two different things — bank-discretionary market-rate variability vs. user-conditional qualifier-driven variability. Added a follow-up prompt + `qualifier_description` and `qualifier_met` fields. Downstream skills now compute opportunity-cost off the effective rate (qualifier met or not), not the headline. Caught when a Bluevine-style conditional 1.30% APY (currently earning 0% because qualifier not met) had no clean schema home.
   - 2026-05-23: draft + Step 4d (income streams, non-labor) sketched in. New procedure step + schema section captures streams that aren't tied to an account balance — pensions, annuities, supplements, dividends, rental, royalties, future SSA. Per-stream fields: name, kind, monthly_amount, currency, status (active / future-activates-at-date / future-activates-at-event / expires-at-date / expires-at-event), activation, expiration, cola_adjusted, taxable_treatment, source. Multi-scenario streams (e.g., FERS at 57 vs 62; SSA at 62 vs 67 vs 70) captured as separate stream entries — crossover models scenarios against the options. **Sketch-level — schema will refine as `/fi:crossover` and `/fi:fu-money-readout` make real demands.** Caught when the walkthrough hit Step 5 (compute roll-ups) without ever having asked about FERS pension, FERS supplement (expires at 62), DRiP dividends, future SSA — all load-bearing for downstream skills.
   - 2026-05-23: draft + Step 4d split into two prompts (current vs future-anticipated income streams). Future streams get glossed over when bundled with current ones — many users default to "my income is my paycheck" and skip the question. Asking future separately catches FERS-deferred, SSA-not-yet-claimed, future-rental cases. Step 7 closing readout gains a conditional income-streams block — rendered only when streams exist, with active-now and future-activated rendered independently; whole block omitted if no streams (matches the open-items-conditional pattern already used).
+  - 2026-05-23: draft + holdings→crossover contract hardening (4 fixes). (1) Liabilities now capture `current_monthly_payment` (P&I only) — was missing; crossover needs it for amortization-based payoff-date computation. (2) Per-holding `cost_basis` added as optional but recommended field — without it crossover defaults to taxing full withdrawal at LTCG (overstates tax by 50%+ on long-held positions). (3) Closing readout gains explicit pointer to `/fi:crossover` as the FI-threshold-math next-step — previously only pointed to fu-money-readout and hourly-wage, missing the most load-bearing skill for retirement-shaped decisions. (4) New "Downstream-ready check" section in closing — skill now tells the user which downstream skills can run and what's missing to unlock the rest. Caught during track-flow walkthrough when the meta-question surfaced: "does holdings-scaffold understand what crossover needs?"
 ---
 
 # /fi:holdings-scaffold
@@ -176,7 +177,7 @@ For each account the user owns, capture:
 | `status` | string | yes (default `active`) | One of: `active` (counts in roll-ups), `dormant` (keep row for record but treat as $0 in roll-ups — used for old aggregator entries the user wants traceability on without including in net-worth math), `closed` (remove from active holdings; move to a `## Removed accounts` audit section at the bottom of the file with the date removed and the last-known balance). |
 | `sync_status` | string | optional | One of: `aggregator-synced` (aggregator currently has live auth), `aggregator-disconnected` (aggregator lost auth — DOES NOT MEAN CLOSED), `manual-only` (account is active but chronically hard to keep in any aggregator — federal accounts like TSP, some pensions, foreign banks; manual refresh is the realistic cadence). Distinct from `status` — a `manual-only sync_status` account is fully active, the sync mechanism is just different. |
 | `ladder_state` | string | optional, only when `ladder_role` is set | One of: `building` (the ladder is being constructed — current count < target count) or `steady-state` (target count reached, fully rotating). Pair with `ladder_target_size` (integer, e.g., `12` for a monthly 12-month CD ladder). Lets downstream skills surface "ladder is N/M rungs built, M-N remaining" vs. assuming the ladder is fully populated. |
-| `holdings` | list | optional (deferred to `/fi:redirect`) | If the account has discrete holdings (stocks, funds, etc.), capture each: ticker, shares, native price-per-share, asset-class tag. Most users won't have this on first run. |
+| `holdings` | list | optional (deferred to `/fi:redirect`) | If the account has discrete holdings (stocks, funds, etc.), capture each: ticker, shares, native price-per-share, asset-class tag, **cost-basis** (per holding, in native currency — needed by `/fi:crossover` to compute LTCG tax on bridge withdrawals; without it crossover defaults to taxing the full withdrawal at LTCG which can overstate tax by 50%+ on long-held positions). Most users won't have this on first run — if the user volunteers they have cost-basis available (Vanguard / Fidelity / Schwab usually show it), capture; otherwise defer to `/fi:redirect`. |
 | `last_updated` | YYYY-MM-DD | yes | When the user last verified this balance |
 
 **Why capture `rate`:** knowing the spread between what cash earns and what debt costs is foundational for downstream skills. A user with $50k in a 0.01% checking account and a 24% credit card balance is leaking money in a way the net-worth number alone doesn't surface. `/fi:fu-money-readout` and `/fi:redirect` both want this signal. Aggregators rarely capture it cleanly, so we prompt for it directly.
@@ -446,6 +447,29 @@ Open items captured to your todo
 
 ──────────────────────────────────────────────────
 
+Downstream-ready check
+
+  (Skill computes which downstream skills can run now vs. what's still
+  missing, and renders the result inline. Don't bury — this is the
+  user's "what's unlocked" signal.)
+
+  Ready to run now:
+    ✓ /fi:fu-money-readout        (always — only needs holdings.md)
+    ✓ /fi:hourly-wage              (independent of holdings.md)
+    <conditional based on captured data:>
+    ✓ /fi:crossover                (income streams + retirement-frame present)
+    ⚠ /fi:crossover                (income streams ready; create
+                                    ~/finances/profile/retirement-frame.md first)
+    ⚠ /fi:crossover                (no income streams declared via Step 4d —
+                                    runs in perpetual-portfolio mode without them)
+
+  Optional refinements (improve downstream accuracy):
+    • Add cost-basis to taxable holdings → tightens /fi:crossover tax math
+    • Add current-monthly-payment to liabilities → enables
+      /fi:crossover payoff projections
+
+──────────────────────────────────────────────────
+
 What to do with this
 
   Daily orientation:  /fi:fu-money-readout
@@ -458,6 +482,14 @@ What to do with this
                       Converts your current spending into time —
                       the forward-looking reframe. This is where
                       YMOYL gets actionable.
+
+  When you want the
+  FI threshold math:  /fi:crossover
+                      Reads what you just captured (holdings, income
+                      streams, liabilities for amortization); computes
+                      your FI crossover age, bridge years, and the
+                      "are you already FI?" check. The most load-
+                      bearing skill for retirement-shaped decisions.
 
   Skill done.
 ```
@@ -537,9 +569,11 @@ holdings-schema-version: 1
 
 ## Liabilities
 
-- **Mortgage**: -<amount> <currency>, rate: <X.XX>% APR-fixed, as of YYYY-MM-DD
-- **Student loans**: -<amount> <currency>, rate: <X.XX>% APR-<fixed|variable>
-- **Credit cards**: -<amount> <currency>, rate: <X.XX>% APR-variable
+- **Mortgage**: -<amount> <currency>, rate: <X.XX>% APR-fixed, current-monthly-payment: <amount> <currency> (P&I only, excludes escrow), as of YYYY-MM-DD
+- **Student loans**: -<amount> <currency>, rate: <X.XX>% APR-<fixed|variable>, current-monthly-payment: <amount> <currency>
+- **Credit cards**: -<amount> <currency>, rate: <X.XX>% APR-variable  *(monthly payment varies; capture if user pays a fixed amount above minimum)*
+
+*Why `current-monthly-payment`*: amortizing liabilities (mortgage, auto loan, student loan) need this field for `/fi:crossover` to compute amortization-based payoff dates ("trust the math, not lender-stated maturity"). Without it, crossover can't model the future-expense-reduction line that fires when the loan is paid off. Capture P&I only (principal + interest); escrow (taxes + insurance) is a separate ongoing expense and doesn't disappear at payoff — note that distinction in the readout if the user has it bundled.
 
 ## Asset-class roll-up (computed; in base currency)
 
