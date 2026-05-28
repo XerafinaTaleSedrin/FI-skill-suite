@@ -135,7 +135,7 @@ After CSV import (or before walkthrough), surface what aggregators systematicall
 - **Platform-held balances and informal income**: Poshmark / eBay / Mercari / Etsy / Substack tips / Patreon balances; informal off-platform side hustles
 - **Non-cash value flow**: bartering / in-kind exchange (capture even without dollar valuation — *spiritual-vibe-only* exchanges are real life-energy)
 - **Missed accounts/channels**: Venmo / Cash App / Zelle / PayPal flows; reimbursements; loans in/out
-- **Forgotten/dormant accounts**: surfaced in Step 2 above
+- **Forgotten/dormant accounts**: surfaced in Step 3 above
 - **One-time / annual flows**: tax refunds, bonuses, RSU vesting, insurance reimbursements, settlements, lump-sum gifts received
 - **Time-bound government benefits**: UI, severance, disability, COBRA subsidies. Capture four fields per benefit so the effective end is computed honestly, not assumed:
   - **payment unit** — weekly (most US state UI), biweekly (some gig-UI programs), monthly (most disability, COBRA)
@@ -211,7 +211,7 @@ Critical for honest cashflow rollups. Tag every positive-amount row (positive am
 
 | Source-type | Definition | Active cashflow? | Notes |
 |---|---|---|---|
-| **wage** | W-2 payroll, employer bonuses, and other CURRENT-LABOR paycheck-shaped income | ✓ yes | apply phantom-paycheck filter AND government-benefit detection first (Step 6 — savings-institution P2P transfers reclassify to internal; UI/pension/SS reclassify to government-benefit). **Wage means current labor** — UI, severance, pensions are past-work and belong in `government-benefit`, not wage. |
+| **wage** | W-2 payroll, employer bonuses, and other CURRENT-LABOR paycheck-shaped income | ✓ yes | apply phantom-paycheck filter AND government-benefit detection first (Step 5 — savings-institution P2P transfers reclassify to internal; UI/pension/SS reclassify to government-benefit). **Wage means current labor** — UI, severance, pensions are past-work and belong in `government-benefit`, not wage. |
 | **family-support** | Recurring transfers from family members (mom, dad, partner, parents-in-law) | ✓ yes | declared markers per user |
 | **side-hustle** | Informal / platform / sporadic income — Poshmark, Etsy, Substack tips, gig work | ✓ yes | platform list user-extensible |
 | **investment-cash** | Investment income paid as cash to a non-investment account — HYSA interest, money-market interest, dividends paid to checking | ✓ yes | counted in BOTH active cashflow AND gross-yield |
@@ -232,7 +232,7 @@ All transactions in investment-bucket accounts (Brokerage, IRA, Roth IRA, Tradit
 
 These rows still contribute to **gross investment yield** (extracted separately, see below) but never to active cashflow.
 
-**User confirmation in Step 2 — account-purpose interrogation:** the skill confirms with the user *"this account auto-reinvests dividends, yes? Or do dividends flow to checking?"* for each investment-bucket account. Default = auto-reinvest. If a user has an account that DOES cash out yield to checking, flip the default; those yield events then count as `investment-cash` for that account.
+**User confirmation in Step 3 — account-purpose interrogation:** the skill confirms with the user *"this account auto-reinvests dividends, yes? Or do dividends flow to checking?"* for each investment-bucket account. Default = auto-reinvest. If a user has an account that DOES cash out yield to checking, flip the default; those yield events then count as `investment-cash` for that account.
 
 **Why this matters:** without this rule, every quarterly dividend distribution and every fund rebalance (e.g., consolidating multiple eREIT positions into a single fund) inflates "income" — sometimes by thousands of dollars in a single month. The validation case: a 7-sells-to-1-buy same-day rebalance event totaling ~5K of principal moving sideways inside a Fundrise account looked like ~5K of income until the rule was added.
 
@@ -333,7 +333,7 @@ Five artifacts plus profile files. **Idempotent**: re-running mid-month overwrit
 ~/finances/monthly-tabs/_trend-categories.csv   # Month × category × stats (for /fi:wallchart)
 ~/finances/monthly-tabs/_trend-totals.csv       # Month × {personal/business income+expense+net} (for /fi:crossover)
 ~/finances/monthly-tabs/_patterns-detected.md   # Cumulative pattern log (for /fi:three-questions)
-~/finances/profile/account-purposes.md          # User's per-account declarations (Step 2 — persisted across runs)
+~/finances/profile/account-purposes.md          # User's per-account declarations (Step 3 — persisted across runs)
 ~/finances/profile/vendor-defaults.md           # User's mixed-purpose vendor defaults (Step 6 — persisted across runs)
 ```
 
