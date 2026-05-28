@@ -12,6 +12,22 @@ Rules that apply across every skill in `FI-skill-suite`. If you find yourself co
 4. **Never include user financial details in error messages or stack traces.** If a skill crashes mid-flow, the error should describe the failure shape, not the data shape.
 5. **Never embed user-specific data in `SKILL.md` files or other public skill artifacts.** SKILL.md goes to GitHub. Account names, balances, vendor patterns, transaction history, dollar amounts, and other user-identifying financial details belong in the user's own machine, in gitignored paths only. When documenting validation, design findings, or worked examples in the public skill files, use generic placeholders (`<personal checking>`, `$X`, `<vendor>`) — never the real values from a specific user's data. User-specific test artifacts and design logs live in the user's private repo at gitignored paths (e.g., `life/finances/_<skill>-validation-YYYY-MM-DD.md`), never in the FI-skill-suite repo.
 
+   **Infrastructure in, data out.** This is the foundational discipline of the suite. The SKILL.md describes the procedure; the procedure runs against user data; the user data never lives in the skill itself. When in doubt, ask: *"Would a stranger reading this skill understand it without knowing the skill author?"* If the answer is no, the offending content is data, not infrastructure — strip it.
+
+   **Audit checklist — scan every SKILL.md against this list before promotion to alpha or any commit that touches user-facing content:**
+
+   - [ ] No personal names beyond legitimate byline attribution. Specifically: no operational text addressed to a specific person ("Tell Marika..."), no client names ("Dina", "Rashna"), no friend/peer names embedded in procedural prose. Operational text refers to "the auditor", "the user", "the skill author" — never a specific person. The skill author's name in `sources: - author:` is the legitimate byline; everywhere else is suspect.
+   - [ ] No specific place names from the skill author's life (city, neighborhood, region) unless explicitly framed as one-of-N illustrative examples. "e.g., Vermont state tax" inside a list of three+ states is fine; "Hoodsport ADU rental" inside a schema field example is not.
+   - [ ] No specific institution names that signal the skill author's actual tool stack. A single bank/processor/tool name is signal; a list of three+ equivalents is generic. ("HoneyBook" alone signals the author's processor; "HoneyBook, Stripe, Square, PayPal" in a list is generic.)
+   - [ ] No specific employer / former-employer references that aren't generic. "Federal employee with FERS" is generic; "USAID lawsuit resolution" as an event example is identifying.
+   - [ ] No cross-references to private memory files (e.g., a Komorebi `feedback_*.md`, `user_*.md`, `reference_*.md`). These render as dead links to anyone else and signal "this was written for me, not you." Either move the cross-ref content inline as anonymized rationale, or strip it.
+   - [ ] No specific dollar amounts that trace to the skill author's actual figures. Generic round numbers ($1,000, $50K) are fine; specific composites with locale + rate + amount ($1,590 invoice with 6% Idaho tax on a $1,500 service fee) are too narrow.
+   - [ ] No design-log filenames or paths that point to private validation artifacts. Cross-refs to public `book-audits/` are fine; cross-refs to `_design-log/*real-data*` are not.
+
+   **When the checklist finds something**: strip it. Do not paraphrase into a less-obvious version. Do not preserve "ran this on YYYY-MM-DD" as historical color in the skill body — the status-history field captures the dated promotion event without leaking the underlying private data.
+
+   **Why this rule recurs**: real-data validation is high-signal feedback, and the temptation to paste a specific finding back into SKILL.md as a worked example is strong because the finding is concrete. Resist. The structural lesson belongs in SKILL.md (anonymized, generalized). The specific finding belongs in the private validation artifact, never the public skill.
+
 ---
 
 ## Headless / pipeline mode (every skill)

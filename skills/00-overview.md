@@ -35,14 +35,6 @@ All skills are namespaced under the `fi` plugin and invoked as `/fi:<skill-name>
 
 ---
 
-## Pipeline skills
-
-| Skill | Purpose | Status |
-|---|---|---|
-| [`/fi:audit`](audit/SKILL.md) | Book audit pipeline — extracts the load-bearing mechanics from a finance/business book, separated by layer (concept / pattern / tool), with Hearth's verdict | **alpha** |
-
----
-
 ## Cadence companions
 
 | Skill | Cadence | Purpose | Status |
@@ -79,9 +71,9 @@ Roughly: do these in order. Some skills can run independently once `/fi:holdings
                                           │
 /fi:track-flow ─→ /fi:three-questions
               └─→ /fi:wallchart
-
-/fi:audit (runs on any book; outputs to book-audits/)
 ```
+
+The book audits that informed the `sources:` frontmatter across these skills live in [`book-audits/`](../book-audits/) — they're the published artifacts of the audit pipeline that produced the source-tracing.
 
 ---
 
@@ -95,6 +87,6 @@ Roughly: do these in order. Some skills can run independently once `/fi:holdings
 
 ---
 
-*Last updated: 2026-05-22 (per-skill status audit — corrected stale status fields that were never updated as skills got used. Five skills moved draft → alpha on real-run evidence: `holdings-scaffold` (run on real holdings, put in front of others for review), `fu-money-readout` (end-to-end validated against real user data 2026-05-03, validation findings encoded as design rules), `track-flow` (end-to-end validated on real multi-stream multi-currency aggregator data, 14 validation findings), `crossover` (bridge-math validated paired with fu-money-readout 2026-05-03). `audit` was already alpha and stays there — 3 shipped book-audits (YMOYL, Profit First, Business Exit Companion). `hourly-wage`, `three-questions`, `wallchart`, `redirect` remain draft — complete runnable procedures but no evidence of a real run yet (`hourly-wage` has one worked example but no live-invocation validation). Note: `_last-reviewed.md` claimed "all 9 skills" reach alpha but then named only 5 — that claim was both wrong and internally inconsistent; this audit grades each skill individually.)*
+*Last updated: 2026-05-27 (audit skill removed from this repo — the book audit pipeline lives privately under the auditor's local skills, since it carries authorial voice (the auditor's verdict, the auditor's reading framing) that doesn't generalize. The published book-audits remain in `book-audits/` as bylined artifacts that inform the `sources:` frontmatter across skills.)*
 
-*Prior: 2026-05-12 (audit promoted scaffold → draft → alpha in the same day. Second worked example shipped: Profit First.)*
+*2026-05-22 (per-skill status audit — corrected stale status fields that were never updated as skills got used. Five skills moved draft → alpha on real-run evidence: `holdings-scaffold` (run on real holdings, put in front of others for review), `fu-money-readout` (end-to-end validated against real user data 2026-05-03, validation findings encoded as design rules), `track-flow` (end-to-end validated on real multi-stream multi-currency aggregator data, 14 validation findings), `crossover` (bridge-math validated paired with fu-money-readout 2026-05-03). `hourly-wage`, `three-questions`, `wallchart`, `redirect` remain draft — complete runnable procedures but no evidence of a real run yet (`hourly-wage` has one worked example but no live-invocation validation).)*

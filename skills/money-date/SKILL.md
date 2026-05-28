@@ -13,7 +13,7 @@ sources:
   - book: Your Money or Your Life
     contribution: "Monthly tabulation is the heavier sibling — the money-date is the weekly lighter version, same spirit. The shared principle: visibility on flow is the first lever."
   - author: Marika Olson
-    contribution: "2026 design refinements — three-question counterweight structure aimed at the Ruler/Accumulator hoarding instinct (per `feedback_blindspot-protocol.md` and the 2026-05-20 money-personality finding). Designed against the failure mode of becoming another anxious balance-check ritual."
+    contribution: "2026 design refinements — three-question counterweight structure aimed at the Ruler/Accumulator hoarding instinct. Designed against the failure mode of becoming another anxious balance-check ritual."
 last-reviewed: 2026-05-23
 ---
 
@@ -105,7 +105,7 @@ joy? Not productivity, not health, not work-adjacent. Joy. Categories:
 
 - A meal out chosen because it sounded good
 - A book, a record, a subscription that brings delight
-- Something for the cabin / home that's purely for pleasure
+- Something for the home that's purely for pleasure
 - An experience (movie, concert, class, trip)
 - A gift to a friend or family member chosen with care
 
@@ -235,11 +235,6 @@ data writes go to gitignored paths on the user's machine (`~/finances/`). See
   outflow surprised the user.
 - `/fi:fu-money-readout` — the daily ground-state report. Money-date is the
   weekly outflow-focused complement; the readout is the balance-state complement.
-- Komorebi memory: `feedback_blindspot-protocol.md` (the hoarding pattern is
-  one of Marika's named blindspots), `feedback_price-from-confidence.md`
-  (scarcity reflex is the same instinct upstream), the 2026-05-20 Money
-  Personality result (Ruler + Accumulator tied) in `work/moc/research/
-  20260520_hidden-profit-book-notes.md`.
 
 ## Sources
 

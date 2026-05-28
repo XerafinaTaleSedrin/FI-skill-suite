@@ -15,9 +15,9 @@ status-history:
   - 2026-05-02: draft (initial 2026 design — full procedure, schema, privacy enforcement, cross-skill contracts)
   - 2026-05-23: draft + `purpose` field added (cash/CD/ladder/earmarked accounts — surfaces user-intent so downstream skills don't flatten emergency-fund and growth-cash into one undifferentiated pool; observed during real-data walkthrough when a CD ladder's "one-year emergency fund + behavioral guardrail" purpose had no schema home)
   - 2026-05-23: draft + walkthrough pass (7 gaps from a real-data fresh-build run) — (1) Step 1a update-mode now asks balance-vs-structural-vs-both before walking the file, plus a life-event check; (2) Step 2 file-location gains a third default for dedicated life-ops repos (the work-vs-personal binary missed users with a "personal OS" repo); (3) Step 4a source-format table distinguishes Monarch's snapshot / history / holdings / dashboard-paste shapes and prescribes wrong-shape handling; (4) `status` field — active / dormant / closed — with dormant preserving row for traceability while zeroing roll-ups; (5) `sync_status` field — adds the manual-only case for federal accounts and similar chronic-disconnect items, distinct from open/closed; (6) hidden-accounts prompt added to the anomaly-surface list (most aggregators hide accounts users forget about); (7) `ladder_state` + `ladder_target_size` fields — captures in-progress ladders (1-of-12 built) vs steady-state. Output schema template updated to match.
-  - 2026-05-23: draft + variable-rate disambiguation. `rate_type: APY-variable` and `APR-variable` previously conflated two different things — bank-discretionary market-rate variability vs. user-conditional qualifier-driven variability. Added a follow-up prompt + `qualifier_description` and `qualifier_met` fields. Downstream skills now compute opportunity-cost off the effective rate (qualifier met or not), not the headline. Caught when a Bluevine-style conditional 1.30% APY (currently earning 0% because qualifier not met) had no clean schema home.
-  - 2026-05-23: draft + Step 4d (income streams, non-labor) sketched in. New procedure step + schema section captures streams that aren't tied to an account balance — pensions, annuities, supplements, dividends, rental, royalties, future SSA. Per-stream fields: name, kind, monthly_amount, currency, status (active / future-activates-at-date / future-activates-at-event / expires-at-date / expires-at-event), activation, expiration, cola_adjusted, taxable_treatment, source. Multi-scenario streams (e.g., FERS at 57 vs 62; SSA at 62 vs 67 vs 70) captured as separate stream entries — crossover models scenarios against the options. **Sketch-level — schema will refine as `/fi:crossover` and `/fi:fu-money-readout` make real demands.** Caught when the walkthrough hit Step 5 (compute roll-ups) without ever having asked about FERS pension, FERS supplement (expires at 62), DRiP dividends, future SSA — all load-bearing for downstream skills.
-  - 2026-05-23: draft + Step 4d split into two prompts (current vs future-anticipated income streams). Future streams get glossed over when bundled with current ones — many users default to "my income is my paycheck" and skip the question. Asking future separately catches FERS-deferred, SSA-not-yet-claimed, future-rental cases. Step 7 closing readout gains a conditional income-streams block — rendered only when streams exist, with active-now and future-activated rendered independently; whole block omitted if no streams (matches the open-items-conditional pattern already used).
+  - 2026-05-23: draft + variable-rate disambiguation. `rate_type: APY-variable` and `APR-variable` previously conflated two different things — bank-discretionary market-rate variability vs. user-conditional qualifier-driven variability (the headline rate is offered only if the user meets a per-month activity threshold). Added a follow-up prompt + `qualifier_description` and `qualifier_met` fields. Downstream skills now compute opportunity-cost off the effective rate (qualifier met or not), not the headline.
+  - 2026-05-23: draft + Step 4d (income streams, non-labor) sketched in. New procedure step + schema section captures streams that aren't tied to an account balance — pensions, annuities, supplements, dividends, rental, royalties, future government retirement benefits. Per-stream fields: name, kind, monthly_amount, currency, status (active / future-activates-at-date / future-activates-at-event / expires-at-date / expires-at-event), activation, expiration, cola_adjusted, taxable_treatment, source. Multi-scenario streams (different eligibility ages, different claim timings) captured as separate stream entries — crossover models scenarios against the options. **Sketch-level — schema will refine as `/fi:crossover` and `/fi:fu-money-readout` make real demands.**
+  - 2026-05-23: draft + Step 4d split into two prompts (current vs future-anticipated income streams). Future streams get glossed over when bundled with current ones — many users default to "my income is my paycheck" and skip the question. Asking future separately catches deferred pensions, not-yet-claimed government benefits, future-rental cases. Step 7 closing readout gains a conditional income-streams block — rendered only when streams exist, with active-now and future-activated rendered independently; whole block omitted if no streams (matches the open-items-conditional pattern already used).
   - 2026-05-23: draft + holdings→crossover contract hardening (4 fixes). (1) Liabilities now capture `current_monthly_payment` (P&I only) — was missing; crossover needs it for amortization-based payoff-date computation. (2) Per-holding `cost_basis` added as optional but recommended field — without it crossover defaults to taxing full withdrawal at LTCG (overstates tax by 50%+ on long-held positions). (3) Closing readout gains explicit pointer to `/fi:crossover` as the FI-threshold-math next-step — previously only pointed to fu-money-readout and hourly-wage, missing the most load-bearing skill for retirement-shaped decisions. (4) New "Downstream-ready check" section in closing — skill now tells the user which downstream skills can run and what's missing to unlock the rest. Caught during track-flow walkthrough when the meta-question surfaced: "does holdings-scaffold understand what crossover needs?"
 ---
 
@@ -341,9 +341,9 @@ ask in **two separate prompts** so future streams don't get glossed over:
 Many users have one but not the other — and future streams especially tend
 to get skipped when the question is collapsed into "do you have income
 streams" (the user thinks "I'm working, my income is my paycheck" and answers
-no). Asking the future question separately catches the FERS-deferred,
-SSA-not-yet-claimed, future-rental cases that downstream skills genuinely
-need. If the user has none of either, that's fine — skip Step 4d's data
+no). Asking the future question separately catches the deferred-pension,
+government-retirement-not-yet-claimed, future-rental, and similar cases
+that downstream skills genuinely need. If the user has none of either, that's fine — skip Step 4d's data
 capture and the closing readout's income-streams block (Step 7) renders
 empty / is omitted.
 
@@ -351,16 +351,16 @@ For each stream, capture:
 
 | Field | Notes |
 |---|---|
-| `name` | Free-form (e.g., "FERS pension", "FERS annuity supplement", "SSA at 67", "VTSAX dividends", "Hoodsport ADU rental") |
+| `name` | Free-form descriptive label (e.g., "employer pension", "pension supplement", "government retirement at FRA", "fund dividends", "rental income") |
 | `kind` | One of: `pension`, `annuity`, `supplement`, `dividends`, `royalty`, `rental`, `trust-distribution`, `other-passive`. Free-form if none fit. |
 | `monthly_amount` | Current or projected $/month in native currency. Use `0` for future-only streams. |
 | `currency` | ISO-4217 (defaults to base) |
-| `status` | One of: `active` (paying now), `future-activates-at-date` (e.g., 2043-11-16), `future-activates-at-event` (e.g., "age 62", "USAID lawsuit resolution"), `expires-at-date`, `expires-at-event` (e.g., FERS supplement expires at age 62). Can have both activation and expiration. |
+| `status` | One of: `active` (paying now), `future-activates-at-date` (e.g., 2043-11-16), `future-activates-at-event` (e.g., "age 62", "litigation settlement"), `expires-at-date`, `expires-at-event` (e.g., a bridge supplement that expires when full eligibility kicks in). Can have both activation and expiration. |
 | `activation` | Date or event when the stream starts paying. Omit if `status: active`. |
 | `expiration` | Date or event when the stream stops. Omit if no end. |
-| `cola_adjusted` | `true` if the stream gets cost-of-living adjustments (e.g., SSA, most FERS pensions), `false` if fixed-nominal. |
-| `taxable_treatment` | Free-form. e.g., "fully taxable as ordinary income", "partially taxable up to 85% (SSA)", "tax-free (Roth qualified distribution)", "depends on claim year and Social Security Fairness Act status". |
-| `source` | Where the figure comes from. e.g., "SF-50 high-3 × 16.917 yrs × 1.0%", "SSA statement 2026-04-28 projection", "DRiP run-rate from Vanguard 2026-04-28". |
+| `cola_adjusted` | `true` if the stream gets cost-of-living adjustments (most government retirement benefits and many public-sector pensions), `false` if fixed-nominal (most private annuities, some private pensions). |
+| `taxable_treatment` | Free-form. e.g., "fully taxable as ordinary income", "partially taxable up to a per-locale threshold", "tax-free (Roth qualified distribution)", "depends on per-locale rules" — capture the specific rule the user understands applies to their stream. |
+| `source` | Where the figure comes from — the calculation, statement, or dated projection that produced the monthly_amount. Be specific enough that a year-from-now-you can re-derive the number. |
 
 **This section is sketch-level (2026-05-23).** It captures the right *shape*
 but the schema will refine as `/fi:crossover` and `/fi:fu-money-readout` make
@@ -369,11 +369,12 @@ of-activation modeling? trust-fund-haircut scenarios for SSA?). For now: get
 the streams in the file with enough detail that downstream skills can ask
 for what's missing.
 
-Pensions / annuities / SSA with **multiple scenarios** (e.g., FERS deferred
-annuity at age 57 reduced vs. age 62 full; SSA claim at 62 vs. 67 vs. 70):
-capture each scenario as its own stream entry with descriptive names ("FERS
-deferred annuity at 62 (full)", "SSA at 67 (FRA)", "SSA at 70 (max)"). Don't
-try to collapse into a "pick one" structure here — `/fi:crossover` will model
+Pensions / annuities / government retirement benefits with **multiple
+scenarios** (early-reduced vs full-eligibility, different claim ages,
+deferred vs immediate options) — capture each scenario as its own stream
+entry with descriptive names ("pension at full eligibility age", "government
+retirement at FRA", "government retirement at max-claim age"). Don't try to
+collapse into a "pick one" structure here — `/fi:crossover` will model
 scenarios against the captured options.
 
 ### Step 5 — Compute roll-ups
@@ -524,7 +525,7 @@ holdings-schema-version: 1
 - **type**: <tag>
 - **balance**: <amount> <ISO-currency>
 - **rate**: <X.XX>% <APY-fixed | APY-variable | APR-fixed | APR-variable | intro-rate>  *(omit for investment accounts; required for cash + liabilities + CDs)*
-- **qualifier-description**: <free-form description of the qualifier condition>  *(required when rate_type is variable AND qualifier-driven, e.g., Bluevine-style conditional APY)*
+- **qualifier-description**: <free-form description of the qualifier condition>  *(required when rate_type is variable AND qualifier-driven — e.g., a high-yield account whose headline APY is only earned when monthly debit-card activity or deposit volume meets a stated threshold)*
 - **qualifier-met**: <true | false>  *(required when qualifier-description is set; downstream skills use the effective rate, not the headline)*
 - **maturity-date**: YYYY-MM-DD  *(required for CDs / Treasuries / I-Bonds)*
 - **term**: <e.g., 12-month>  *(optional, helpful for CDs)*
@@ -708,7 +709,7 @@ See `examples/` (when populated):
 
 `draft` — the skill is documented end-to-end with concrete procedures, schema, privacy enforcement, and downstream contracts. Not yet tested in a live invocation. Pre-launch checklist:
 
-- [ ] Run the skill end-to-end on Marika's own holdings (the original source of the pattern).
+- [ ] Run the skill end-to-end on a first-user's real holdings.
 - [ ] Write the two `examples/` files.
 - [ ] Stress-test gitignore enforcement on a fresh repo.
 - [ ] Verify FX-rate query against api.frankfurter.dev returns expected format.
@@ -719,4 +720,4 @@ See `examples/` (when populated):
 ## Sources
 
 - **Vicki Robin & Joe Dominguez**, *Your Money or Your Life* (1992; rev. 2018). Step 1 of the 9-step program; the catch-up framing.
-- **Marika Olson** (2026). The holdings-file structure was built for personal use first, then generalized into this skill. The FX-at-read-time rule comes from the Monarch failure case (April 2026): aggregator-frozen conversions silently stale, leading to ~$400 misreport on EUR holdings.
+- **Marika Olson** (2026). 2026 generalization of the holdings-file structure. The FX-at-read-time rule comes from a real aggregator failure case: aggregator-frozen currency conversions silently stale between syncs, producing material misreport on non-base-currency holdings.

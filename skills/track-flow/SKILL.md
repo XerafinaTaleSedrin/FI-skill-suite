@@ -12,12 +12,13 @@ sources:
     contribution: "Sub-account allocation pattern — operational checking, tax reserves, profit pool. Categorization rules respect the sub-account purposes (pass-through vs reserve vs profit) when a user is running this architecture."
   - author: Marika Olson
     contribution: "2026 design refinements surfaced by running the skill end-to-end on real aggregator data: phantom-paycheck filter, account-purpose interrogation, mixed-purpose vendor reclassification, income source-type split, Profit First sub-account architecture recognition."
-last-reviewed: 2026-05-23
+last-reviewed: 2026-05-26
 status-history:
   - 2026-05-03: draft (initial 2026 design — unified capture+tabulation, source-type classification, phantom-paycheck filter, mixed-purpose vendor handling, cross-period refund attribution, investment-account internal-flow exclusion, anomaly grouping, gitignore enforcement)
   - 2026-05-23: draft + time-bound-benefit handling tightened. Step 3 previously said "capture amount + end date" — singular end date. Real UI / severance / similar benefits have TWO end boundaries (calendar end date AND funds-exhaustion date computed from remaining ÷ per-period-amount); the binding one is `min(calendar_end, today + remaining/period_rate)`. Skill now captures payment unit (weekly/biweekly/monthly), per-period amount, calendar end, and funds remaining; computes effective-end honestly. Caught when a real UI capture (~$1,152/week, $3,712 remaining, calendar year end Oct 31 2026) revealed funds would exhaust ~June 2026 — 4 months before the stated end date.
   - 2026-05-23: draft + step ordering — currency handling moved from Step 4 to Step 2 (right after ingest, before account-purpose and everything-flowing interrogations). Reason: account-purpose questions and missed-flow questions are currency-aware in multi-currency users; asking currency fourth meant the first three steps assumed single-currency implicitly. Renumbered: was Step 2 Account-purpose → now Step 3; was Step 3 Everything-flowing → now Step 4; was Step 4 Currency → now Step 2. Steps 5–11 unchanged. Caught when a multi-currency user (USD base + EUR foreign account) noted that the currency question should have come earlier in the walkthrough.
   - 2026-05-23: draft + mixed-purpose vendor default inverted. Was: skill forces user to declare a single dominant category per vendor (Walmart → Groceries) under the assumption that 70-80%/20-30% splits dominate. Real users routinely have 50/50 vendors (Amazon, Walmart) where any single default is wrong half the time. Now: default behavior is "trust the aggregator's per-transaction call" — the per-row category is the best signal available for genuinely-mixed vendors. Vendor-level overrides become opt-in per vendor, with "no override" as a first-class answer. Verification step only runs when overrides were declared (nothing to verify if nothing changed). Caught when a real user reported Costco=food (clear dominant, override valuable), Walmart=split (no dominant), Amazon=50/50 (no dominant) — two of three vendors didn't fit the forced-default pattern.
+  - 2026-05-26: draft + government-benefit source-type added. Aggregators commonly tag UI / pension / government-retirement / VA / railroad-retirement deposits as `Paychecks`, which made them roll up as `wage` source-type and inflate active cashflow income. The structural problem: when the entire "wage" line is composed of past-work-residual benefit income, the user's *current* labor income reads as ample when it's actually zero — and any benefit cliff (UI expiration, severance exhaustion) becomes invisible until it hits. Fix: detect statement/merchant text for known government-benefit markers (extensible list) and classify as `government-benefit` source-type — surfaced on its own monthly-tab line, excluded from active cashflow income. Same shape as the existing phantom-paycheck filter, but the carve-out is "past-work residual" rather than "internal flow."
 ---
 
 # /fi:track-flow
@@ -41,7 +42,7 @@ In 2026 reality, capture and aggregation happen in one user action — user expo
 Single skill, monthly-or-weekly cadence, idempotent re-runs. User invokes; skill ingests latest data, refreshes the current month's output, updates the rolling trend file. Re-running mid-month overwrites/refreshes the current month's row (with `complete: false` flag). Re-running after month-end produces the final stable row.
 
 Three layers of classification, applied in order:
-1. **Bucket** (personal / business-moc / business-sy / business-rb / internal-flow) — answers "whose money is this?"
+1. **Bucket** (personal / business-* / internal-flow — where `business-*` is one bucket per distinct business entity the user operates; e.g., `business-llc-a`, `business-llc-b`, `business-rental`) — answers "whose money is this?"
 2. **Source-type** (wage / family-support / side-hustle / investment-cash / investment-reinvest / refund / one-time / NOT-cashflow) — answers "what kind of cashflow event is this?"
 3. **Canonical category** (housing / transportation / food / etc., or user-discretionary verbatim) — answers "what was it for?"
 
@@ -74,7 +75,7 @@ If ambiguous, ask which aggregator the export came from.
 
 > *"Is there a regime-change boundary in your data — moved cities, changed jobs, divorce, kids, retirement, RIF, recovery start — that means older data shouldn't be aggregated with newer? If yes, what's the cutoff date?"*
 
-Mixing regimes pollutes the trend analysis. Pre-RIF DC-area expenses don't belong in the same average as post-RIF cabin life. Default behavior: process all data; user can name a cutoff to filter.
+Mixing regimes pollutes the trend analysis. Expenses from a high-cost-of-living urban regime don't belong in the same average as a post-relocation rural-or-suburban one. Default behavior: process all data; user can name a cutoff to filter.
 
 ### Step 2 — Currency handling
 
@@ -210,10 +211,11 @@ Critical for honest cashflow rollups. Tag every positive-amount row (positive am
 
 | Source-type | Definition | Active cashflow? | Notes |
 |---|---|---|---|
-| **wage** | Paycheck-shaped income — UI, severance, W-2 payroll, employer bonuses | ✓ yes | apply phantom-paycheck filter first (Step 6 — savings-institution P2P transfers tagged Paychecks reclassify to internal) |
+| **wage** | W-2 payroll, employer bonuses, and other CURRENT-LABOR paycheck-shaped income | ✓ yes | apply phantom-paycheck filter AND government-benefit detection first (Step 6 — savings-institution P2P transfers reclassify to internal; UI/pension/SS reclassify to government-benefit). **Wage means current labor** — UI, severance, pensions are past-work and belong in `government-benefit`, not wage. |
 | **family-support** | Recurring transfers from family members (mom, dad, partner, parents-in-law) | ✓ yes | declared markers per user |
 | **side-hustle** | Informal / platform / sporadic income — Poshmark, Etsy, Substack tips, gig work | ✓ yes | platform list user-extensible |
 | **investment-cash** | Investment income paid as cash to a non-investment account — HYSA interest, money-market interest, dividends paid to checking | ✓ yes | counted in BOTH active cashflow AND gross-yield |
+| **government-benefit** | UI, severance from prior employer, FERS / SS / RRB pension, VA pension, etc. — government or past-employer-funded benefits tied to PAST labor or status, not current work | ❌ no — surfaced as separate monthly-tab line | Per Finding #15 (2026-05-26). Aggregators commonly tag these as Paychecks; without the carve-out, they inflate "wage" and mask the trajectory when the benefit ends. Detection markers: statement contains `ui benefit`, `employment security`, `unemployment`, `fers annuity`, `social security`, `va benefit`, `rrb retirement`, etc. (extensible). |
 | **refund** | Reversal of a prior expense — flight refund, return credit, insurance reimbursement, vendor adjustment | ❌ no — see cross-period attribution below | reduces in-window expense magnitude only when matched original is in-window |
 | **windfall** | Cross-period refund (original expense out-of-window OR unmatched) AND unmatched positive-shape events that don't fit other types — settlements, lump-sum gifts, inheritance, sale of major asset, severance lump sum, etc. | ✓ yes (but flagged as one-time, separate line) | NEVER folded into recurring-baseline; surface as discrete event |
 | **business-income** | Income to business buckets (handled separately in business breakdown) | n/a | shown in business section, not personal |
@@ -246,7 +248,8 @@ Compute by scanning all rows (including internal-account ones) for yield-event s
 
 **Two views, both honest:**
 
-- **Active cashflow income** = wage + family-support + side-hustle + investment-cash + income-other. Excludes refund (nets to expense), excludes windfall (separate one-time line), excludes investment-account internal flows. Useful for "can I cover this month with recurring income?"
+- **Active cashflow income** = wage + family-support + side-hustle + investment-cash + income-other. Excludes refund (nets to expense), excludes windfall (separate one-time line), **excludes government-benefit (surfaced on its own line — past-work residual, not current labor)**, excludes investment-account internal flows. Useful for "can I cover this month with recurring income from current work?"
+- **Government-benefit total** = sum of government-benefit source-type rows. Surfaced on a separate monthly-tab line so the user can see UI/pension/SS coverage but it doesn't masquerade as current-labor wage. When a benefit is time-bound (UI typically expires; severance lump sums; FERS bridge supplements), pair with the time-bound-benefit handling (status-history 2026-05-23) to compute funds-exhaustion date and surface the income-cliff risk.
 - **Gross investment yield** = sum of yield-event amounts across all accounts. Useful for "what's my portfolio's retirement-income capacity?" — relevant for `/fi:fu-money-readout`, `/fi:crossover`.
 
 **Cross-period refund attribution (rule + user confirmation)**

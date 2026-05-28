@@ -31,3 +31,11 @@ lifetime-earnings.md
 transactions/
 fu-money-log/
 *-private.md
+
+# Real-data validation artifacts — design-log entries derived from the
+# skill author's actual financial data. Contains specific dollar amounts,
+# client / vendor names, contract details. Structural lessons get folded
+# into the corresponding SKILL.md status-history + Step content; the raw
+# findings stay local. Convention: any _design-log file with "real-data"
+# in the name is private.
+_design-log/*real-data*
