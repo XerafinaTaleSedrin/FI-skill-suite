@@ -10,7 +10,7 @@ sources:
     contribution: "Step 5 — make life energy visible via long-arc chart. Three lines (income, spending, investment income) plotted over time; crossover where investment income meets spending = FI threshold."
   - author: Marika Olson
     contribution: "2026 design refinements: three-method investment-income computation (actual yield / balance-change derived / forward-projected), default to forward-projection because it's the line that conceptually crosses spending. ASCII-first rendering for universal terminal compatibility, SVG/PNG via matplotlib as printable wall-chart upgrade. Reads track-flow trend CSVs rather than re-aggregating monthly tabs."
-last-reviewed: 2026-05-09
+last-reviewed: 2026-05-28
 ---
 
 # /fi:wallchart
@@ -55,42 +55,76 @@ If any required input is missing, instruct the user to run the prerequisite skil
 
 ### Step 2 — Aggregate the data series
 
-Read `_trend-totals.csv`. Extract per-month:
+Read `_trend-totals.csv`. **Include ALL months by default** (both `complete: true` and `partial`). Render solid line for complete months, dashed line for partial months. **Never silently filter to complete-only** — the current month is the one the user most wants to see, and it will always be partial.
 
-- **Monthly income** = `personal_active_income` (the recurring cashflow baseline, NOT including windfalls; per `/fi:track-flow`'s source-type schema)
-- **Monthly spending** = `-1 × personal_expense` (the refund-netted expense, sign-flipped to positive for plotting)
+Extract per-month, per stream:
 
-Filter to `complete: true` rows by default. Show partial months with a dashed line if user requests.
+**Income streams** (all of these, each as its own line, summed into a combined total):
+- `personal_active_income` — W-2 / paycheck / pension income
+- `business_income` — net consulting / LLC / side-hustle revenue (`business_income + business_expense`, net)
+- `personal_gross_yield` — actual investment yield (cash dividends/interest that hit the account this month). This goes IN income, not as a separate "method" — see Step 3.
+- Any additional income column the user has declared in `<finances_root>/profile/wallchart-config.md` (rental, royalties, etc.)
 
-### Step 3 — Compute investment-income series
+**Default rule**: include ALL income streams. User opts OUT of streams they don't want on the chart via wallchart-config.md, not in. Silent exclusion produces a chart that lies about life-energy-in.
 
-Three computation methods. Ask the user which to use, with a default recommendation:
+**Spending** = `-1 × personal_expense` (the refund-netted expense, sign-flipped to positive for plotting).
 
-> *"How should we compute the investment-income line? Three options:*
+**Outlier detection** (mandatory): scan the income data for monthly values > 5× trailing-12-month median, OR > 3 standard deviations from trailing mean. When detected, surface to the user:
+
+> *"I detected an outlier: [month] income of [$X] is [N]× the trailing median ([$Y]). This looks like a windfall (severance, sale, inheritance, etc.) miscategorized as recurring income. How should I handle it?*
 >
-> *1. **Actual yield from track-flow** (`personal_gross_yield`) — what your portfolio actually produced as dividends/interest each month. Real, but lumpy and often lower than capacity (auto-reinvest dilutes the visible cash yield).*
->
-> *2. **Balance-change derived** — month-over-month holdings.md balance change, minus net contributions. Captures market-driven gains AND yield, but volatile because of market moves.*
->
-> *3. **Forward-projected (recommended for the wall chart)** — today's portfolio × assumed safe-withdrawal rate (default 4%, configurable). Smooth line. This is the line that conceptually crosses spending — the YMOYL chart wants the answer to "what could this portfolio support sustainably?" not "what did it cough up last month."*
->
-> *Default: option 3, with options 1 + 2 plottable as side-bands if you want the volatility visible."*
+> *1. Render raw — chart auto-scale will be dominated by the outlier, but the truth is preserved*
+> *2. Annotate + use trailing-median for the trend line — outlier shown as a labeled callout, trend line not yanked upward*
+> *3. Move to a separate "windfall" marker — render as a single point above the chart, distinct from the recurring income trend*
+> *4. Push back to source — this should be re-categorized in /fi:track-flow as `personal_windfall` not `personal_active_income`. I'll emit a hint for that fix."*
 
-For option 3, ask:
+Persist the user's decision per-outlier-month to `<finances_root>/profile/wallchart-config.md` so re-runs don't re-prompt.
 
-> *"Safe-withdrawal rate? Default 4% (Bengen / Trinity classic). Modern conservative readers use 3.3-3.5%. Aggressive uses 4.5-5%. Enter a percentage."*
+### Step 3 — Compute the FI threshold reference line
 
-Apply the rate to today's portfolio value (from `holdings.md`):
+**Conceptual clarification** (load-bearing — read this before you write the prompt):
+
+The wall chart plots two conceptually different kinds of lines simultaneously:
+- **Flow lines** — income streams (incl. actual investment yield) and spending. These are monthly cash events.
+- **Reference line** — projected investment-income CAPACITY (portfolio × SWR / 12). This is NOT a monthly cash event; it's a portfolio-derived "what could this portfolio support sustainably?" question.
+
+The FI crossover moment is when the **reference line crosses the spending line**. That's a portfolio-size milestone made visible, not a flow event.
+
+Earlier versions of this skill framed Step 3 as a "pick a method" choice between actual yield, balance-change, and forward-projected. That framing was wrong — they're not alternatives, they answer different questions:
+- Actual yield is **part of income** (folds into the income total — handled in Step 2 above).
+- Forward-projected capacity is **the FI threshold reference** (handled here in Step 3).
+- Balance-change is a net-worth-delta line that doesn't belong on the default wall chart (offer as a separate panel toggle for users who want it).
+
+**What this step actually does**: ask the user to confirm the safe-withdrawal rate, compute the reference line, and persist the preference.
+
+**Prompt copy**:
+
+> *"To draw the FI threshold reference line, I need a safe-withdrawal rate. The historical SWR convention used by the FI community is 4% (Bengen 1994 / Trinity Study 1998). YMMV — please pick a rate you feel is suitable based on your level of risk acceptance. Modern conservative readers go 3.3-3.5% for long horizons; aggressive 4.5-5% for shorter horizons.*
+>
+> *At your current portfolio of [$P] from holdings.md, here's what each rate would draw:*
+> *- 3.5% → [$P × 0.035 / 12]/mo*
+> *- 4.0% → [$P × 0.04 / 12]/mo*
+> *- 4.5% → [$P × 0.045 / 12]/mo*
+>
+> *Want me to explain any of these in more depth, or compare them side-by-side, before you pick? Otherwise — what rate do you want me to use?"*
+
+The skill MUST explicitly invite Q&A before accepting an answer. Do not just collect a number and proceed. Users who are new to FI need conversational space to understand what they're choosing.
+
+Apply the chosen rate to today's portfolio value (from `holdings.md`):
 
 ```
-projected_monthly_investment_income = (portfolio_value × annual_swr) / 12
+projected_monthly_investment_income_capacity = (portfolio_value × annual_swr) / 12
 ```
 
-For historical months, optionally back-cast: use that month's holdings snapshot (if `holdings.md` has historical entries) or the current value (if not). Default to current value (smooth line — that's the wall-chart point).
+For historical months, default to current value (smooth horizontal reference — that's the wall-chart point). If `holdings.md` has historical balance entries, optionally back-cast per-month for a sloped reference line (offer as a toggle, not the default).
+
+Persist the user's SWR choice to `<finances_root>/profile/wallchart-config.md`. Subsequent runs use stored preference unless user passes `--re-prompt` or similar.
 
 ### Step 4 — Compute crossover
 
-Identify the point where `projected_monthly_investment_income >= monthly_spending`.
+Identify the point where `projected_monthly_investment_income_capacity >= monthly_spending`.
+
+(Note: the comparator is the **capacity reference line** vs. the **spending flow line** — NOT the income-total flow line vs. spending. The wall chart's FI moment is when the portfolio could sustainably cover spending, not when this month's income happened to.)
 
 - **Already-crossed**: the projected investment income line is already above the spending line at the most recent month. Surface as a headline:
   > *"Investment-income capacity ($X/mo) is already covering spending ($Y/mo). At a [4]% withdrawal rate, the portfolio supports the current spending baseline indefinitely."*
@@ -110,34 +144,41 @@ Two formats. Default: ASCII (universal). Optional: SVG/PNG (matplotlib, planned)
 
 #### ASCII chart
 
-X-axis: months (oldest left, newest right). Y-axis: dollars (auto-scale to fit max value × 1.1).
+X-axis: months (oldest left, newest right). Y-axis: dollars (auto-scale to fit max value × 1.1, EXCLUDING outliers flagged in Step 2 — outlier handling determines its own axis treatment).
 
-Three series with distinct markers:
-- Income: `█` (solid block)
-- Spending: `▒` (medium shade)
-- Investment income (projected): `─` (horizontal line — the smooth one)
+**Series convention** (visual distinction between flow and reference):
+- **Income TOTAL** (bold, load-bearing comparator): `█` solid block, FULL height
+- **Income per-stream** (lighter, sub-lines): `·` or `┄` or per-stream marker, half-height — see legend
+- **Spending** (bold flow line): `▒` medium shade
+- **FI threshold reference** (capacity, dashed reference line): `╌╌╌` dashed horizontal
+- **Partial months** (any series): dashed variant of the series's marker, NOT solid
 
-Example layout (small):
+Multi-line bold-total over stacked-area: the total is what crosses spending, so the total has to be visually dominant. Stacks bury individual streams.
+
+Example layout (5 months, two income streams + total):
 
 ```
  $8000┤
-      │   ███████████████
- $6000┤████              ██████
-      │
- $4000┤▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
-      │───────────────────────── ← projected investment income (4% SWR on current portfolio)
- $2000┤
+      │             ████████████  ← income TOTAL (bold)
+ $6000┤████████████              ┄┄┄┄  ← partial month dashed
+      │··················· ·············  ← personal_active stream (light)
+ $4000┤▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒  ← spending
+      │╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌  ← FI threshold (4% SWR capacity, dashed reference)
+ $2000┤   ········  ·······  ······  ← business_income stream (light)
       │
     $0└────┬────┬────┬────┬────┬
          Jan  Feb  Mar  Apr  May
                                  2026
 
-  Income    █  Spending   ▒  Investment-income capacity   ─
+  Income TOTAL  █   Personal-active  ··  Business  ··  Spending  ▒  FI threshold (4% SWR)  ╌
+  Partial month variant: same marker, dashed
 ```
 
 For longer time ranges (12+ months), narrow the columns. For very long ranges (24+), use compressed-month markers (every 3rd month labeled).
 
-Crossover annotation: when the projected investment income line is above the spending line, annotate at the crossing point: `★ FI threshold — investment income capacity ≥ spending starting [month]`.
+Crossover annotation: when the FI threshold reference line is above the spending line, annotate at the crossing point: `★ FI threshold — capacity ≥ spending starting [month]`.
+
+**Color / typography polish**: the ASCII baseline above is the headless-friendly contract. For print-ready / wall-ready output, downstream upgrade via the `design:` skill (or matplotlib SVG/PNG path below) can add color, hierarchy, and typography. Don't gold-plate the ASCII; keep it readable in a terminal.
 
 #### SVG / PNG (planned)
 
@@ -197,19 +238,22 @@ generated-by: /fi:wallchart
 
 ## Per-month data
 
-| Month | Income | Spending | Inv. income (projected) | Notes |
-|---|---|---|---|---|
-| 2026-01 | $X | $Y | $Z | |
-| 2026-02 | ... | ... | ... | |
-| ... | | | | |
+| Month | Active income | Business income | Investment yield | Income TOTAL | Spending | FI threshold (capacity) | Complete? | Notes |
+|---|---|---|---|---|---|---|---|---|
+| 2026-01 | $X | $X | $X | $X | $Y | $Z | ✓ / partial | |
+| 2026-02 | ... | ... | ... | ... | ... | ... | ... | |
+| ... | | | | | | | | |
+
+(Per-stream columns expand or contract based on which income streams the user has declared in `wallchart-config.md`. The TOTAL column is always present.)
 
 ## Caveats
 
-- **Investment-income line is projected, not actual.** At a [4]% SWR, today's portfolio of $P would support $Z/mo. Actual cash-yield is lower (auto-reinvested); this is capacity, not realized.
+- **The FI threshold reference line is capacity, not cash.** At a [4]% SWR, today's portfolio of $P could sustainably support $Z/mo. Actual cash-yield is lower (auto-reinvested) and is plotted separately as an income stream — see Step 2.
 - **No sequence-of-returns adjustment.** A 4% SWR assumes a "normal" market trajectory; early-retirement years that hit a bear market reduce the safe rate. For finer-grained scenario work, see `/fi:crossover`.
 - **No pension or Social Security overlay.** If you have future income streams (FERS, SSA, etc.), they reduce the spending you need the portfolio to cover. `/fi:crossover` does the bridge math.
 - **Spending line is current state.** Lifestyle inflation, healthcare cost trajectory, and time-bucketed spending (Bill Perkins) are not modeled — the chart treats current spending as flat-forward.
 - **No tax adjustment.** SWR of 4% is gross; real spendable income depends on the tax mix of your accounts.
+- **Outliers are surfaced, not silently filtered.** If your data has a windfall (severance, sale, inheritance) miscategorized as recurring income, the skill flags it and asks how to handle. See Step 2.
 
 ## Re-rendering
 
@@ -271,14 +315,20 @@ For users near or at crossover: the value is the daily exposure to the fact that
 ## TODO
 
 - [ ] Matplotlib SVG/PNG renderer (the planned upgrade)
-- [ ] Historical-portfolio back-cast for option 3 — if `holdings.md` has historical balance entries, use them per-month rather than current value (more accurate but volatile)
+- [ ] `design:` skill integration for color/typography polish — the ASCII baseline is the headless contract; print-ready output is a downstream polish pass
+- [ ] Historical-portfolio back-cast for the FI threshold reference — if `holdings.md` has historical balance entries, draw a sloped reference line per-month rather than the flat current-value line (toggle, not default)
+- [ ] Optional balance-change net-worth-delta panel — separate from the main chart, for users who want it
 - [ ] Annotation layer: mark major life events (RIF, severance start/end, side-hustle launch, etc.) on the chart so the bends have context
 - [ ] Multi-currency rendering — if user is multi-currency, decide whether to plot base-currency only or include side panels per currency
 - [ ] Mobile/phone-friendly rendering — ASCII looks bad on narrow terminals; responsive sizing
 - [ ] Print-optimized layout: title block + chart + key + per-month data table on one printable page
 - [ ] Side-by-side comparison: this year's chart vs prior year's chart, scaled equivalently
-- [ ] Optional fourth series: net worth (from `holdings.md` historical snapshots) — useful but can clutter; toggle-on
+- [ ] Optional fifth series: net worth (from `holdings.md` historical snapshots) — useful but can clutter; toggle-on
 - [ ] Caveat refresher: when caveats apply specifically (e.g., user has FERS — surface FERS-specific caveats in the file)
+
+## Status history
+
+- **2026-05-28** — Fresh-user QA walkthrough revealed 5 wallchart-specific structural issues (W-1 through W-5), 3 suite-level findings (S-1 path resolution; S-2 + S-3 in `/fi:track-flow`), and 2 cross-cutting meta-patterns (M-1 skills-as-advisors; M-2 default-to-inclusion). Full findings at `<Komorebi>/work/moc/research/fi-skill-suite/20260528_wallchart-fresh-user-qa.md`. SKILL.md updated to reflect: include-all-months default, multi-stream income with bold combined-total comparator, reframed Step 3 as concept-not-method (capacity reference line vs. flow lines), mandatory outlier detection with user-decided handling, conversational prompts with explicit Q&A invitations, persistence to `wallchart-config.md`. Status remains `draft` pending the suite-level path resolution work (S-1) and a clean second walkthrough.
 
 ---
 
