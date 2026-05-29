@@ -50,6 +50,18 @@ Three layers of classification, applied in order:
 
 ## What the skill does at runtime
 
+### Step 0 — Finalization-check pass (run before ingest)
+
+Before asking the user for new data, scan `monthly-tabs/_trend-totals.csv` for any prior months still flagged `partial`. For each such month older than the current month:
+
+> *"`<month>` is still flagged partial from a prior run. We're now in `<current-month>`, so `<month>` should be finalizable — all of its transactions have had time to clear. Want me to re-tabulate `<month>` with whatever data has come in since, and flip it to complete?"*
+
+If yes: re-run the rolling tabulation pass against `<month>` only, including any transactions ingested in the meantime, and flip the `complete` flag to `true`. If no: leave as-is but note that downstream skills (wallchart, crossover) will continue treating `<month>` as partial.
+
+**Why this matters**: track-flow's complete/partial flag captures the state at last-run, not the state of reality. A month that was partial when last tracked may have been fully captured since but never re-run, leaving the trend file lying. The finalization-check makes the staleness visible and offers a one-click fix. Validation case (2026-05-28): April 2026 was found flagged `partial` in late May during a fresh-user walkthrough of `/fi:wallchart`; this check would surface that and offer to finalize April before any downstream skill consumed the lying flag.
+
+This step is fast (no user-data ingest), runs every track-flow invocation, and is silent when there's nothing to finalize.
+
 ### Step 1 — Ingest
 
 Ask the user:
@@ -251,6 +263,22 @@ Compute by scanning all rows (including internal-account ones) for yield-event s
 - **Active cashflow income** = wage + family-support + side-hustle + investment-cash + income-other. Excludes refund (nets to expense), excludes windfall (separate one-time line), **excludes government-benefit (surfaced on its own line — past-work residual, not current labor)**, excludes investment-account internal flows. Useful for "can I cover this month with recurring income from current work?"
 - **Government-benefit total** = sum of government-benefit source-type rows. Surfaced on a separate monthly-tab line so the user can see UI/pension/SS coverage but it doesn't masquerade as current-labor wage. When a benefit is time-bound (UI typically expires; severance lump sums; FERS bridge supplements), pair with the time-bound-benefit handling (status-history 2026-05-23) to compute funds-exhaustion date and surface the income-cliff risk.
 - **Gross investment yield** = sum of yield-event amounts across all accounts. Useful for "what's my portfolio's retirement-income capacity?" — relevant for `/fi:fu-money-readout`, `/fi:crossover`.
+
+**Magnitude-based windfall detection (mandatory)**
+
+After all rule-based classification runs, scan every row tagged `wage`, `family-support`, `side-hustle`, `investment-cash`, or `income-other` for magnitude outliers. **Rule**: any single positive-amount row > 5× the user's trailing-12-month median monthly active-cashflow income, OR > 3 standard deviations above the trailing mean, gets flagged as a possible windfall miscategorization.
+
+For each flagged row, surface to the user:
+
+> *"This row stood out as much larger than your normal income pattern: [merchant] [$X] on [date], currently tagged as [source-type]. Trailing-12-month median monthly income is [$Y].*
+>
+> *Common causes of an income spike this size: severance lump sum, USAID/federal buyout, business sale, inheritance, settlement, asset sale, large gift. All of those belong in `windfall`, not `wage` or `side-hustle` — windfalls go on a separate line so the recurring-income trend doesn't lie.*
+>
+> *Re-classify as `windfall`? (y/n/explain)"*
+
+If user confirms: re-tag as `windfall`. If user declines: leave as-is but persist the "user-confirmed-not-windfall" tag so future runs don't re-prompt for the same row.
+
+**Why this matters**: rule-based classification at the merchant/statement-text layer cannot catch every windfall. A USAID buyout deposited via the same direct-deposit channel as a regular paycheck will hit the wage classifier. Without a magnitude check, a $102K buyout sits in `personal_active_income` and breaks every downstream chart (wallchart, crossover, fu-money-readout) that treats active income as recurring. The validation case (2026-05-28): a buyout was found in `personal_active_income` during a fresh-user walkthrough of `/fi:wallchart`; this detection step would have caught it at ingest.
 
 **Cross-period refund attribution (rule + user confirmation)**
 

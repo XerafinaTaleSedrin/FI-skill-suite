@@ -118,21 +118,70 @@ The verdict scale is the substance — books that recommend ignoring lived const
 
 ---
 
+## Path resolution — `<finances_root>`
+
+Every skill in this suite reads from / writes to files under a common root, conventionally referred to as `<finances_root>`. Different users put their data in different places — `~/finances/`, `~/Documents/personal-finances/`, `<some-project>/life/finances/`, etc. — and the suite must resolve to the right one without baking a path into any skill.
+
+**Resolution order** (every skill walks this order on first relevant operation):
+
+1. **`FI_ROOT` environment variable**, if set. Takes precedence over everything else. Useful for CI, automation, or users running multiple FI stacks (personal vs. LLC vs. client bookkeeping) who flip between scopes per-shell.
+
+2. **Walk-up `.fi-root` sentinel file.** From the current working directory, walk upward toward `/` looking for a `.fi-root` file. Same pattern as `.git` — when found, the directory containing the sentinel IS `<finances_root>`. The sentinel itself is a (typically empty) marker file; if it has content, it's TOML and can override defaults (currency, default SWR, etc.). Walk-up makes the suite project-aware: each project can have its own finances root, and skills "just work" wherever they're invoked.
+
+3. **`~/.fi/config.toml`**, if present. Top-level user-wide config. May declare `finances_root = "..."` for users who keep all finances in one place across projects. Also the natural home for cross-cutting defaults (`default_swr = 0.04`, `currency = "USD"`).
+
+4. **`~/finances/`**, as a last-resort default. If nothing above resolves, assume the user followed the historical convention and look there. If it doesn't exist, fail loudly with instructions: "I can't find your finances root. Run `/fi:holdings-scaffold` first — it sets up the directory and writes the `.fi-root` sentinel so every other skill knows where to look. Or set `FI_ROOT` env var. Or create `~/.fi/config.toml` with `finances_root = '/path/to/your/data'`."
+
+**Sentinel ownership**: `/fi:holdings-scaffold` writes the `.fi-root` marker at its first-run setup pass. No other skill should write it. Other skills only read it (or walk up looking for it).
+
+**Multi-account support**: future-friendly. A user with personal finances at `~/personal-finances/.fi-root` and LLC bookkeeping at `~/rogue-bureaucrat/.fi-root` can `cd` between them and the skills follow. The `FI_ROOT` env var lets shell aliases pin a scope explicitly.
+
+**Implementation rule**: every skill that reads or writes finances data MUST resolve `<finances_root>` at the start of its run via the four-step order above. No skill hard-codes `~/finances/`. References to data paths in SKILL.md should always be written `<finances_root>/monthly-tabs/_trend-totals.csv`, not `~/finances/monthly-tabs/_trend-totals.csv`. Cross-reference: this section + `/fi:holdings-scaffold`'s setup pass.
+
+---
+
 ## Cross-skill data contracts
 
-Skills that read from / write to shared sentinel files must respect the schema:
+All paths below are relative to `<finances_root>` (see path resolution above). Skills that read from / write to shared sentinel files must respect the schema:
 
-| Sentinel file | Owner skill | Reader skills | Schema source |
+| Sentinel file (relative to `<finances_root>`) | Owner skill | Reader skills | Schema source |
 |---|---|---|---|
-| `holdings.md` (user repo) | `/fi:holdings-scaffold` | `/fi:fu-money-readout`, `/fi:crossover`, `/fi:redirect` | See `skills/holdings-scaffold/SCHEMA.md` |
-| `transactions/<YYYY-MM>.csv` (user repo) | `/fi:track-flow` | (internal — track-flow reads its own output during the rolling tabulation pass) | See `skills/track-flow/SCHEMA.md` |
-| `monthly-tabs/<YYYY-MM>.md` (user repo) | `/fi:track-flow` | `/fi:three-questions` | See `skills/track-flow/SCHEMA.md` |
-| `monthly-tabs/_trend-categories.csv` (user repo) | `/fi:track-flow` | `/fi:wallchart` | See `skills/track-flow/SCHEMA.md` |
-| `monthly-tabs/_trend-totals.csv` (user repo) | `/fi:track-flow` | `/fi:crossover` | See `skills/track-flow/SCHEMA.md` |
-| `wallchart.md` (user repo) | `/fi:wallchart` | `/fi:crossover` | See `skills/wallchart/SCHEMA.md` |
-| `book-audits/<DATE>-<book>.md` (this repo) | `/fi:audit` | (read by humans, surfaced in cross-references) | See `book-audits/_audit-template.md` |
+| `.fi-root` (root marker, optional TOML overrides) | `/fi:holdings-scaffold` | (every skill walks up looking for it) | See path resolution above |
+| `holdings.md` | `/fi:holdings-scaffold` | `/fi:fu-money-readout`, `/fi:crossover`, `/fi:redirect`, `/fi:wallchart` | See `skills/holdings-scaffold/SCHEMA.md` |
+| `transactions/<YYYY-MM>.csv` | `/fi:track-flow` | (internal — track-flow reads its own output during the rolling tabulation pass) | See `skills/track-flow/SCHEMA.md` |
+| `monthly-tabs/<YYYY-MM>.md` | `/fi:track-flow` | `/fi:three-questions` | See `skills/track-flow/SCHEMA.md` |
+| `monthly-tabs/_trend-categories.csv` | `/fi:track-flow` | `/fi:wallchart` | See `skills/track-flow/SCHEMA.md` |
+| `monthly-tabs/_trend-totals.csv` | `/fi:track-flow` | `/fi:crossover`, `/fi:wallchart` | See `skills/track-flow/SCHEMA.md` |
+| `profile/wallchart-config.md` | `/fi:wallchart` | (internal — persisted user preferences) | See `skills/wallchart/SKILL.md` |
+| `wallchart.md` | `/fi:wallchart` | `/fi:crossover` | See `skills/wallchart/SCHEMA.md` |
+| `book-audits/<DATE>-<book>.md` (this repo, not finances_root) | `/fi:audit` | (read by humans, surfaced in cross-references) | See `book-audits/_audit-template.md` |
 
 **Rule:** if a skill reads from a sentinel file, it MUST validate the schema and fail loudly if the file is malformed. Don't silently ignore unexpected fields.
+
+---
+
+## Defaults: include, don't exclude
+
+**Cross-cutting design rule** (surfaced from wallchart QA 2026-05-28): when a skill encounters a filter / inclusion decision at runtime, default to INCLUSION. Let the user opt OUT of what they don't want. Silent exclusion produces output that's wrong in a way the user can't see.
+
+Applied examples:
+- `/fi:wallchart` defaults to including all months (complete + partial), all income streams (personal + business + yield + user-declared), and rendering outliers (with a "how should I handle this?" prompt) rather than silently filtering them.
+- `/fi:track-flow` defaults to including all transactions in the rolling tab, not just "categorized" ones — uncategorized transactions surface as a prompt at the end of the run.
+- `/fi:crossover` defaults to including all income streams in the bridge math, not just W-2 — pension, SSA, rental, royalties all factor in unless user explicitly excludes.
+
+Silent default-exclude is a foot-gun in personal finance specifically because the user often doesn't know what's missing until they make a decision based on a chart that quietly omitted half the picture.
+
+---
+
+## Skills are advisors, not switch statements
+
+**Cross-cutting design rule** (surfaced from wallchart QA 2026-05-28): when a skill needs the user to make a decision, it should:
+
+1. **Explain the options in plain language anchored to the user's actual data** — not abstract definitions. "Option 3 would draw the line at $5,300/mo (that's your $1.43M × 4% / 12)" beats "Option 3 uses forward-projected SWR methodology."
+2. **Explicitly invite follow-up Q&A before accepting an answer.** "Want me to explain any of these in more depth, or compare them side-by-side, before you pick?" Users who are new to a domain need conversational space.
+3. **Persist the answer** to a per-skill config file (e.g., `profile/<skill>-config.md`) so subsequent runs don't re-prompt. Re-prompt only on explicit `--re-prompt` or equivalent flag.
+
+Skill prompts that are switch-case ("pick 1, 2, or 3") treat the user as a CLI. The user is a human making a financial decision and may need to think out loud. Build for that.
 
 ---
 

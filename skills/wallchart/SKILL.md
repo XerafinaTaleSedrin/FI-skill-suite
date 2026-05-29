@@ -43,15 +43,15 @@ The skill is **idempotent**: re-running with new data refreshes the chart in pla
 
 ### Step 1 — Source data check
 
-Check for required inputs:
+Resolve `<finances_root>` per the four-step convention in AGENTS.md (FI_ROOT env var → `.fi-root` walk-up → `~/.fi/config.toml` → `~/finances/` default). Then check for required inputs:
 
-- `~/finances/monthly-tabs/_trend-totals.csv` (from `/fi:track-flow`) — required
-- `~/finances/holdings.md` (from `/fi:holdings-scaffold`) — required for investment-income line
-- `~/finances/hourly-wage/*.md` (from `/fi:hourly-wage`) — optional, for life-energy-hour annotation on Y-axis labels
+- `<finances_root>/monthly-tabs/_trend-totals.csv` (from `/fi:track-flow`) — required
+- `<finances_root>/holdings.md` (from `/fi:holdings-scaffold`) — required for the FI threshold reference line
+- `<finances_root>/hourly-wage/*.md` (from `/fi:hourly-wage`) — optional, for life-energy-hour annotation on Y-axis labels
 
-If any required input is missing, instruct the user to run the prerequisite skill first and stop. Be specific:
+If `<finances_root>` itself can't be resolved, fail loudly per the AGENTS.md path-resolution spec. If a required input is missing inside a resolved finances root, instruct the user to run the prerequisite skill first and stop. Be specific:
 
-> *"Need `~/finances/monthly-tabs/_trend-totals.csv` from `/fi:track-flow`. Run that first (drops a fresh aggregator export, takes ~5 minutes), then come back."*
+> *"Need `<finances_root>/monthly-tabs/_trend-totals.csv` from `/fi:track-flow`. Run that first (drops a fresh aggregator export, takes ~5 minutes), then come back."*
 
 ### Step 2 — Aggregate the data series
 
