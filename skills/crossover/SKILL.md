@@ -8,6 +8,8 @@ status: draft
 sources:
   - book: Your Money or Your Life
     contribution: "Step 8 — capital and the crossover point"
+  - book: Just Keep Buying (Maggiulli, 2022)
+    contribution: "The 'transfer the load' framing of the crossover point — keep buying income-producing assets until they out-earn your labor and carry you by the time you can no longer work. Conceptual reinforcement of YMOYL Step 8 rather than a new mechanic."
   - author: Marika Olson
     contribution: "2026 design refinements — bridge math vs perpetual-portfolio math; load-bearing headline written here, echoed in fu-money-readout; income streams read from holdings.md (single source of truth) rather than a separate profile file; future expense reductions derived from holdings.md liabilities via amortization (not a separate input); two-scenario sensitivity for streams with early-reduced and waited-full options; trust-fund-haircut sensitivity for government retirement; active-income-forward-projection rule"
 last-reviewed: 2026-05-23

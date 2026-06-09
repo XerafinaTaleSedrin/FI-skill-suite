@@ -12,6 +12,8 @@ sources:
     contribution: "p.74 — the Weekly Money Date concept. ~5-minute weekly cash-flow check, in contrast to the heavier monthly tabulation. Cadence and lightness come from Trull's framing."
   - book: Your Money or Your Life
     contribution: "Monthly tabulation is the heavier sibling — the money-date is the weekly lighter version, same spirit. The shared principle: visibility on flow is the first lever."
+  - book: Just Keep Buying (Maggiulli, 2022)
+    contribution: "The 2x spending rule — for every dollar spent guilt-free on a want, invest a matching dollar — as a permission-to-spend device aimed squarely at the accumulator/Ruler under-spending instinct this skill counterweights. Useless for an over-spender; genuinely useful for the saver who needs structured cover to enjoy their money."
   - author: Marika Olson
     contribution: "2026 design refinements — three-question counterweight structure aimed at the Ruler/Accumulator hoarding instinct. Designed against the failure mode of becoming another anxious balance-check ritual."
 last-reviewed: 2026-05-23
