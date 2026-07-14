@@ -1,8 +1,8 @@
 ---
 name: money-date
 description: Weekly ~5-minute counterweight ritual to the hoarding instinct. Three honest questions — did you pay yourself, did you spend on ease, did you enjoy anything — surfaced once a week against the user's actual flow. Designed for owners whose risk pattern is *under*-spending, not over. Use weekly, or whenever the user wants a quick check against the "check the balance to feel safe" compulsion.
-layer: pattern
-ymoyl_step: cadence-companion
+layer: concept+pattern
+ymoyl_step: n/a
 mode_aware: false
 status: draft
 status-history:
