@@ -138,7 +138,7 @@ Output is two-tier:
 7. **Sensitivity table** — vary the load-bearing assumptions, show how the answer shifts:
    - Real return on portfolio: ±1% from baseline (typically 5% real)
    - Spending baseline: ±10%
-   - High-3 / pension multiplier: per the confidence interval declared in `future-income-streams.md`
+   - High-3 / pension multiplier: per the confidence noted on the stream's `source` field in `holdings.md`'s income-streams section
    - Government retirement timing: early / full / late (locale-aware — US SSA at 62/67/70, UK State Pension at State Pension Age with 1% deferral bonus per 9 weeks, Canada CPP at 60-70 with adjustments per month, etc.)
    - Trust-fund haircut: locale-aware; for US, model SSA 2034 -19% scenario per current law; for UK, model State Pension means-testing scenarios; etc.
    - Mortgage payoff timing: as-amortized vs accelerated curtailments
@@ -369,7 +369,7 @@ and real numbers in the report so the user can see purchasing-power impact.
 
   The principle: the user should not be surprised by a caveat later that they could have known about now. The headline carries the load.
 
-- **Bridge math, not perpetual-portfolio math.** When future fixed-income streams exceed cost-of-living at activation, the portfolio's job is to bridge — not support spending forever. This is often the more honest frame than the textbook "4% rule" perpetual-portfolio model. The skill defaults to bridge-math framing if `future-income-streams.md` declares any stream ≥ 50% of expense baseline.
+- **Bridge math, not perpetual-portfolio math.** When future fixed-income streams exceed cost-of-living at activation, the portfolio's job is to bridge — not support spending forever. This is often the more honest frame than the textbook "4% rule" perpetual-portfolio model. The skill defaults to bridge-math framing if `holdings.md`'s income-streams section declares any stream ≥ 50% of expense baseline.
 
 - **Headline written here, echoed in fu-money-readout.** Decouples slow sensitivity math (run periodically) from fast daily orientation (echoed every readout). The headline file is the contract between skills.
 
