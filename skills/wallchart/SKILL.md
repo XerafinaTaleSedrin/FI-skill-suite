@@ -328,7 +328,7 @@ For users near or at crossover: the value is the daily exposure to the fact that
 
 ## Status history
 
-- **2026-05-28** — Fresh-user QA walkthrough revealed 5 wallchart-specific structural issues (W-1 through W-5), 3 suite-level findings (S-1 path resolution; S-2 + S-3 in `/fi:track-flow`), and 2 cross-cutting meta-patterns (M-1 skills-as-advisors; M-2 default-to-inclusion). Full findings at `<Komorebi>/work/moc/research/fi-skill-suite/20260528_wallchart-fresh-user-qa.md`. SKILL.md updated to reflect: include-all-months default, multi-stream income with bold combined-total comparator, reframed Step 3 as concept-not-method (capacity reference line vs. flow lines), mandatory outlier detection with user-decided handling, conversational prompts with explicit Q&A invitations, persistence to `wallchart-config.md`. Status remains `draft` pending the suite-level path resolution work (S-1) and a clean second walkthrough.
+- **2026-05-28** — Fresh-user QA walkthrough revealed 5 wallchart-specific structural issues (W-1 through W-5), 3 suite-level findings (S-1 path resolution; S-2 + S-3 in `/fi:track-flow`), and 2 cross-cutting meta-patterns (M-1 skills-as-advisors; M-2 default-to-inclusion). SKILL.md updated to reflect: include-all-months default, multi-stream income with bold combined-total comparator, reframed Step 3 as concept-not-method (capacity reference line vs. flow lines), mandatory outlier detection with user-decided handling, conversational prompts with explicit Q&A invitations, persistence to `wallchart-config.md`. Status remains `draft` pending the suite-level path resolution work (S-1) and a clean second walkthrough.
 
 ---
 

@@ -15,7 +15,7 @@ sources:
 last-reviewed: 2026-05-26
 status-history:
   - "2026-05-03: draft (initial 2026 design — unified capture+tabulation, source-type classification, phantom-paycheck filter, mixed-purpose vendor handling, cross-period refund attribution, investment-account internal-flow exclusion, anomaly grouping, gitignore enforcement)"
-  - "2026-05-23: draft + time-bound-benefit handling tightened. Step 3 previously said \"capture amount + end date\" — singular end date. Real UI / severance / similar benefits have TWO end boundaries (calendar end date AND funds-exhaustion date computed from remaining ÷ per-period-amount); the binding one is `min(calendar_end, today + remaining/period_rate)`. Skill now captures payment unit (weekly/biweekly/monthly), per-period amount, calendar end, and funds remaining; computes effective-end honestly. Caught when a real UI capture (~$1,152/week, $3,712 remaining, calendar year end Oct 31 2026) revealed funds would exhaust ~June 2026 — 4 months before the stated end date."
+  - "2026-05-23: draft + time-bound-benefit handling tightened. Step 3 previously said \"capture amount + end date\" — singular end date. Real UI / severance / similar benefits have TWO end boundaries (calendar end date AND funds-exhaustion date computed from remaining ÷ per-period-amount); the binding one is `min(calendar_end, today + remaining/period_rate)`. Skill now captures payment unit (weekly/biweekly/monthly), per-period amount, calendar end, and funds remaining; computes effective-end honestly. Caught when a real UI capture revealed the benefit pool would exhaust months before the stated calendar end date."
   - "2026-05-23: draft + step ordering — currency handling moved from Step 4 to Step 2 (right after ingest, before account-purpose and everything-flowing interrogations). Reason: account-purpose questions and missed-flow questions are currency-aware in multi-currency users; asking currency fourth meant the first three steps assumed single-currency implicitly. Renumbered: was Step 2 Account-purpose → now Step 3; was Step 3 Everything-flowing → now Step 4; was Step 4 Currency → now Step 2. Steps 5–11 unchanged. Caught when a multi-currency user (USD base + EUR foreign account) noted that the currency question should have come earlier in the walkthrough."
   - "2026-05-23: draft + mixed-purpose vendor default inverted. Was: skill forces user to declare a single dominant category per vendor (Walmart → Groceries) under the assumption that 70-80%/20-30% splits dominate. Real users routinely have 50/50 vendors (Amazon, Walmart) where any single default is wrong half the time. Now: default behavior is \"trust the aggregator's per-transaction call\" — the per-row category is the best signal available for genuinely-mixed vendors. Vendor-level overrides become opt-in per vendor, with \"no override\" as a first-class answer. Verification step only runs when overrides were declared (nothing to verify if nothing changed). Caught when a real user reported Costco=food (clear dominant, override valuable), Walmart=split (no dominant), Amazon=50/50 (no dominant) — two of three vendors didn't fit the forced-default pattern."
   - "2026-05-26: draft + government-benefit source-type added. Aggregators commonly tag UI / pension / government-retirement / VA / railroad-retirement deposits as `Paychecks`, which made them roll up as `wage` source-type and inflate active cashflow income. The structural problem: when the entire \"wage\" line is composed of past-work-residual benefit income, the user's *current* labor income reads as ample when it's actually zero — and any benefit cliff (UI expiration, severance exhaustion) becomes invisible until it hits. Fix: detect statement/merchant text for known government-benefit markers (extensible list) and classify as `government-benefit` source-type — surfaced on its own monthly-tab line, excluded from active cashflow income. Same shape as the existing phantom-paycheck filter, but the carve-out is \"past-work residual\" rather than \"internal flow.\""
@@ -58,7 +58,7 @@ Before asking the user for new data, scan `monthly-tabs/_trend-totals.csv` for a
 
 If yes: re-run the rolling tabulation pass against `<month>` only, including any transactions ingested in the meantime, and flip the `complete` flag to `true`. If no: leave as-is but note that downstream skills (wallchart, crossover) will continue treating `<month>` as partial.
 
-**Why this matters**: track-flow's complete/partial flag captures the state at last-run, not the state of reality. A month that was partial when last tracked may have been fully captured since but never re-run, leaving the trend file lying. The finalization-check makes the staleness visible and offers a one-click fix. Validation case (2026-05-28): April 2026 was found flagged `partial` in late May during a fresh-user walkthrough of `/fi:wallchart`; this check would surface that and offer to finalize April before any downstream skill consumed the lying flag.
+**Why this matters**: track-flow's complete/partial flag captures the state at last-run, not the state of reality. A month that was partial when last tracked may have been fully captured since but never re-run, leaving the trend file lying. The finalization-check makes the staleness visible and offers a one-click fix. Observed failure shape: a prior month left flagged `partial` for weeks after its transactions had fully cleared, with downstream skills (`/fi:wallchart`, `/fi:crossover`) consuming the lying flag until someone noticed.
 
 This step is fast (no user-data ingest), runs every track-flow invocation, and is silent when there's nothing to finalize.
 
@@ -117,7 +117,7 @@ After ingest, before classification, ask the user about each account in the data
 > - *HSA / FSA — tax-advantaged but restricted-use*
 > - *Reserve / sinking fund — emergency, CD ladder, specific savings goal*
 
-User declares per-account roles. Skill applies bucket and treatment rules accordingly. The Profit First architecture (one main + multiple sub-accounts: federal taxes / B&O tax / sales tax / profit pool) is a common pattern; handle each sub-account per its declared purpose.
+User declares per-account roles. Skill applies bucket and treatment rules accordingly. The Profit First architecture (one main + multiple sub-accounts: federal taxes / state business tax / sales tax / profit pool) is a common pattern; handle each sub-account per its declared purpose.
 
 **Persist declarations to user profile.** All account-purpose declarations are written to `~/finances/profile/account-purposes.md` (gitignored). On first run, walk all accounts. On subsequent runs, read the profile silently and only prompt for accounts that are NEW (appearing in the data but not yet declared). User can re-walk anytime via `--rewalk-accounts`.
 
@@ -246,7 +246,7 @@ These rows still contribute to **gross investment yield** (extracted separately,
 
 **User confirmation in Step 3 — account-purpose interrogation:** the skill confirms with the user *"this account auto-reinvests dividends, yes? Or do dividends flow to checking?"* for each investment-bucket account. Default = auto-reinvest. If a user has an account that DOES cash out yield to checking, flip the default; those yield events then count as `investment-cash` for that account.
 
-**Why this matters:** without this rule, every quarterly dividend distribution and every fund rebalance (e.g., consolidating multiple eREIT positions into a single fund) inflates "income" — sometimes by thousands of dollars in a single month. The validation case: a 7-sells-to-1-buy same-day rebalance event totaling ~5K of principal moving sideways inside a Fundrise account looked like ~5K of income until the rule was added.
+**Why this matters:** without this rule, every quarterly dividend distribution and every fund rebalance (e.g., consolidating multiple fund positions into a single fund) inflates "income" — sometimes by thousands of dollars in a single month. The validation case: a many-sells-to-one-buy same-day rebalance event moving principal sideways inside an investment account looked like income for the full rebalance amount until the rule was added.
 
 **Gross investment yield (capacity number, separate from cashflow):**
 
@@ -272,13 +272,13 @@ For each flagged row, surface to the user:
 
 > *"This row stood out as much larger than your normal income pattern: [merchant] [$X] on [date], currently tagged as [source-type]. Trailing-12-month median monthly income is [$Y].*
 >
-> *Common causes of an income spike this size: severance lump sum, USAID/federal buyout, business sale, inheritance, settlement, asset sale, large gift. All of those belong in `windfall`, not `wage` or `side-hustle` — windfalls go on a separate line so the recurring-income trend doesn't lie.*
+> *Common causes of an income spike this size: severance lump sum, employer or government buyout, business sale, inheritance, settlement, asset sale, large gift. All of those belong in `windfall`, not `wage` or `side-hustle` — windfalls go on a separate line so the recurring-income trend doesn't lie.*
 >
 > *Re-classify as `windfall`? (y/n/explain)"*
 
 If user confirms: re-tag as `windfall`. If user declines: leave as-is but persist the "user-confirmed-not-windfall" tag so future runs don't re-prompt for the same row.
 
-**Why this matters**: rule-based classification at the merchant/statement-text layer cannot catch every windfall. A USAID buyout deposited via the same direct-deposit channel as a regular paycheck will hit the wage classifier. Without a magnitude check, a $102K buyout sits in `personal_active_income` and breaks every downstream chart (wallchart, crossover, fu-money-readout) that treats active income as recurring. The validation case (2026-05-28): a buyout was found in `personal_active_income` during a fresh-user walkthrough of `/fi:wallchart`; this detection step would have caught it at ingest.
+**Why this matters**: rule-based classification at the merchant/statement-text layer cannot catch every windfall. A buyout or severance lump sum deposited via the same direct-deposit channel as a regular paycheck will hit the wage classifier. Without a magnitude check, a six-figure one-time deposit sits in `personal_active_income` and breaks every downstream chart (wallchart, crossover, fu-money-readout) that treats active income as recurring. This failure shape was observed in real data — the detection step exists to catch it at ingest.
 
 **Cross-period refund attribution (rule + user confirmation)**
 
@@ -290,7 +290,7 @@ When a refund-shaped row is detected (positive amount in expense-shaped category
 | Out-of-window match (original expense pre-tracking) | Reclassify as `windfall`. Does NOT reduce current expense magnitude — surfaces as separate windfall line. |
 | No match (no prior same-merchant negative found) | Reclassify as `windfall`, flag for user: *"This positive-amount row from [vendor] looks refund-shaped but I can't find a matching original expense. Refund of an out-of-window purchase, or income event?"* |
 
-**Why this matters:** refunds for purchases made before the tracking window started would otherwise net against unrelated current-month expenses, making the period look artificially cheap. The validation case: a flight cancelation refund of ~2K in April for tickets purchased the previous September would have understated April's actual spending by 40%.
+**Why this matters:** refunds for purchases made before the tracking window started would otherwise net against unrelated current-month expenses, making the period look artificially cheap. The validation case: a large flight-cancellation refund landing months after the original ticket purchase would have materially understated the refund month's actual spending.
 
 ### Step 8 — Tabulate
 
@@ -371,7 +371,7 @@ Before writing any output, the skill verifies that `~/finances/` is covered by t
 
 1. **Already gitignored** (`git check-ignore` returns coverage) — proceed silently.
 2. **Not in a git repo** — write a "DO NOT COMMIT" header banner at the top of every file generated.
-3. **In a git repo but not gitignored** — STOP. Add `life/finances/` (or equivalent path) to the user's `.gitignore`, commit the gitignore change with a clear message, then proceed. Never write user financial data to a path that could land in git history.
+3. **In a git repo but not gitignored** — STOP. Add the finances directory (or a covering parent path) to the user's `.gitignore`, commit the gitignore change with a clear message, then proceed. Never write user financial data to a path that could land in git history.
 
 The skill also verifies via `git log --all --follow -- <path>` that no historical version of any output file exists in git history. If a leaked version is found, surface it loudly: *"Found prior version of this file in git history at commit X. This is a privacy leak — investigate and consider history-rewrite (force-push) before proceeding."*
 
