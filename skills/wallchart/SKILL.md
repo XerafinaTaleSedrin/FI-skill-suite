@@ -219,7 +219,7 @@ generated: YYYY-MM-DD
 data-source: monthly-tabs/_trend-totals.csv
 months-included: YYYY-MM to YYYY-MM
 swr-assumption: 4%
-investment-income-method: projected | actual | balance-change-derived
+fi-threshold-method: capacity-projection   # always portfolio × SWR / 12; actual yield folds into income (Step 2), balance-change is an optional separate panel — see Step 3
 crossover-status: already-crossed | crossing-visible | not-yet-crossed
 generated-by: /fi:wallchart
 ---
@@ -290,11 +290,12 @@ Generated via matplotlib when the Python optimization is built. Until then, ASCI
 
 Fully supported. Cron-friendly:
 
-- Pulls from already-existing CSV + holdings.md (no interactive prompts needed if user has previously declared SWR + investment-income method)
-- SWR + method declarations persist in `~/finances/profile/wallchart-config.md` after first run
+- Pulls from already-existing CSV + holdings.md (no interactive prompts needed if the user has previously declared an SWR and resolved any outlier prompts)
+- SWR choice + per-outlier handling decisions persist in `~/finances/profile/wallchart-config.md` after first run
+- If a NEW outlier appears in a headless run (no human to answer the Step 2 prompt), render it raw with an inline annotation flagging it for the next interactive run — never silently filter it
 - Re-renders the wallchart at whatever cadence the cron fires (typically end-of-month after `/fi:track-flow` finalizes)
 
-For first runs, interactive setup is required to capture SWR + method preference.
+For first runs, interactive setup is required to capture the SWR preference.
 
 ---
 
