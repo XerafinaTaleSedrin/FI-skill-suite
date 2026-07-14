@@ -155,7 +155,10 @@ intervention.
 
 Write each run to `<finances_root>/money-date/YYYY-MM-DD.md`. One file per run, a
 dated snapshot, never overwritten. Validate `.gitignore` coverage before
-writing; warn if the path is not ignored.
+writing, per AGENTS.md privacy posture rule 2: if the path is inside a git
+repo and not covered, add it to `.gitignore` BEFORE writing (with the user
+shown the diff); if not in a git repo, write the "DO NOT COMMIT" warning
+header at the top of the file. Never just warn and write anyway.
 
 ```markdown
 ---
