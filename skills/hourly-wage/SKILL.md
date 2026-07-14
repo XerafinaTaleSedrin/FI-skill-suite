@@ -360,8 +360,10 @@ When the user supplies any of the following, persist to
 - `processor-fees.md` — payment processor + fee structure per stream
   (used by Step 5 fee subtraction)
 - `allocation-basis.md` — by-hours vs by-revenue, captured once, reused
-- `mixed-purpose-vendors.md` — vendor-default category map (Walmart →
-  Groceries, etc.) — shared with `/fi:track-flow`
+- `vendor-defaults.md` — vendor-default category map (Walmart →
+  Groceries, etc.) — owned and written by `/fi:track-flow` (Step 6
+  there); this skill only reads it. Read-only here — never write it
+  from hourly-wage.
 - `tax-pass-throughs.md` — per-stream state/sales tax pass-through rates
   (used by Step 3a)
 

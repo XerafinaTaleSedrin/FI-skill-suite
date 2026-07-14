@@ -567,7 +567,7 @@ User-specific test artifacts live on the user's machine in their gitignored fina
 - [ ] Pattern detection thresholds — what counts as "anomaly"? What counts as "recurring"?
 - [ ] Currency-conversion audit log per month (which transactions were converted, at what rate, when).
 - [ ] Recurring-detection across months — first-month-seen flag, last-month-seen flag for subscriptions ending or starting.
-- [ ] Mixed-purpose vendor profile — user-declared defaults stored in `references/user-profile.md` so the skill remembers Walmart=Groceries across runs.
+- [x] Mixed-purpose vendor profile — implemented as `profile/vendor-defaults.md` (Step 6): user-declared defaults persisted across runs, re-walk via `--rewalk-vendors`.
 - [x] Auto-reinvest pair detection — replaced by simpler "investment-account = internal by default" rule, validated against real data. Per-account override available via account-purpose interrogation.
 - [x] Refund-pair matching — full-history same-merchant scan in prior 12 months; in-window match → refund, else → windfall.
 - [ ] Account-pair routing rules (e.g., "<savings account> → <checking account> = always internal flow") — declared once, applied forever.
