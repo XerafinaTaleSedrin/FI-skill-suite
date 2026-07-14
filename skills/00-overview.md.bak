@@ -73,7 +73,7 @@ Roughly: do these in order. Some skills can run independently once `/fi:holdings
               └─→ /fi:wallchart
 ```
 
-The book audits that informed the `sources:` frontmatter across these skills were produced by the audit pipeline that moved out of this repo on 2026-05-27 (see the note at the bottom of this file); the pre-move audit artifacts remain available in this repo's git history.
+The book audits that informed the `sources:` frontmatter across these skills live in [`book-audits/`](../book-audits/) — they're the published artifacts of the audit pipeline that produced the source-tracing.
 
 ---
 

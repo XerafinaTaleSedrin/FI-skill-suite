@@ -14,7 +14,7 @@ The architectural rule (full detail in [`ARCHITECTURE.md`](./ARCHITECTURE.md)): 
 
 ## Available skills
 
-All skills are invoked under the `fi` namespace. The 12 currently defined:
+All skills are invoked under the `fi` namespace. The 9 currently defined (see `skills/00-overview.md` for the full index with statuses):
 
 ### Foundation (start here)
 
@@ -37,11 +37,13 @@ All skills are invoked under the `fi` namespace. The 12 currently defined:
 
 > **Step 1 — what we don't implement.** YMOYL's Step 1 has two prescribed halves: current net worth, and total lifetime earnings reconstruction. We implement only the first. The lifetime-earnings half lands in 2026 as a shame mechanic that distorts dignified non-paycheck years. See `book-audits/2026-05-01-ymoyl.md` §8 for full reasoning.
 
-### Editorial pipeline
+### Cadence companions
 
 | Skill | Invocation | Purpose |
 |---|---|---|
-| Book audit | `/fi:audit` | Run a finance/business book through the audit format. Produces a `book-audits/YYYY-MM-DD-<slug>.md` artifact. Hearth's verdict mandatory. |
+| Money date | `/fi:money-date` | Weekly ~5-minute counterweight ritual to the hoarding instinct — pay self / ease / joy, surfaced against actual flow. Pairs with `/fi:track-flow`. |
+
+> **Book audits**: the `/fi:audit` skill and the `book-audits/` artifacts moved out of this repo on 2026-05-27 — the audit pipeline carries authorial voice and lives privately with the author. The published audits remain the provenance behind the `sources:` frontmatter across skills.
 
 ## Privacy posture (every skill)
 
@@ -54,19 +56,21 @@ Strict, non-negotiable rules enforced across all skills:
 
 ## Where outputs go
 
-Skills write to predictable, gitignored locations on the user's machine. Default paths (user can override):
+Skills write to predictable, gitignored locations under `<finances_root>`, resolved per [`AGENTS.md`](./AGENTS.md) §Path resolution (`FI_ROOT` env var → `.fi-root` walk-up → `~/.fi/config.toml` → `~/finances/` default):
 
-- Holdings: `~/finances/holdings.md`
-- Transactions: `~/finances/transactions/YYYY-MM.csv`
-- Monthly tabs: `~/finances/monthly-tabs/YYYY-MM.md`
-- Wall chart: `~/finances/wallchart.md`
-- FU money log: `~/finances/fu-money-log/YYYY-MM-DD.md`
+- Holdings: `<finances_root>/holdings.md`
+- Transactions: `<finances_root>/transactions/YYYY-MM.csv`
+- Monthly tabs: `<finances_root>/monthly-tabs/YYYY-MM.md`
+- Wall chart: `<finances_root>/wallchart.md`
+- FU money log: `<finances_root>/fu-money-log/YYYY-MM-DD.md`
+- Hourly wage runs: `<finances_root>/hourly-wage/YYYY-MM-DD.md`
+- Money dates: `<finances_root>/money-date/YYYY-MM-DD.md`
 
-Book audits (NOT user-private) go in the plugin's own repo at `book-audits/`.
+The full sentinel-file map (owners, readers, schema sources) is the contract table in [`AGENTS.md`](./AGENTS.md) §Cross-skill data contracts.
 
 ## Reading order if you're new to the user's setup
 
-1. Check whether `~/finances/holdings.md` exists. If not, `/fi:holdings-scaffold` is the gateway — every other skill reads from that file.
+1. Check whether `<finances_root>/holdings.md` exists (resolve the root per AGENTS.md §Path resolution). If not, `/fi:holdings-scaffold` is the gateway — every other skill reads from that file.
 2. After holdings exists, `/fi:fu-money-readout` provides daily orientation. Other skills (`/fi:crossover`, `/fi:redirect`, `/fi:track-flow`) all read from holdings.
 3. The YMOYL Step 2-5 skills (hourly-wage, track-flow, three-questions, wallchart) chain together: each reads from the previous.
 
@@ -80,7 +84,7 @@ See [`AGENTS.md`](./AGENTS.md) for the DRY layer — privacy posture, headless m
 
 ## Contributing
 
-See [`CONTRIBUTING.md`](./CONTRIBUTING.md). Short version: country tax files and tool register entries are the highest-leverage contribution surface. Audits are CLOSED to community submissions (voice integrity).
+See [`CONTRIBUTING.md`](./CONTRIBUTING.md). Short version: country tax files and tool register entries are the highest-leverage contribution surface. Book audits are not part of this repo (the audit pipeline lives privately with the author — voice integrity).
 
 ## License
 

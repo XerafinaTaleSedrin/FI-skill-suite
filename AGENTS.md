@@ -125,8 +125,8 @@ Skills can use WebFetch (when available) to verify external state. When WebFetch
 
 In `FI-skill-suite`, Hearth has a defined role:
 
-- **`/fi:audit` skill**: Hearth's verdict is **mandatory** on every short-form clip (IG carousels, social cuts, the 5-line takeaway hero slide) and present on the full audit. Hearth speaks for herself.
-- **Other skills**: Hearth is silent unless the user invokes her with a command-line flag. Default OFF for all skills except `/fi:audit`.
+- **Book audits**: Hearth's verdict is mandatory on audits — but the `/fi:audit` skill and its artifacts moved out of this repo on 2026-05-27 (the pipeline lives privately with the author). This section remains so the verdict scale stays defined for the audits cited in skills' `sources:` frontmatter.
+- **Skills in this repo**: Hearth is silent unless the user invokes her with a command-line flag. Default OFF for every `/fi:` skill.
 
 The verdict scale is the substance — books that recommend ignoring lived constraints get *hiss-worthy*; books with a single load-bearing insight worth keeping get *windowsill-approved*; books that survive the audit intact and earn re-reads get full Hearth approval. *Would-knock-off-the-desk* is reserved for books that confidently misinform.
 
