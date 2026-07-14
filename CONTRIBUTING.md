@@ -10,10 +10,11 @@ In rough order of value to the project:
 
 1. **Per-country tax reference files** (`references/tax/<COUNTRY>.md`). The highest-leverage surface. If your country isn't represented, please contribute. Schema in [`references/tax/_country-template.md`](references/tax/_country-template.md).
 2. **Tool register entries** (`tools/`). New aggregators, banks, brokerages, or platforms that fit one of the existing tool categories. Each entry needs `last-reviewed: YYYY-MM-DD` and a "if this dies, look for X-shape replacement" hint.
-3. **Book audits** (`book-audits/`). Run the `/fi:audit` skill on a finance/business book and submit the output. Use the audit template; include Hearth's verdict.
-4. **User-extensible category submissions**. After running a skill, if you added a custom category that you think generalizes (e.g., a work-related expense category that wasn't in the canonical list), open an issue or discussion to suggest promotion. Maintainer reviews; if the same category recurs across submissions, it gets promoted with attribution.
-5. **Documentation fixes, typo corrections, link updates**. Always welcome.
-6. **New skills**. Less common — most concepts already have a home. **Open an issue first** to discuss before writing the skill.
+3. **User-extensible category submissions**. After running a skill, if you added a custom category that you think generalizes (e.g., a work-related expense category that wasn't in the canonical list), open an issue or discussion to suggest promotion. Maintainer reviews; if the same category recurs across submissions, it gets promoted with attribution.
+4. **Documentation fixes, typo corrections, link updates**. Always welcome.
+5. **New skills**. Less common — most concepts already have a home. **Open an issue first** to discuss before writing the skill.
+
+**Book audits are NOT a contribution surface.** The audit pipeline (formerly `/fi:audit` + `book-audits/`) moved out of this repo on 2026-05-27; it carries the author's voice and is closed to community submissions.
 
 ---
 
@@ -57,7 +58,6 @@ Quick rule of thumb:
 | An implementation pattern that survives tool changes | Pattern | `skills/<skill>/SKILL.md` (alongside concept) |
 | A specific app, bank, rate, or limit | Tool | `tools/<category>.md` |
 | Country-specific tax content | Tool (with structure) | `references/tax/<COUNTRY>.md` |
-| A book extraction | n/a (audit format) | `book-audits/<date>-<slug>.md` |
 
 If you're not sure, open a discussion before opening a PR.
 
@@ -78,7 +78,6 @@ When in doubt: project / repo / brand context = capital FI. Plugin name / slash-
 - All `SKILL.md` files live at `skills/<skill-name>/SKILL.md`. The folder name is the bare concept (e.g., `hourly-wage`, NOT `fi-hourly-wage`). The skill is invoked as `/fi:<skill-name>`.
 - Tool register files use kebab-case category names: `tools/transaction-aggregators.md`, `tools/high-yield-savings.md`.
 - Country tax files use ISO country codes: `references/tax/US.md`, `references/tax/GB.md`, `references/tax/CA.md`.
-- Book audit files: `book-audits/YYYY-MM-DD-<book-slug>.md` (date is audit date, not publication date).
 
 ### Frontmatter
 
@@ -98,7 +97,6 @@ Required fields per file type:
 | `SKILL.md` | `name`, `description`, `layer`, `ymoyl_step`, `mode_aware`, `sources`, `last-reviewed` |
 | `tools/<category>.md` | `category`, `last-reviewed` |
 | `references/tax/<COUNTRY>.md` | `country`, `country_code`, `last-reviewed` |
-| `book-audits/<file>.md` | `book`, `author`, `published`, `audited`, `auditor`, `hearth_verdict` |
 
 ### Headings
 
@@ -161,7 +159,7 @@ Planned approach:
 
 ## Conduct
 
-Be a good colleague. The audience for this project is people who are sometimes anxious about money, sometimes ashamed of past decisions, sometimes trying to undo years of bad financial advice. They may have never considered their financial situation in detail, or realized they they had agency in improving it. Reviewers and contributors should be patient, specific, and humane. Check your priviledge. 
+Be a good colleague. The audience for this project is people who are sometimes anxious about money, sometimes ashamed of past decisions, sometimes trying to undo years of bad financial advice. They may have never considered their financial situation in detail, or realized they had agency in improving it. Reviewers and contributors should be patient, specific, and humane. Check your privilege.
 
 Specifically NOT welcome:
 - Bro-y tone in PRs or issues
