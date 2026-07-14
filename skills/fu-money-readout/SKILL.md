@@ -4,7 +4,7 @@ description: Optional daily ground-state report — net direction, runway, recur
 layer: concept+pattern
 ymoyl_step: 8
 mode_aware: true
-status: draft
+status: alpha
 sources:
   - book: Your Money or Your Life
     contribution: "Crossover-point concept (Step 8) — when investment income covers expenses"
@@ -12,7 +12,10 @@ sources:
     contribution: "Three-month operating reserve / 'vault' concept (Chapter 9) — the business-level equivalent of the personal runway field in this readout. For users running a business, the runway calc operates on two layers: personal-side liquid savings (existing) and business-side reserve buffer (Profit First's vault). Surfaces both in the readout when the user has a business."
   - author: Marika Olson
     contribution: "2026 design refinements — Nuclear runway mandatory; income streams read from holdings.md (single source of truth, shared with /fi:crossover); context footer for future income streams without folding into present-tense math"
-last-reviewed: 2026-05-12
+last-reviewed: 2026-07-14
+status-history:
+  - "2026-05-03: draft (end-to-end validated against real user data; 8 findings encoded back as design rules — see §Validation)"
+  - "2026-07-14: alpha — frontmatter synced to the 2026-05-22 index promotion (real-run evidence recorded 2026-05-03); same-day hardening pass added deterministic checks and moved income streams to holdings.md as single source of truth"
 ---
 
 # /fi:fu-money-readout

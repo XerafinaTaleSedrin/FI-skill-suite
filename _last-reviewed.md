@@ -6,7 +6,7 @@ This file tracks the last full review of the repo's contents. The intent: at any
 
 ## Most recent review
 
-- **2026-05-12** — `audit` skill promoted scaffold → draft → alpha in the same day. Second worked example shipped: *Profit First* (Michalowicz, 2017 revised), Hearth verdict `would-knock-off-the-desk` (book) / `windowsill-approved` (appendix). Marika as auditor of record. Rough edges observed during the run will inform the next SKILL.md tightening.
+- **2026-07-14** — Full hardening pass (every SKILL.md read end-to-end; branch `claude/fi-skill-suite-hardening-0d8k47`, readout in `_design-log/2026-07-14-hardening-pass-readout.md`): YAML frontmatter parse fixes, privacy strip per the AGENTS.md checklist, income-streams contract drift healed, `<finances_root>` resolution unified, contract table rebuilt, deterministic invariants folded into all nine skills. Status sync: holdings-scaffold / fu-money-readout / track-flow / crossover frontmatter promoted draft → alpha, matching the 2026-05-22 index promotions. **beta** rung added to the status legend (non-author run + no contract drift + checks exercised live); nothing qualifies yet.
 
 ---
 
@@ -14,6 +14,7 @@ This file tracks the last full review of the repo's contents. The intent: at any
 
 (Reverse chronological; append at top.)
 
+- **2026-07-14**: Hardening pass + status sync (see above). Four skills' frontmatter draft → alpha on already-recorded real-run evidence; beta gate defined.
 - **2026-05-12** PM: `audit` draft → alpha. Profit First audit complete. All 9 skills with at least one real-world run now reach alpha: holdings-scaffold, fu-money-readout, track-flow, crossover, audit.
 - **2026-05-12** AM: `audit` scaffold → draft.
 - **2026-05-09**: `hourly-wage` + `three-questions` + `wallchart` + `redirect` scaffold → draft.
@@ -23,9 +24,10 @@ This file tracks the last full review of the repo's contents. The intent: at any
 
 ## Next review due
 
-- **2026-06-01** target — first iteration pass with Marika to flesh out the YMOYL-specific skills based on her active reading.
-- **2026-07-01** target — book audit pipeline runnable; first audit published (likely YMOYL or Profit First).
-- **2026-Q3** target — first runnable skill (likely `/fi:holdings-scaffold` since it's the gateway).
+- **2026-10-14** target — quarterly review per "What review means" below; includes the first `last-reviewed > 6 months` staleness sweep of any `tools/` entries authored by then.
+- Standing gates (event-driven, not dated): wallchart's clean second walkthrough → alpha; first non-author run through holdings-scaffold + track-flow → first beta candidates.
+
+(Earlier targets — 2026-06-01 iteration pass, 2026-07-01 first audit, 2026-Q3 first runnable skill — all met; see history.)
 
 ---
 

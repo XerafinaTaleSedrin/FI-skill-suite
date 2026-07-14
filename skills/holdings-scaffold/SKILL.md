@@ -4,13 +4,13 @@ description: "Build the user's local holdings.md file from scratch — every acc
 layer: concept+pattern
 ymoyl_step: 1
 mode_aware: false
-status: draft
+status: alpha
 sources:
   - book: Your Money or Your Life
     contribution: "Step 1 framing — current net worth as 'making peace with the past'. (YMOYL prescribes a second half — lifetime earnings reconstruction — which this suite deliberately does not implement; see book-audits/2026-05-01-ymoyl.md for reasoning.)"
   - author: Marika Olson
     contribution: "2026 generalization of the holdings-file structure she built for personal use; the FX-at-read-time rule from the Monarch failure case"
-last-reviewed: 2026-05-23
+last-reviewed: 2026-07-14
 status-history:
   - "2026-05-02: draft (initial 2026 design — full procedure, schema, privacy enforcement, cross-skill contracts)"
   - "2026-05-23: draft + `purpose` field added (cash/CD/ladder/earmarked accounts — surfaces user-intent so downstream skills don't flatten emergency-fund and growth-cash into one undifferentiated pool; observed during real-data walkthrough when a CD ladder's \"one-year emergency fund + behavioral guardrail\" purpose had no schema home)"
@@ -19,6 +19,7 @@ status-history:
   - "2026-05-23: draft + Step 4d (income streams, non-labor) sketched in. New procedure step + schema section captures streams that aren't tied to an account balance — pensions, annuities, supplements, dividends, rental, royalties, future government retirement benefits. Per-stream fields: name, kind, monthly_amount, currency, status (active / future-activates-at-date / future-activates-at-event / expires-at-date / expires-at-event), activation, expiration, cola_adjusted, taxable_treatment, source. Multi-scenario streams (different eligibility ages, different claim timings) captured as separate stream entries — crossover models scenarios against the options. **Sketch-level — schema will refine as `/fi:crossover` and `/fi:fu-money-readout` make real demands.**"
   - "2026-05-23: draft + Step 4d split into two prompts (current vs future-anticipated income streams). Future streams get glossed over when bundled with current ones — many users default to \"my income is my paycheck\" and skip the question. Asking future separately catches deferred pensions, not-yet-claimed government benefits, future-rental cases. Step 7 closing readout gains a conditional income-streams block — rendered only when streams exist, with active-now and future-activated rendered independently; whole block omitted if no streams (matches the open-items-conditional pattern already used)."
   - "2026-05-23: draft + holdings→crossover contract hardening (4 fixes). (1) Liabilities now capture `current_monthly_payment` (P&I only) — was missing; crossover needs it for amortization-based payoff-date computation. (2) Per-holding `cost_basis` added as optional but recommended field — without it crossover defaults to taxing full withdrawal at LTCG (overstates tax by 50%+ on long-held positions). (3) Closing readout gains explicit pointer to `/fi:crossover` as the FI-threshold-math next-step — previously only pointed to fu-money-readout and hourly-wage, missing the most load-bearing skill for retirement-shaped decisions. (4) New \"Downstream-ready check\" section in closing — skill now tells the user which downstream skills can run and what's missing to unlock the rest. Caught during track-flow walkthrough when the meta-question surfaced: \"does holdings-scaffold understand what crossover needs?\""
+  - "2026-07-14: alpha — frontmatter synced to the 2026-05-22 index promotion (real-data fresh-build + walkthrough passes recorded above); same-day hardening pass added deterministic checks (Step 5b) and the .fi-root sentinel duty (Steps 2/6)"
 ---
 
 # /fi:holdings-scaffold
@@ -723,13 +724,15 @@ See `examples/` (when populated):
 
 ## Status
 
-`draft` — the skill is documented end-to-end with concrete procedures, schema, privacy enforcement, and downstream contracts. Not yet tested in a live invocation. Pre-launch checklist:
+`alpha` — documented end-to-end and run on real holdings data (fresh-build and walkthrough passes recorded in status-history; each pass fed structural fixes back into the skill). Rough edges remain. Remaining checklist toward `beta`/`stable`:
 
-- [ ] Run the skill end-to-end on a first-user's real holdings.
+- [x] Run the skill end-to-end on real holdings (2026-05-23 walkthrough passes; findings folded in).
+- [ ] One non-author run (a user whose finances the author has never seen) — the beta gate.
 - [ ] Write the two `examples/` files.
 - [ ] Stress-test gitignore enforcement on a fresh repo.
 - [ ] Verify FX-rate query against api.frankfurter.dev returns expected format.
-- [ ] Test what happens when the user already has a holdings.md (Step 1 branch).
+- [ ] Exercise update mode (Step 1a) on a live re-run, including the `.fi-root` verify.
+- [ ] Exercise the Step 5b deterministic checks on a live run (added 2026-07-14; not yet fired on real data).
 
 ---
 
