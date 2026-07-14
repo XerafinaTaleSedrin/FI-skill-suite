@@ -113,6 +113,8 @@ Suggest three defaults and let the user pick:
 
 If none fits, accept a custom path. **Do not write the file yet.** Privacy enforcement runs first.
 
+**Sentinel duty (this skill only).** The directory containing `holdings.md` is the user's `<finances_root>` — the root every other `/fi:` skill resolves via the AGENTS.md §Path resolution order. This skill is the sole writer of the `.fi-root` sentinel file: in Step 6, alongside `holdings.md`, write an empty `.fi-root` marker in the chosen directory if one isn't already there (and in update mode, verify it exists — add it if missing). Without the sentinel, downstream skills fall back to `~/finances/` and silently miss a custom location.
+
 ### Step 3 — Enforce no-commit posture (LOAD-BEARING — never skip this)
 
 This is the highest-stakes step in the entire skill. Holdings data is sensitive. Failure to enforce gitignore can result in the user accidentally committing their entire net worth to a public repository.
@@ -390,6 +392,8 @@ After all data is captured:
 
 Write the holdings.md file using the schema in the next section. Follow the structure exactly — other skills will parse this format.
 
+Also write (or verify) the `.fi-root` sentinel in the same directory, per the sentinel-duty note in Step 2 — an empty marker file that lets every other `/fi:` skill resolve `<finances_root>` by walk-up.
+
 ### Step 7 — Closing readout (literal template)
 
 After writing the file, render this closing block to the user. **Use this template literally** — don't paraphrase, don't add motivational language, don't shorten the framing paragraph. Variations between sessions create drift; the canonical template is below.
@@ -460,7 +464,7 @@ Downstream-ready check
     <conditional based on captured data:>
     ✓ /fi:crossover                (income streams + retirement-frame present)
     ⚠ /fi:crossover                (income streams ready; create
-                                    ~/finances/profile/retirement-frame.md first)
+                                    <finances_root>/profile/retirement-frame.md first)
     ⚠ /fi:crossover                (no income streams declared via Step 4d —
                                     runs in perpetual-portfolio mode without them)
 

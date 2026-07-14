@@ -35,7 +35,7 @@ In 2026 reality, the chart can be rendered (rather than hand-plotted), and the u
 
 Aggregate trend data from `/fi:track-flow` (monthly income + spending) → derive or project monthly investment income from `/fi:holdings-scaffold` → render a chart with three series → write to a sentinel file the user can re-render or update over time.
 
-The skill is **idempotent**: re-running with new data refreshes the chart in place. The sentinel file at `~/finances/wallchart.md` is always the latest snapshot; previous renders are not preserved (the trend itself is the history).
+The skill is **idempotent**: re-running with new data refreshes the chart in place. The sentinel file at `<finances_root>/wallchart.md` is always the latest snapshot; previous renders are not preserved (the trend itself is the history).
 
 ---
 
@@ -197,7 +197,7 @@ ax.axhline(y=crossover_value, color="gold", linestyle=":", label="FI threshold")
 ax.set_ylabel("Monthly $")
 ax.set_xlabel("Month")
 ax.legend()
-plt.savefig("~/finances/wallchart.png", dpi=300)
+plt.savefig("<finances_root>/wallchart.png", dpi=300)
 ```
 
 PNG output is dpi=300 so it prints cleanly at 8×11 or larger. Color choices favor printability (no near-white on white).
@@ -207,8 +207,8 @@ PNG output is dpi=300 so it prints cleanly at 8×11 or larger. Color choices fav
 Two artifacts:
 
 ```
-~/finances/wallchart.md       # Data + ASCII chart + caveats
-~/finances/wallchart.png      # Renderable image (when matplotlib path is implemented)
+<finances_root>/wallchart.md       # Data + ASCII chart + caveats
+<finances_root>/wallchart.png      # Renderable image (when matplotlib path is implemented)
 ```
 
 #### `wallchart.md` schema:
@@ -264,7 +264,7 @@ Re-run `/fi:wallchart` after `/fi:track-flow` adds new monthly data. Chart updat
 
 Show:
 
-> *"Wall chart at ~/finances/wallchart.md. Print it, tape it to a wall.*
+> *"Wall chart at <finances_root>/wallchart.md. Print it, tape it to a wall.*
 >
 > *Status: [already-crossed | crossing-visible-at-YYYY-MM | not-yet-crossed-projected-YYYY]. [One-line headline.]*
 >
@@ -276,11 +276,11 @@ Show:
 
 ## Output schema
 
-### `~/finances/wallchart.md`
+### `<finances_root>/wallchart.md`
 
 (Per Step 6. Frontmatter declares generation date, data source, SWR assumption, crossover status. Body has the at-a-glance summary, ASCII chart, per-month data table, and caveats.)
 
-### `~/finances/wallchart.png` (planned)
+### `<finances_root>/wallchart.png` (planned)
 
 Generated via matplotlib when the Python optimization is built. Until then, ASCII-only.
 
@@ -291,7 +291,7 @@ Generated via matplotlib when the Python optimization is built. Until then, ASCI
 Fully supported. Cron-friendly:
 
 - Pulls from already-existing CSV + holdings.md (no interactive prompts needed if the user has previously declared an SWR and resolved any outlier prompts)
-- SWR choice + per-outlier handling decisions persist in `~/finances/profile/wallchart-config.md` after first run
+- SWR choice + per-outlier handling decisions persist in `<finances_root>/profile/wallchart-config.md` after first run
 - If a NEW outlier appears in a headless run (no human to answer the Step 2 prompt), render it raw with an inline annotation flagging it for the next interactive run — never silently filter it
 - Re-renders the wallchart at whatever cadence the cron fires (typically end-of-month after `/fi:track-flow` finalizes)
 

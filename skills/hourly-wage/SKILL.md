@@ -382,7 +382,7 @@ common silent failure mode: 5 hours logged when 60 were worked produces a wage
 that looks 12× higher than reality. Cross-check with whichever of these the user
 has:
 
-- **Stated typical week** — captured in `~/finances/profile/typical-hours.md`
+- **Stated typical week** — captured in `<finances-dir>/profile/typical-hours.md`
   on first run, e.g. "16 hours/week across all paid streams." If logged hours
   for the period fall below ~50% of expected, flag and ask: under-logged, or a
   genuinely lighter period?
@@ -463,15 +463,20 @@ directory if needed). One file per run — a dated snapshot, never overwritten.
 
 **Resolving `<finances-dir>`:**
 
-1. Check the `FI_FINANCES_DIR` environment variable. If set and the path
-   exists, use it.
-2. Otherwise fall back to `~/finances/`.
+`<finances-dir>` is this skill's historical name for the suite-wide
+`<finances_root>`. Resolve it per AGENTS.md §Path resolution — `FI_ROOT`
+env var → `.fi-root` walk-up → `~/.fi/config.toml` → `~/finances/`
+default — with one skill-local addition for backwards compatibility:
 
-Users with a non-standard layout (e.g. a finances folder inside another repo)
-should set `FI_FINANCES_DIR` once in their shell profile. The same resolution
-applies everywhere this skill references `~/finances/` — profile files, output
-files, and the gitignore check below all read from `<finances-dir>` resolved
-through this rule.
+- **`FI_FINANCES_DIR`** (this skill's original env var) is still honored.
+  Check it immediately after `FI_ROOT`: if `FI_ROOT` is unset but
+  `FI_FINANCES_DIR` is set and the path exists, use it, and mention once
+  that `FI_ROOT` is the suite-wide spelling going forward. Existing
+  shell profiles keep working unchanged.
+
+The same resolution applies everywhere this skill references a finances
+path — profile files, output files, and the gitignore check below all
+read from `<finances-dir>` resolved through this rule.
 
 **Gitignore validation** before writing: check that `<finances-dir>` (or a
 parent that contains it) is covered by a `.gitignore` rule in the nearest git
@@ -544,8 +549,9 @@ When invoked by another agent or a scheduled run with no human present:
 User-specific data — income, expense amounts, employer names, vendor patterns —
 is never embedded in this skill file or committed to the plugin repo. All user
 data writes go to gitignored paths on the user's machine — `<finances-dir>`
-resolved per the Output section (defaults to `~/finances/`, overridable via
-`FI_FINANCES_DIR`). The skill validates `.gitignore` coverage before writing
+resolved per the Output section (AGENTS.md §Path resolution, with
+`FI_FINANCES_DIR` honored as this skill's legacy env-var alias). The
+skill validates `.gitignore` coverage before writing
 and refuses to write if the resolved path is not ignored. See `AGENTS.md` for
 the cross-skill privacy posture.
 

@@ -60,9 +60,11 @@ Output is two-tier:
 
 ## What the skill does at runtime
 
+All data paths below are relative to `<finances_root>`, resolved at the start of the run per AGENTS.md §Path resolution (`FI_ROOT` env var → `.fi-root` walk-up → `~/.fi/config.toml` → `~/finances/` default). Unqualified `holdings.md` means `<finances_root>/holdings.md`.
+
 1. **Reads `holdings.md`** for current invested assets, real estate, vehicles, mortgage balance, mortgage rate. Validates schema. Reports if missing — points at `/fi:holdings-scaffold`.
 
-2. **Reads `~/finances/monthly-tabs/_trend-totals.csv`** (output from `/fi:track-flow`) when available. Computes:
+2. **Reads `<finances_root>/monthly-tabs/_trend-totals.csv`** (output from `/fi:track-flow`) when available. Computes:
    - Median monthly active income (recent 3-month rolling, complete months only, anomalies excluded)
    - Median monthly gross expenses
    - Median monthly gross investment yield (capacity)
@@ -83,7 +85,7 @@ Output is two-tier:
 
    **Future expense reductions** are NOT a separate input file — they're *derived from `holdings.md` `## Liabilities`* via amortization. For each liability with `rate`, `balance`, and current monthly payment, compute the payoff date from current payment + balance + rate. **Trust the math, not lender-stated maturity** (lenders often display original 30-yr maturity even when the user is paying above minimum scheduled P&I). Mortgage payoff, auto loan payoff, student loan payoff all fold in this way — symmetric to income stream activations, opposite sign on the burn line.
 
-4. **Reads `~/finances/profile/retirement-frame.md`** for the user's personal-intention data — three fields, separate from holdings.md (different cadence: holdings is monthly, frame is rare/life-event-driven):
+4. **Reads `<finances_root>/profile/retirement-frame.md`** for the user's personal-intention data — three fields, separate from holdings.md (different cadence: holdings is monthly, frame is rare/life-event-driven):
    - **`birth_year`** (YYYY) — required. Anchors all age-relative math: years until crossover, years on the bridge, age at each future stream activation. The skill computes current age as `(today - birth_year)` for the projection year, not asking interactively each run.
    - **`frame`** (required) — one of:
      - **Full stop**: traditional retirement; crossover target = passive + fixed income ≥ 100% of expenses
@@ -92,7 +94,7 @@ Output is two-tier:
      - **Coast FI**: invested enough that compounding alone reaches FI by traditional retirement age; target = `existing_invested × (1 + expected_real_return)^(years_to_target_age) ≥ FI_threshold` with zero further contributions
    - **`desired_action_age`** (optional integer) — the age at which the user wants to stop being *required* to earn. Distinct from the computed FI crossover age. Used for behavior planning (bridge-capital projections start from this age, not from today) and for the optional "you have N years of optional work between desired-action-age and FI-crossover-age" framing.
 
-   **If the file is missing**, write a setup template to `~/finances/profile/retirement-frame.md.template` and exit with a clear "edit the template and re-run" message — don't silently default.
+   **If the file is missing**, write a setup template to `<finances_root>/profile/retirement-frame.md.template` and exit with a clear "edit the template and re-run" message — don't silently default.
 
 5. **Runtime freshness check**: pulls current 10-year Treasury yield (for safe-withdrawal-rate sensitivity), current S&P historical real return (for portfolio growth assumption), current inflation rate. **Does NOT hard-code these.** When WebFetch is unavailable, prompts user for current values.
 
@@ -150,7 +152,7 @@ Output is two-tier:
    - Income downshift: 40-60%?
    - Coast FI: existing invested × expected real return → reach target by year N?
 
-9. **Writes the load-bearing headline** to `~/finances/profile/crossover-headline.md`. One line plus optional caveat acknowledgment, computed from the crossover analysis. The headline should be honest and direct about which case applies — AND must acknowledge material caveats inline (see "State the already-FI case clearly with caveats" below). Format examples (placeholders, not user data):
+9. **Writes the load-bearing headline** to `<finances_root>/profile/crossover-headline.md`. One line plus optional caveat acknowledgment, computed from the crossover analysis. The headline should be honest and direct about which case applies — AND must acknowledge material caveats inline (see "State the already-FI case clearly with caveats" below). Format examples (placeholders, not user data):
 
    **Already-FI case with caveats acknowledged:**
    - *"You are already FI under your chosen frame, assuming current conditions hold. Known caveats: <government-retirement trust fund risk, e.g., US SSA -19% from 2034>, <pension high-3 pending verification>, <other material risks>."*
@@ -170,13 +172,13 @@ Output is two-tier:
 
    The skill should NEVER write a stale or demoralizing version when the already-FI case applies. State the win directly. AND never write an unqualified already-FI headline when material caveats exist — surface them in the same line.
 
-10. **Writes the full report** to `~/finances/crossover-YYYY-MM-DD.md`. Sensitivity table, scenario breakdowns, assumption log, year-by-year bridge cashflow projection.
+10. **Writes the full report** to `<finances_root>/crossover-YYYY-MM-DD.md`. Sensitivity table, scenario breakdowns, assumption log, year-by-year bridge cashflow projection.
 
 ---
 
 ## Output formats
 
-### `~/finances/profile/crossover-headline.md`
+### `<finances_root>/profile/crossover-headline.md`
 
 ```
 ---
@@ -200,7 +202,7 @@ material-caveats-count: <integer>
 
 Read by `/fi:fu-money-readout` for the headline echo. Readout echoes the headline line; full-caveat detail available via `/fi:crossover` re-run or by reading the file directly.
 
-### `~/finances/crossover-YYYY-MM-DD.md`
+### `<finances_root>/crossover-YYYY-MM-DD.md`
 
 ```markdown
 ---
@@ -398,14 +400,14 @@ When fired with no human present:
 - Does NOT print to stdout
 - Does NOT prompt interactively
 - If `holdings.md` is missing or stale (or its `## Income streams (non-labor)` section is missing for users with non-account income): writes an error note to the report file with a clear next step (pointer to `/fi:holdings-scaffold`), exits cleanly without overwriting the previous headline (don't write a stale headline).
-- If `retirement-frame.md` is missing: writes a one-time setup template to `~/finances/profile/retirement-frame.md.template` showing the four frame options (full-stop / location-time-flex / income-downshift / coast-fi) and notes in the error message that the user can copy and edit to enable the run. Don't hard-fail forever — make the setup step obvious.
+- If `retirement-frame.md` is missing: writes a one-time setup template to `<finances_root>/profile/retirement-frame.md.template` showing the four frame options (full-stop / location-time-flex / income-downshift / coast-fi) and notes in the error message that the user can copy and edit to enable the run. Don't hard-fail forever — make the setup step obvious.
 - If `_trend-totals.csv` is missing: cannot run in headless mode (no human present to provide the manual fallback). Exits with a clear error pointing at `/fi:track-flow` and noting that interactive runs support a manual-baseline override.
 
 ---
 
 ## Privacy posture
 
-This SKILL.md describes the procedure in general terms. User-specific data (account names, dollar amounts, pension figures, vendor patterns) is never embedded in the public skill files. All user data writes go to gitignored paths on the user's machine — `~/finances/profile/`, `~/finances/crossover-*.md`.
+This SKILL.md describes the procedure in general terms. User-specific data (account names, dollar amounts, pension figures, vendor patterns) is never embedded in the public skill files. All user data writes go to gitignored paths on the user's machine — `<finances_root>/profile/`, `<finances_root>/crossover-*.md`.
 
 User-specific test artifacts and design logs live on the user's machine in their gitignored finance directory. They do not get published.
 

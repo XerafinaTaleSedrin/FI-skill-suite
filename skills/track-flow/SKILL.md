@@ -50,6 +50,8 @@ Three layers of classification, applied in order:
 
 ## What the skill does at runtime
 
+All data paths below are relative to `<finances_root>`, resolved at the start of the run per AGENTS.md §Path resolution (`FI_ROOT` env var → `.fi-root` walk-up → `~/.fi/config.toml` → `~/finances/` default).
+
 ### Step 0 — Finalization-check pass (run before ingest)
 
 Before asking the user for new data, scan `monthly-tabs/_trend-totals.csv` for any prior months still flagged incomplete (`complete: false`). For each such month older than the current month:
@@ -119,7 +121,7 @@ After ingest, before classification, ask the user about each account in the data
 
 User declares per-account roles. Skill applies bucket and treatment rules accordingly. The Profit First architecture (one main + multiple sub-accounts: federal taxes / state business tax / sales tax / profit pool) is a common pattern; handle each sub-account per its declared purpose.
 
-**Persist declarations to user profile.** All account-purpose declarations are written to `~/finances/profile/account-purposes.md` (gitignored). On first run, walk all accounts. On subsequent runs, read the profile silently and only prompt for accounts that are NEW (appearing in the data but not yet declared). User can re-walk anytime via `--rewalk-accounts`.
+**Persist declarations to user profile.** All account-purpose declarations are written to `<finances_root>/profile/account-purposes.md` (gitignored). On first run, walk all accounts. On subsequent runs, read the profile silently and only prompt for accounts that are NEW (appearing in the data but not yet declared). User can re-walk anytime via `--rewalk-accounts`.
 
 **First-run friction reducer:** before walking each account, count them and offer the choice:
 
@@ -213,7 +215,7 @@ If user walks: ask one default per vendor with **"no override — keep aggregato
 > *Amazon → mostly shopping? mostly electronics? **no override**?*
 > *etc."*
 
-**Persist declarations to user profile.** Vendor-level overrides written to `~/finances/profile/vendor-defaults.md` (gitignored) — empty file is fine if the user declined all overrides; on subsequent runs, read silently and only prompt for NEW mixed-purpose vendors that appear in the data. User can re-walk via `--rewalk-vendors`.
+**Persist declarations to user profile.** Vendor-level overrides written to `<finances_root>/profile/vendor-defaults.md` (gitignored) — empty file is fine if the user declined all overrides; on subsequent runs, read silently and only prompt for NEW mixed-purpose vendors that appear in the data. User can re-walk via `--rewalk-vendors`.
 
 **User verification step (only when overrides were declared)**: render the proposed mapping, ask *"these look right?"* Wave-through if yes; point-corrections if no. Skip the verification step entirely if no overrides were declared (nothing changed from aggregator defaults).
 
@@ -356,18 +358,18 @@ Default: save (respects energy; patterns are still in the output file when wante
 Five artifacts plus profile files. **Idempotent**: re-running mid-month overwrites/refreshes the current month's row.
 
 ```
-~/finances/transactions/YYYY-MM.csv             # Clean per-row transactions
-~/finances/monthly-tabs/YYYY-MM.md              # Human readout per month
-~/finances/monthly-tabs/_trend-categories.csv   # Month × category × stats (for /fi:wallchart)
-~/finances/monthly-tabs/_trend-totals.csv       # Month × {personal/business income+expense+net} (for /fi:crossover)
-~/finances/monthly-tabs/_patterns-detected.md   # Cumulative pattern log (for /fi:three-questions)
-~/finances/profile/account-purposes.md          # User's per-account declarations (Step 3 — persisted across runs)
-~/finances/profile/vendor-defaults.md           # User's mixed-purpose vendor defaults (Step 6 — persisted across runs)
+<finances_root>/transactions/YYYY-MM.csv             # Clean per-row transactions
+<finances_root>/monthly-tabs/YYYY-MM.md              # Human readout per month
+<finances_root>/monthly-tabs/_trend-categories.csv   # Month × category × stats (for /fi:wallchart)
+<finances_root>/monthly-tabs/_trend-totals.csv       # Month × {personal/business income+expense+net} (for /fi:crossover)
+<finances_root>/monthly-tabs/_patterns-detected.md   # Cumulative pattern log (for /fi:three-questions)
+<finances_root>/profile/account-purposes.md          # User's per-account declarations (Step 3 — persisted across runs)
+<finances_root>/profile/vendor-defaults.md           # User's mixed-purpose vendor defaults (Step 6 — persisted across runs)
 ```
 
 **Gitignore enforcement (mandatory, every run):**
 
-Before writing any output, the skill verifies that `~/finances/` is covered by the user's repo `.gitignore`. Three outcomes:
+Before writing any output, the skill verifies that `<finances_root>/` is covered by the user's repo `.gitignore`. Three outcomes:
 
 1. **Already gitignored** (`git check-ignore` returns coverage) — proceed silently.
 2. **Not in a git repo** — write a "DO NOT COMMIT" header banner at the top of every file generated.

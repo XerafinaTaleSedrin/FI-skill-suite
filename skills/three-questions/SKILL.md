@@ -51,7 +51,7 @@ The skill is **resumable** — if the user runs it on a 47-category month and on
 
 ### Step 1 — Source data check
 
-Look for the most recent `~/finances/monthly-tabs/YYYY-MM.md` file. If multiple are available, ask:
+Resolve `<finances_root>` per AGENTS.md §Path resolution (`FI_ROOT` env var → `.fi-root` walk-up → `~/.fi/config.toml` → `~/finances/` default); all data paths below are relative to it. Then look for the most recent `<finances_root>/monthly-tabs/YYYY-MM.md` file. If multiple are available, ask:
 
 > *"I see monthly tabs for [list of months]. Which one are we walking?"*
 
@@ -61,7 +61,7 @@ If no monthly tab is present, instruct the user to run `/fi:track-flow` first an
 
 ### Step 2 — Anchor in life-energy hours (if available)
 
-Look for the most recent `~/finances/hourly-wage/*.md` file. If present, read the real hourly wage. Use it to anchor each category prompt:
+Look for the most recent `<finances_root>/hourly-wage/*.md` file. If present, read the real hourly wage. Use it to anchor each category prompt:
 
 > *"At your real hourly wage of $R/hr, a $X expense in [category] cost you W hours of life energy this month. Holding that number in mind for the questions."*
 
@@ -166,7 +166,7 @@ Default offer: save. The skill's job is awareness, not action — `/fi:redirect`
 
 ### Step 7 — Write output
 
-Write to `~/finances/monthly-tabs/YYYY-MM-with-values.md`. Schema:
+Write to `<finances_root>/monthly-tabs/YYYY-MM-with-values.md`. Schema:
 
 ```markdown
 ---
@@ -207,7 +207,7 @@ last-updated: 2026-MM-DD
 
 Show:
 
-> *"Saved to ~/finances/monthly-tabs/[month]-with-values.md.*
+> *"Saved to <finances_root>/monthly-tabs/[month]-with-values.md.*
 >
 > *No directive ending. The data's the data. A few useful next steps if you want them:*
 >
@@ -221,7 +221,7 @@ Show:
 
 ## Output schema
 
-### `~/finances/monthly-tabs/YYYY-MM-with-values.md`
+### `<finances_root>/monthly-tabs/YYYY-MM-with-values.md`
 
 (Per Step 7. Frontmatter declares source tab + anchor + walk progress; per-category ratings table; patterns; pending list for resume.)
 

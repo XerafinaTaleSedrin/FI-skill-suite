@@ -39,13 +39,15 @@ A short daily readout, rendered in the terminal or saved to a log file, produced
 
 ## What the skill does at runtime
 
+All data paths below are relative to `<finances_root>`, resolved at the start of the run per AGENTS.md §Path resolution (`FI_ROOT` env var → `.fi-root` walk-up → `~/.fi/config.toml` → `~/finances/` default). Unqualified `holdings.md` means `<finances_root>/holdings.md`.
+
 1. **Reads `holdings.md`.** Validates schema. Reports if the file is missing — points at `/fi:holdings-scaffold` to create one.
-2. **Reads `~/finances/monthly-tabs/_trend-totals.csv`** (output from `/fi:track-flow`). Pulls recent-3-month median for active cashflow income, gross expenses, net cashflow, gross yield. If file missing, points at `/fi:track-flow`.
+2. **Reads `<finances_root>/monthly-tabs/_trend-totals.csv`** (output from `/fi:track-flow`). Pulls recent-3-month median for active cashflow income, gross expenses, net cashflow, gross yield. If file missing, points at `/fi:track-flow`.
 3. **Reads income streams from `holdings.md`'s `## Income streams (non-labor)` section** — the cross-skill source of truth, populated by `/fi:holdings-scaffold` Step 4d and shared with `/fi:crossover`. Pension/annuity/SSA estimates with eligibility ages, COLA flags, activation/expiration events all come from there. Future expense reductions (mortgage/auto/student-loan payoffs) are derived from `holdings.md`'s `## Liabilities` section via amortization — not a separate input file. If the section is missing or empty on first run, point the user at `/fi:holdings-scaffold` (update mode, Step 4d) to capture streams.
 
    **Legacy fallback (backwards compatibility):** if a `profile/future-income-streams.md` file exists from an earlier version of this skill AND `holdings.md` has no income-streams section, read the legacy file so the readout still works, and offer a one-time migration: *"Your income streams live in the old standalone profile file; the suite now keeps them in holdings.md so every skill reads one source. Want me to move them over (via /fi:holdings-scaffold update mode)?"* Never read both silently — if both exist, holdings.md wins and the skill flags the stale legacy file.
 4. **Checks freshness.** Flags `holdings.md` warm if last-updated >14 days ago; stale if >30 days. Flags `_trend-totals.csv` stale if last month is >2 months old.
-5. **Pulls the user's "retirement frame"** from `~/finances/profile/retirement-frame.md`. Frame options:
+5. **Pulls the user's "retirement frame"** from `<finances_root>/profile/retirement-frame.md`. Frame options:
    - **Full stop**: traditional retirement, all income from passive sources.
    - **Location-time flexibility**: working, but able to choose where and when.
    - **Income downshift**: working, but at lower income because non-money values are weighted higher.
@@ -58,8 +60,8 @@ A short daily readout, rendered in the terminal or saved to a log file, produced
    - **Nuclear runway**: if all active income stopped AND drawdown begins, how many years until portfolio depleted. **This calc DOES incorporate future income offsets** — at each stream's eligibility age (wherever a pension/annuity activates), monthly burn against the portfolio drops by that stream's amount, extending nuclear runway. Reports the user's age at depletion.
 7. **Renders the readout** in the user's chosen tone (matter-of-fact / warm / blunt).
 8. **Footer: future income streams context line.** Names the streams (pension at age X, SSA at 62-70, etc.) without folding into present-tense math.
-9. **Optional: load-bearing crossover line.** If `/fi:crossover` has run and saved a "load-bearing answer" to `~/finances/profile/crossover-headline.md`, echo it in the readout at user-chosen cadence. The crossover headline states the user's POSITION (computed FI crossover age, or "already FI") rather than a target-vs-progress framing. Examples: *"You are already FI under your chosen frame. Maintain trajectory."* or *"FI crossover at age 52 (range 49-56). Bridge from today: 8 years."* or *"Current trajectory does not cross FI threshold; gap is $X cumulative."* The readout doesn't recompute — `/fi:crossover` writes the line, readout repeats it. Cadence options: every readout / Mondays only / first-of-month / quarterly / on-request only. User picks at setup.
-10. **Logs it** to `~/finances/fu-money-log/YYYY-MM-DD.md` so the user has a history.
+9. **Optional: load-bearing crossover line.** If `/fi:crossover` has run and saved a "load-bearing answer" to `<finances_root>/profile/crossover-headline.md`, echo it in the readout at user-chosen cadence. The crossover headline states the user's POSITION (computed FI crossover age, or "already FI") rather than a target-vs-progress framing. Examples: *"You are already FI under your chosen frame. Maintain trajectory."* or *"FI crossover at age 52 (range 49-56). Bridge from today: 8 years."* or *"Current trajectory does not cross FI threshold; gap is $X cumulative."* The readout doesn't recompute — `/fi:crossover` writes the line, readout repeats it. Cadence options: every readout / Mondays only / first-of-month / quarterly / on-request only. User picks at setup.
+10. **Logs it** to `<finances_root>/fu-money-log/YYYY-MM-DD.md` so the user has a history.
 
 ---
 
@@ -102,7 +104,7 @@ Crossover headline (cadence: [every readout / Mondays / monthly / on-request]):
 
 - **Active-income baseline forward-projection.** The historical median active income from `/fi:track-flow` may be inflated by finite income sources (UI benefits, severance, a contract job that's ending). Before using the historical median in nuclear-runway or bridge calcs, ask the user: *"Are there any income sources in this median that will end soon? UI benefits, severance, a contract ending, a side gig you're winding down?"* If yes, recompute a "post-cliff" baseline excluding those sources. The bridge math should run against the post-cliff baseline, not the inflated historical median. This is a common case for recently-RIFed federal employees (UI ends 6-12 months after filing), severance recipients (severance covers a defined period), and contract-to-perm transitions.
 - **Present-tense vs. future-tense discipline.** The readout's primary numbers (Runway, Recurring, Crossover %) are STRICTLY present-tense — they do NOT include future pension/annuity/SSA streams. The Nuclear line and the Future Income footer are where future streams show up. The crossover skill is where future streams do their FI-threshold math. Mixing tenses in the present-tense numbers makes today's anxiety answer unreliable; keeping them clean keeps the readout honest.
-- **Crossover headline echo.** If `/fi:crossover` has run, its load-bearing answer is saved to `~/finances/profile/crossover-headline.md`. The readout echoes that line at user-configured cadence (every readout / Mondays / first-of-month / quarterly / on-request). The readout never recomputes the crossover; it just repeats. Decouples slow sensitivity math from fast daily orientation.
+- **Crossover headline echo.** If `/fi:crossover` has run, its load-bearing answer is saved to `<finances_root>/profile/crossover-headline.md`. The readout echoes that line at user-configured cadence (every readout / Mondays / first-of-month / quarterly / on-request). The readout never recomputes the crossover; it just repeats. Decouples slow sensitivity math from fast daily orientation.
 - **Tone selectable**: matter-of-fact / warm / blunt. User picks at setup. The skill offers grounding sentence variants in the chosen tone (kept in `tone-options.md` per the skill folder).
 - **Runtime freshness**: pulls `holdings.md`'s `last-updated` date; flags if stale.
 - **Pluggable into session start**: optional; default OFF. User opts in. If opted in, the readout fires on first session of the day after any other session-start rituals.
@@ -122,7 +124,7 @@ Income streams (pensions, annuities, government retirement, rental, royalties) l
 
 **Deprecated:** earlier versions of this skill declared streams in a standalone `profile/future-income-streams.md`. That file is read only as a legacy fallback (see runtime step 3) and users are offered a one-time migration into `holdings.md`.
 
-### `~/finances/profile/retirement-frame.md`
+### `<finances_root>/profile/retirement-frame.md`
 
 ```yaml
 ---
@@ -134,7 +136,7 @@ notes: |
 ---
 ```
 
-### `~/finances/profile/crossover-headline.md`
+### `<finances_root>/profile/crossover-headline.md`
 
 Written by `/fi:crossover`. One line, plain text. Read by `/fi:fu-money-readout` for the headline echo.
 
@@ -142,7 +144,7 @@ Written by `/fi:crossover`. One line, plain text. Read by `/fi:fu-money-readout`
 Until <year> to grow <income stream> to $<amount>/mo for the bridge years.
 ```
 
-### `~/finances/profile/readout-config.md`
+### `<finances_root>/profile/readout-config.md`
 
 ```yaml
 ---
@@ -166,7 +168,7 @@ This skill is **explicitly designed to run headlessly** as a session-start ritua
 
 - Reads `holdings.md` as normal.
 - Computes the readout.
-- Writes it to `~/finances/fu-money-log/YYYY-MM-DD.md`.
+- Writes it to `<finances_root>/fu-money-log/YYYY-MM-DD.md`.
 - Does NOT print to stdout (no human there to read it).
 - Does NOT block on any interactive prompt.
 - If `holdings.md` is missing or malformed: writes an error note to the log file with a clear next step (run `/fi:holdings-scaffold`), exits cleanly.

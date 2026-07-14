@@ -64,14 +64,16 @@ The unified yield-comparison frame: when a user has surplus capital and competin
 
 ### Step 1 — Read upstream
 
+Resolve `<finances_root>` per AGENTS.md §Path resolution (`FI_ROOT` env var → `.fi-root` walk-up → `~/.fi/config.toml` → `~/finances/` default); all user-data paths below are relative to it.
+
 Required:
-- `~/finances/holdings.md` (from `/fi:holdings-scaffold`) — pulls debts (with `rate` + `rate_type`), investment accounts, cash positions, asset-class roll-ups
+- `<finances_root>/holdings.md` (from `/fi:holdings-scaffold`) — pulls debts (with `rate` + `rate_type`), investment accounts, cash positions, asset-class roll-ups
 - `references/tax/<COUNTRY>.md` — for tax-advantaged-account hierarchy, deductibility rules, contribution limits
 
 Optional:
-- `~/finances/monthly-tabs/_trend-totals.csv` (from `/fi:track-flow`) — for surplus identification
-- `~/finances/fu-money-log/[latest].md` (from `/fi:fu-money-readout`) — for the gap number
-- `~/finances/monthly-tabs/YYYY-MM-with-values.md` (from `/fi:three-questions`) — for minus-rated categories whose freed-up dollars are the surplus we're deploying
+- `<finances_root>/monthly-tabs/_trend-totals.csv` (from `/fi:track-flow`) — for surplus identification
+- `<finances_root>/fu-money-log/[latest].md` (from `/fi:fu-money-readout`) — for the gap number
+- `<finances_root>/monthly-tabs/YYYY-MM-with-values.md` (from `/fi:three-questions`) — for minus-rated categories whose freed-up dollars are the surplus we're deploying
 
 If `holdings.md` is missing, instruct the user to run `/fi:holdings-scaffold` first and stop.
 
@@ -186,7 +188,7 @@ Continuity:
   - Beneficiaries on file at: [list institutions]
 ```
 
-Walk the user through filling this. Persist to `~/finances/profile/ips.md` (gitignored).
+Walk the user through filling this. Persist to `<finances_root>/profile/ips.md` (gitignored).
 
 #### Q2: Diversification reality check
 
@@ -330,7 +332,7 @@ Rates updated [today] from [sources].
 
 ### Step 8 — Write the deployment plan
 
-Combine everything into `~/finances/redirect-review-YYYY-MM-DD.md`:
+Combine everything into `<finances_root>/redirect-review-YYYY-MM-DD.md`:
 
 ```markdown
 ---
@@ -387,7 +389,7 @@ Re-run after major changes (new debt, new income, sold investments, RIF, raise, 
 
 Show:
 
-> *"Saved to ~/finances/redirect-review-[date].md.*
+> *"Saved to <finances_root>/redirect-review-[date].md.*
 >
 > *The yield-comparison snapshot is a moment-in-time read; rates move. Re-run me if any of these shift materially:*
 > - *Mortgage rate environment moves >0.5pp from your rate*
@@ -402,11 +404,11 @@ Show:
 
 ## Output schema
 
-### `~/finances/redirect-review-YYYY-MM-DD.md`
+### `<finances_root>/redirect-review-YYYY-MM-DD.md`
 
 (Per Step 8. Frontmatter declares date, source country, surplus number + source, IPS status. Body has debt landscape, investment landscape, diagnostics, yield comparison, recommended deployment shape, open questions.)
 
-### `~/finances/profile/ips.md` (persistent)
+### `<finances_root>/profile/ips.md` (persistent)
 
 User's Investment Policy Statement, scaffolded by the skill if absent. Read by future runs.
 
@@ -444,7 +446,7 @@ Common reactions:
 
 Not generally headless — interactive walkthrough. Two partial-headless modes:
 
-1. **Refresh-rates-only** — pulls current Treasury yields, HYSA rates, mortgage rates, contribution limits, writes a snapshot to `~/finances/redirect-rates-[date].md`. Useful as a cron-fired weekly refresh that the next interactive run reads from.
+1. **Refresh-rates-only** — pulls current Treasury yields, HYSA rates, mortgage rates, contribution limits, writes a snapshot to `<finances_root>/redirect-rates-[date].md`. Useful as a cron-fired weekly refresh that the next interactive run reads from.
 2. **Manifest-driven deployment** — for users with stable IPS + stable debt landscape, accept a YAML manifest declaring surplus + deployment-plan shape, write the deployment record without prompts. Planned but not built.
 
 Full interactive walkthrough remains the recommended path for first runs and after major life events.
