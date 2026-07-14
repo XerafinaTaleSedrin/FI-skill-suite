@@ -55,7 +55,7 @@ If `<finances_root>` itself can't be resolved, fail loudly per the AGENTS.md pat
 
 ### Step 2 — Aggregate the data series
 
-Read `_trend-totals.csv`. **Include ALL months by default** (both `complete: true` and `partial`). Render solid line for complete months, dashed line for partial months. **Never silently filter to complete-only** — the current month is the one the user most wants to see, and it will always be partial.
+Read `_trend-totals.csv`. **Include ALL months by default** (both `complete: true` and `complete: false`). Render solid line for complete months, dashed line for partial months (`complete: false`). **Never silently filter to complete-only** — the current month is the one the user most wants to see, and it will always be partial.
 
 Extract per-month, per stream:
 

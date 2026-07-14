@@ -52,7 +52,7 @@ Three layers of classification, applied in order:
 
 ### Step 0 — Finalization-check pass (run before ingest)
 
-Before asking the user for new data, scan `monthly-tabs/_trend-totals.csv` for any prior months still flagged `partial`. For each such month older than the current month:
+Before asking the user for new data, scan `monthly-tabs/_trend-totals.csv` for any prior months still flagged incomplete (`complete: false`). For each such month older than the current month:
 
 > *"`<month>` is still flagged partial from a prior run. We're now in `<current-month>`, so `<month>` should be finalizable — all of its transactions have had time to clear. Want me to re-tabulate `<month>` with whatever data has come in since, and flip it to complete?"*
 
@@ -491,10 +491,12 @@ month,category,bucket,total,transaction_count,top_vendor,top_vendor_share,recurr
 ```
 month,personal_active_income,personal_gross_yield,personal_windfall,personal_expense_gross,personal_refund_in_window,personal_expense,personal_net,business_income,business_expense,business_net,complete
 2026-04,X.XX,X.XX,X.XX,-X.XX,X.XX,-X.XX,X.XX,X.XX,-X.XX,X.XX,true
-2026-05,...,...,...,...,...,...,...,...,...,...,partial
+2026-05,...,...,...,...,...,...,...,...,...,...,false
 ```
 
-Eleven-column schema gives downstream skills (`/fi:crossover`, `/fi:redirect`, `/fi:fu-money-readout`) access to:
+**The `complete` column takes exactly two values: `true` or `false`.** A month still being tracked mid-cycle is `false` (called a "partial month" in prose, but the flag value written to the CSV is the literal string `false` — never `partial`). Downstream readers (`/fi:wallchart`, `/fi:crossover`, `/fi:fu-money-readout`) filter on this literal value; a third vocabulary silently breaks their filters.
+
+Twelve-column schema gives downstream skills (`/fi:crossover`, `/fi:redirect`, `/fi:fu-money-readout`) access to:
 - `personal_active_income` — recurring cashflow baseline (use as crossover-target denominator)
 - `personal_gross_yield` — retirement-income capacity (use for "what could the portfolio support?")
 - `personal_windfall` — one-time events (exclude from rolling-baseline averages)
