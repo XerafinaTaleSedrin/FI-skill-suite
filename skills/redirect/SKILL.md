@@ -72,7 +72,7 @@ Required:
 
 Optional:
 - `<finances_root>/monthly-tabs/_trend-totals.csv` (from `/fi:track-flow`) — for surplus identification
-- `<finances_root>/fu-money-log/[latest].md` (from `/fi:fu-money-readout`) — for the gap number
+- `<finances_root>/fu-money-log/[latest].md` (from `/fi:fu-money-readout`) — for the gap number. "Latest" = greatest `YYYY-MM-DD` filename, not filesystem mtime (mtimes lie after a clone — see AGENTS.md §File operations).
 - `<finances_root>/monthly-tabs/YYYY-MM-with-values.md` (from `/fi:three-questions`) — for minus-rated categories whose freed-up dollars are the surplus we're deploying
 
 If `holdings.md` is missing, instruct the user to run `/fi:holdings-scaffold` first and stop.
