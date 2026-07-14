@@ -162,6 +162,16 @@ nuclear_drawdown_sequence:
 
 ---
 
+## Deterministic checks (run before rendering or logging the readout)
+
+Per AGENTS.md §Deterministic invariants — recompute each readout field by a second route before rendering. On mismatch: reconcile before showing anything; in headless mode write an error note to the log file instead of a wrong readout.
+
+- **Crossover % recompute**: crossover % = recurring passive income ÷ monthly expense baseline, re-derived from the source figures — and the two operands match what the readout prints on the Recurring and expense lines.
+- **Runway recompute**: runway months = liquid savings (cash + CDs + taxable brokerage, per the stated definition) ÷ monthly expense baseline; the liquid sum excludes every account whose `purpose` is `tax-reserve` (not the user's to spend).
+- **Present-tense discipline (mechanical)**: no stream with `status: future-*` contributes to Net direction, Runway, Recurring, or Crossover % — scan the inputs, don't trust the prose. Future streams appear ONLY in the Nuclear line and the footer.
+- **Nuclear-line arithmetic**: depletion age = current age + nuclear-runway years; after each activation event, modeled burn = prior burn − that stream's monthly amount; in the two-scenario variant, both scenarios use identical assumptions except the stream terms.
+- **Windfall exclusion**: the month's net-direction figure excludes rows the trend file tags `personal_windfall` (they're noted separately, never inside the recurring number).
+
 ## Headless behavior
 
 This skill is **explicitly designed to run headlessly** as a session-start ritual or a daily cron. When fired with no human present:

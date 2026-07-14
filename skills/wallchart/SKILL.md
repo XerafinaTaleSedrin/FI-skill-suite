@@ -138,6 +138,16 @@ Identify the point where `projected_monthly_investment_income_capacity >= monthl
 
 - **Crossing visible in the historical data**: the lines crossed somewhere in the chart's time range. Mark the crossover month with a vertical annotation.
 
+### Step 4b — Deterministic checks (run before rendering; a chart that fails its own math never ships)
+
+Per AGENTS.md §Deterministic invariants:
+
+- **Total is a sum**: per month, Income TOTAL = Σ(stream columns) exactly — in the per-month data table AND in the chart's plotted series (same numbers, two renderings).
+- **Spending traceability**: per month, plotted spending = −1 × `personal_expense` from the source CSV row.
+- **Reference-line recompute**: FI threshold = portfolio value (holdings.md) × chosen SWR ÷ 12; the at-a-glance line, the chart annotation, and the frontmatter `swr-assumption` all agree.
+- **Axis discipline**: months strictly increasing, no month duplicated or skipped silently (a gap in the data renders as a labeled gap, not a compressed axis).
+- **Crossover-status consistency**: the frontmatter `crossover-status` value matches the computed comparison of reference line vs. spending at the latest month.
+
 ### Step 5 — Render
 
 Two formats. Default: ASCII (universal). Optional: SVG/PNG (matplotlib, planned).

@@ -353,7 +353,16 @@ User picks:
 
 Default: save (respects energy; patterns are still in the output file when wanted).
 
-### Step 10 — Write outputs
+### Step 9b — Deterministic checks (run before Step 10; never write output that fails)
+
+Per AGENTS.md §Deterministic invariants — recompute each identity from the row-level data by a second route and compare against the tabulated values. On any mismatch: stop, reconcile (usually a mis-bucketed or double-counted row), and re-tabulate; never write trend files that fail their own ledger math, because every downstream skill trusts them.
+
+- **Row conservation**: every ingested row is assigned exactly one `bucket`, and every positive-amount non-internal row exactly one `source_type`. count(rows out) = count(rows in) — no row silently dropped, none duplicated by the idempotent re-run merge.
+- **Active-income identity**: `personal_active_income` = Σ(wage + family-support + side-hustle + investment-cash + income-other rows), personal bucket, non-internal.
+- **Expense identities**: `personal_expense_gross` = Σ(negative-amount personal non-internal rows); `personal_expense` = `personal_expense_gross` + `personal_refund_in_window`; Σ(per-category expense totals in `_trend-categories.csv`) = `personal_expense_gross` for the same month.
+- **Net identities**: `personal_net` = `personal_active_income` + `personal_expense`; `business_net` = `business_income` + `business_expense`; month-closed-at = `personal_net` + `business_net` + `personal_windfall`.
+- **Schema shape**: every `_trend-totals.csv` row has exactly 12 columns; `complete` ∈ {`true`, `false`}; months strictly increasing with no duplicate month rows.
+- **Currency completeness**: every non-base-currency row has an FX rate recorded for the month (no silent unconverted amounts inside base-currency sums).
 
 Five artifacts plus profile files. **Idempotent**: re-running mid-month overwrites/refreshes the current month's row.
 

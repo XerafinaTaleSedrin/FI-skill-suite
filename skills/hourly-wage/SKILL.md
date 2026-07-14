@@ -398,6 +398,14 @@ so the wage isn't read as a settled number.
 
 ## Step 7 — Compute and report
 
+**Deterministic checks first** (per AGENTS.md §Deterministic invariants — run before reporting; on mismatch, reconcile, don't report):
+
+- **Wage identity per stream**: real hourly wage × hours = compensation − job-related expenses − allocated shared expenses − tax (when after-tax basis). Recompute the multiplication back; it must close to the cent.
+- **Blended is a ratio of sums**: blended wage = Σ(net compensation across paid streams) ÷ Σ(hours across paid streams) — NEVER the average of the per-stream wages (that weights a 2-hour stream equal to a 100-hour one).
+- **Allocation conservation**: shared-expense and shared-hours allocations sum to exactly 100% across streams; every shared dollar and hour lands on exactly one stream.
+- **Window discipline**: per stream, the income figure and the hours figure cover the same effective window; each effective window ⊆ the overall window; hours > 0 for any stream reporting a wage.
+- **Non-negativity**: expenses, allocated shares, and tax are each ≥ 0; a negative subtraction means a sign error upstream.
+
 Per stream:
 
 ```

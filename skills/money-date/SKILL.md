@@ -151,6 +151,8 @@ intervention.
 
 ## Output
 
+**Deterministic checks first** (per AGENTS.md §Deterministic invariants): each trend-table count n ≤ the number of money-date files in the window (can't have 6 yes-weeks out of 5 runs); `days-covered` = the actual day span since the previous file's date; the period's in/out flow figures re-sum from the source rows.
+
 Write each run to `<finances_root>/money-date/YYYY-MM-DD.md`. One file per run, a
 dated snapshot, never overwritten. Validate `.gitignore` coverage before
 writing; warn if the path is not ignored.

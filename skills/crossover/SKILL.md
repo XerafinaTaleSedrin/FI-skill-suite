@@ -389,6 +389,18 @@ and real numbers in the report so the user can see purchasing-power impact.
 
 ---
 
+## Deterministic checks (run before writing headline or report; never write output that fails)
+
+Per AGENTS.md §Deterministic invariants — this skill's outputs steer retirement-shaped decisions, so every identity below is recomputed by a second route before anything is written. On mismatch: stop and reconcile; in headless mode write an error note instead of output (and leave the previous headline untouched).
+
+- **Age arithmetic**: every age in the output = the corresponding year − `birth_year` (one consistent convention throughout); bridge-phase age ranges are strictly increasing, contiguous, and non-overlapping.
+- **Bridge-table row identity**: each phase row's Net = Active income + Fixed income − Burn, to the dollar.
+- **Bridge ratio recompute**: bridge ratio = Σ(available net bridge capital across bridge years) ÷ Σ(bridge gap across bridge years), re-derived from the per-year table — not carried forward from an earlier draft of the analysis.
+- **Accessibility/tax sanity**: per account per year, `net_available` ≤ gross balance; Tier-4 accounts contribute exactly $0; effective tax rates ∈ [0%, 60%].
+- **Sensitivity monotonicity**: raising the real-return assumption never worsens the crossover age; raising spending never improves it; a benefit haircut never improves it. A non-monotonic sensitivity table means a computation error, not an interesting finding.
+- **Headline consistency**: the `position` frontmatter value must match the numbers (`already-fi` ⇔ computed crossover age ≤ current age; `coast-fi-passing` ⇔ the coast test inequality holds); `material-caveats-count` = the number of entries in the material-caveats list.
+- **Stream conservation**: every stream read from holdings.md appears in the analysis exactly once (multi-scenario entries as alternatives, never summed together).
+
 ## Headless behavior
 
 Fully supported. Cron-friendly; produces an updated projection monthly. Writes both the headline file (1 line, for fu-money-readout to echo) and the full report (markdown, for human review).

@@ -388,6 +388,18 @@ After all data is captured:
 3. **Net worth**: sum all assets (investment + non-investment + cash) minus all debts.
 4. **Foreign-currency conversion**: for any non-base-currency holdings, query a current FX rate at this moment of the calculation. **Do NOT store the converted figure in the file.** Store native currency only. Note the FX rate used and the timestamp in a comment so re-runs are auditable. Use a reliable source — `https://api.frankfurter.dev/v1/latest?from=<src>&to=<base>` (free, no API key, ECB-sourced).
 
+### Step 5b — Deterministic checks (run before Step 6; never write a file that fails)
+
+Per AGENTS.md §Deterministic invariants — recompute each identity from the per-account data and compare against the roll-ups from Step 5. On mismatch: stop and reconcile (usual causes: a double-counted bulk-import row, a dormant account leaking into a sum, a stale FX figure); don't write.
+
+- **Net-worth identity**: net worth = Σ(all asset balances, base currency) − Σ(all liability balances). Recomputed from the account rows, compared against the Step 5 figure to the cent (FX-converted amounts: ±0.5% rounding tolerance).
+- **Roll-up conservation**: Σ(asset-class roll-up values) = investment-accounts total; Σ(account-type roll-up values) = same total; each roll-up's percentages sum to 100% ± rounding.
+- **Status discipline**: `dormant` accounts contribute exactly $0 to every roll-up (row present, value excluded); `closed` accounts appear only in `## Removed accounts`.
+- **Holdings-level sum** (when a `holdings:` list is populated): Σ(shares × price) per account = that account's `balance` within rounding; flag the gap otherwise (usually cash drag or a stale price — name which).
+- **Ladder consistency**: rung count ≤ `ladder_target_size`; `ladder_state: steady-state` requires rung count = target.
+- **Date sanity**: every `last-verified` ≤ today; `maturity_date` in the future for any active CD/Treasury (a past maturity on an active row means the instrument rolled or the row is stale — ask).
+- **FX audit completeness**: every non-base currency appearing in any balance has a rate + timestamp line in the FX audit log.
+
 ### Step 6 — Write the file
 
 Write the holdings.md file using the schema in the next section. Follow the structure exactly — other skills will parse this format.

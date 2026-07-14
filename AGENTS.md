@@ -84,6 +84,20 @@ Mechanisms:
 
 ---
 
+## Deterministic invariants (every skill that computes)
+
+An LLM running a finance procedure can be confidently wrong in arithmetic while being perfectly fluent in prose — the failure mode this suite most needs to guard against. The guard: **the model proposes the numbers; cheap deterministic checks adjudicate.** Wherever a skill's math admits an identity that must hold by construction (ledger sides balance, percentages sum to 100, components sum to the total, dates strictly ordered), the skill declares it in a `## Deterministic checks` section and runs every check **before presenting results or writing an output file**.
+
+Rules:
+
+1. **Recompute, don't re-read.** A check re-derives the quantity from the inputs by a second route (e.g., net = income + expense summed from rows, compared against the net the tabulation produced). Re-reading the same computed value proves nothing.
+2. **On failure, stop — never present.** A failed invariant means the numbers are wrong or the inputs are inconsistent. Reconcile, or surface the discrepancy to the user with both values shown (interactive) / write an error note instead of output (headless). Never write an output file that fails its own invariants; a downstream skill will trust it.
+3. **Tolerance is for rounding only.** Currency identities hold to the cent (or a stated rounding tolerance for FX-converted figures, e.g. ±0.5% of the converted amount). "Close enough" beyond rounding is a failure.
+4. **Checks are silent when they pass.** No "all checks passed ✓" ceremony in user output — the check is scaffolding, not content. (Headless runs MAY log a one-line pass note to the output file's frontmatter, e.g. `invariants: pass`.)
+5. **Backwards compatible by construction.** Checks change no computation and no output schema; they only gate wrong output from escaping. A skill invoked exactly as yesterday produces exactly yesterday's output — unless yesterday's output was arithmetically wrong.
+
+---
+
 ## Runtime freshness
 
 Every skill that touches time-sensitive content must include a runtime "is this still true?" check. See [ARCHITECTURE.md](./ARCHITECTURE.md) §Runtime freshness for the full rule. The three checks:

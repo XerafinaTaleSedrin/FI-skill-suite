@@ -332,6 +332,14 @@ Rates updated [today] from [sources].
 
 ### Step 8 — Write the deployment plan
 
+**Deterministic checks first** (per AGENTS.md §Deterministic invariants — on mismatch, reconcile before writing):
+
+- **Deployment conservation**: the recommended deployment lines sum to exactly the declared monthly surplus — no dollar deployed twice, none silently unallocated (an explicit "unallocated: $X" line is fine; a missing remainder is not).
+- **Amortization recompute**: per debt, months-to-payoff re-derived via the amortization formula from balance + rate + payment; with surplus > 0, months at (minimum + surplus) < months at minimum, strictly.
+- **After-tax sanity**: after-tax cost of each debt ≤ its nominal rate; deductibility adjustments never increase a rate.
+- **Headroom non-negativity**: tax-advantaged headroom = current-year limit − contributions to date, ≥ 0 per account (a negative means the limit or the contribution figure is wrong — resolve before advising).
+- **Ladder-step consistency**: the "you are at step N" claim is consistent with the data (e.g., step 4 requires no debt >10% after-tax outstanding and employer match captured).
+
 Combine everything into `<finances_root>/redirect-review-YYYY-MM-DD.md`:
 
 ```markdown

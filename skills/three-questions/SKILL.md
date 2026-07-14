@@ -166,6 +166,12 @@ Default offer: save. The skill's job is awareness, not action — `/fi:redirect`
 
 ### Step 7 — Write output
 
+**Deterministic checks first** (per AGENTS.md §Deterministic invariants — on mismatch, reconcile before writing):
+
+- **Category conservation**: categories walked + categories pending = total categories in the source tab; every rated category exists in the source tab (no phantom rows).
+- **Dollar conservation**: Σ(dollars across `+`, `=`, `-`, and pending) = the source tab's total personal expenses for the month.
+- **Hours arithmetic**: each category's hours = category spend ÷ the anchor wage, consistently using the one anchor stated in frontmatter.
+
 Write to `<finances_root>/monthly-tabs/YYYY-MM-with-values.md`. Schema:
 
 ```markdown
