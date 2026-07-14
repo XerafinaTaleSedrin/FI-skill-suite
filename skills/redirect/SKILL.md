@@ -84,11 +84,11 @@ Pull current rates from authoritative sources (cache results for 24h to avoid ha
 - **Treasury yields** (1mo, 3mo, 6mo, 1yr, 2yr, 5yr, 10yr, 30yr) — from US Treasury or equivalent national source
 - **HYSA market rates** — top 5 by APY, sourced from a trusted aggregator (Bankrate, NerdWallet, DepositAccounts)
 - **Mortgage rates** — current 30-year, 15-year, 5/1 ARM
-- **Country-specific contribution limits** (current year):
-  - US: 401k ($23K + $7.5K catch-up), IRA ($7K + $1K catch-up), HSA ($4,300 self-only / $8,550 family + $1K catch-up), FSA ($3,300), backdoor Roth process
-  - UK: ISA (£20K), SIPP, LISA, pension annual allowance
-  - Canada: RRSP, TFSA
-  - Other countries: stub for user-declared
+- **Country-specific contribution limits** — fetch the CURRENT year's values at runtime; do not reuse a figure from an example, a cached file, or model memory without verifying the year. What to fetch, per country:
+  - US: 401(k) employee-deferral limit + age-50 catch-up, IRA limit + catch-up, HSA self-only / family + catch-up, FSA limit, backdoor-Roth viability — authoritative source: the IRS's annual cost-of-living-adjustment announcement
+  - UK: ISA allowance, pension annual allowance (SIPP), LISA limit — gov.uk
+  - Canada: RRSP limit, TFSA annual room — canada.ca
+  - Other countries: per `references/tax/<COUNTRY>.md` when authored; otherwise ask the user to supply the current values and record them in the assumption log
 
 Surface stale-data flags if any source can't be fetched: *"Couldn't fetch current Treasury yields; last cached value from [date]. Skill continues with the cached number, flagging for user awareness."*
 
@@ -266,7 +266,7 @@ Capture honestly. The user's claimed risk tolerance is less informative than the
 
 Compare to current-year contribution limits (from Step 2 freshness check). Surface gaps:
 
-> *"You're contributing $X/yr to your IRA. The 2026 limit is $7,000 ($8,000 if 50+). Gap: $Y. Worth automating the rest? At 8% expected return, that gap costs you ~$Z over the next 10 years compounded."*
+> *"You're contributing $X/yr to your IRA. The current-year limit is $[limit from Step 2] ($[limit + catch-up] if 50+). Gap: $Y. Worth automating the rest? At [expected-return assumption]% expected return, that gap costs you ~$Z over the next 10 years compounded."*
 
 The "cost of the gap" framing is grounding. Most users underestimate how much the marginal contribution matters over a decade.
 
