@@ -69,6 +69,8 @@ Extract per-month, per stream:
 
 **Spending** = `-1 × personal_expense` (the refund-netted expense, sign-flipped to positive for plotting).
 
+**Trailing statistics use complete months only.** Partial months (`complete: false`) always PLOT (dashed, per the include-all rule above) but never enter medians / means / SDs — half a month inside a monthly average is an arithmetic error, not an exclusion; the failure shape is the current mid-month row dragging the trailing median down and faking a spending drop. This governs the At-a-glance trailing-6mo figures (Step 6), the Step 4 spending baseline, and the outlier baseline below.
+
 **Outlier detection** (mandatory): scan the income data for monthly values > 5× the trailing-12-month median (when fewer than 12 months exist — most first-year users — use the median of all available months), OR > 3 standard deviations from the trailing mean. Compute the median / mean / SD **excluding the candidate month itself**: a large outlier left in its own baseline inflates the SD enough to mask itself from the 3-SD test (the 5× median test is the robust one; the SD test only works on outlier-excluded stats). When detected, surface to the user:
 
 > *"I detected an outlier: [month] income of [$X] is [N]× the trailing median ([$Y]). This looks like a windfall (severance, sale, inheritance, etc.) miscategorized as recurring income. How should I handle it?*
@@ -131,7 +133,7 @@ Identify the point where `projected_monthly_investment_income_capacity >= monthl
 
   Caveat-aware: include the same caveats `/fi:crossover` echoes (pension assumptions, sequence-of-returns risk, healthcare cost trajectory, Social Security or equivalent timing, etc.).
 
-- **Not-yet-crossed**: forward-extrapolate the spending line (as a flat baseline, default) and the investment-income line (growing at the user's recent contribution rate). Ask:
+- **Not-yet-crossed**: forward-extrapolate the spending line (as a flat baseline at the trailing-6-complete-month median — the same figure the At-a-glance block reports — by default) and the investment-income line (growing at the user's recent contribution rate). Ask:
   > *"What's your monthly contribution to investments — recurring 401k / IRA / brokerage adds? I can project when the lines cross at that contribution rate."*
 
   Show the projected crossover year + the assumptions.
