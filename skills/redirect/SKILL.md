@@ -18,7 +18,7 @@ sources:
     contribution: "IPS (Investment Policy Statement) framing; diversification depth"
   - author: Marika Olson
     contribution: "2026 design refinements: behavioral-fit framing for debt-paydown approach (avalanche vs snowball vs equal vs hybrid), country-aware tax-advantaged placement audit, runtime freshness for contribution limits / yields / market rates, integration with /fi:fu-money-readout for surplus identification, integration with /fi:three-questions minus-rated categories as upstream inputs."
-last-reviewed: 2026-05-09
+last-reviewed: 2026-07-14
 ---
 
 # /fi:redirect
@@ -312,15 +312,15 @@ Guaranteed (debt avoidance):
   Student loan $Z      @  4.5% after-tax
   Mortgage     $W      @  3.0% after-tax    [keep — sub-market]
 
-Available cash yields:
-  HYSA market rate: 4.4% APY (top 5 sources: ...)
-  6-month T-Bill:   4.5% APY
-  12-month CD:      4.6% APY
+Available cash yields (every figure fetched in Step 2 THIS run — never copied from this template or a stale cache):
+  HYSA market rate: [X.X]% APY (top sources: [from Step 2 aggregator fetch])
+  6-month T-Bill:   [X.X]% APY
+  12-month CD:      [X.X]% APY
 
 Expected investment return (long-term, gross):
-  Equity (US total market): ~7% real / 9-10% nominal (historical 1928-2024 avg, sequence-of-returns risk applies)
-  Bonds (intermediate Treasury): ~2% real / 4-5% nominal (current yield-to-maturity)
-  60/40 blend: ~5% real / 7-8% nominal
+  Equity (US total market): ~[X]% real / [X-X]% nominal (long-run historical average — name the data window used)
+  Bonds (intermediate Treasury): [X]% real / [X-X]% nominal (derive from the CURRENT yield-to-maturity fetched in Step 2, not a historical average)
+  60/40 blend: [weighted from the two lines above]
 
 Tax-advantaged headroom:
   401k: $X remaining vs limit
