@@ -374,7 +374,7 @@ Five artifacts plus profile files. **Idempotent**: re-running mid-month overwrit
 ```
 <finances_root>/transactions/YYYY-MM.csv             # Clean per-row transactions
 <finances_root>/monthly-tabs/YYYY-MM.md              # Human readout per month
-<finances_root>/monthly-tabs/_trend-categories.csv   # Month × category × stats (for /fi:wallchart)
+<finances_root>/monthly-tabs/_trend-categories.csv   # Month × category × stats (no consumer yet — see schema note)
 <finances_root>/monthly-tabs/_trend-totals.csv       # Month × {personal/business income+expense+net} (for /fi:crossover)
 <finances_root>/monthly-tabs/_patterns-detected.md   # Cumulative pattern log (for /fi:three-questions)
 <finances_root>/profile/account-purposes.md          # User's per-account declarations (Step 3 — persisted across runs)
@@ -503,6 +503,8 @@ month,category,bucket,total,transaction_count,top_vendor,top_vendor_share,recurr
 2026-04,food,personal,-450.00,8,<vendor>,0.62,3,5,true
 ...
 ```
+
+**No skill consumes this file yet — a documented limitation, not an oversight.** It's reserved for `/fi:wallchart`'s per-category spending panels (listed in that skill's TODO), and the contract table in AGENTS.md records the same. The skill keeps writing it because it's cheap to produce during tabulation and expensive to reconstruct later; it also participates in the Step 9b expense identity (per-category totals must sum to `personal_expense_gross`), so it's exercised every run even without a reader.
 
 ### `monthly-tabs/_trend-totals.csv`
 

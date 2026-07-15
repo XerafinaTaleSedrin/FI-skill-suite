@@ -329,6 +329,7 @@ For users near or at crossover: the value is the daily exposure to the fact that
 - [ ] `design:` skill integration for color/typography polish — the ASCII baseline is the headless contract; print-ready output is a downstream polish pass
 - [ ] Historical-portfolio back-cast for the FI threshold reference — if `holdings.md` has historical balance entries, draw a sloped reference line per-month rather than the flat current-value line (toggle, not default)
 - [ ] Optional balance-change net-worth-delta panel — separate from the main chart, for users who want it
+- [ ] Per-category spending panels reading `monthly-tabs/_trend-categories.csv` — the reserved consumer named in AGENTS.md's contract table; `/fi:track-flow` already writes the file every run, so the data will be waiting
 - [ ] Annotation layer: mark major life events (RIF, severance start/end, side-hustle launch, etc.) on the chart so the bends have context
 - [ ] Multi-currency rendering — if user is multi-currency, decide whether to plot base-currency only or include side panels per currency
 - [ ] Mobile/phone-friendly rendering — ASCII looks bad on narrow terminals; responsive sizing
