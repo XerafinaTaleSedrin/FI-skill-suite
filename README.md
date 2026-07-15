@@ -4,7 +4,7 @@
 
 A free, open, multi-skill suite for navigating towards financial independence — built on multiple frameworks, modernized for 2026 work modes, written to age well as the world keeps changing. Many thanks to the original authors of Your Money Or Your Life for setting the author on this journey, and to the other authors whose work will be added to the book audits in editions to come.
 
-> **Status:** scaffold (2026-05-01). Active development. Not yet production-ready. Eventual home: a public GitHub repo under the `XerafinaTaleSedrin` GH account, posted as work by Marika Olson Consulting.
+> **Status:** active development. Four skills at alpha (run on real data), the rest in draft — see [`skills/00-overview.md`](skills/00-overview.md) for the live per-skill index. Public home: [`XerafinaTaleSedrin/FI-skill-suite`](https://github.com/XerafinaTaleSedrin/FI-skill-suite), posted as work by Marika Olson Consulting.
 
 ---
 
@@ -20,7 +20,7 @@ A set of Claude Code skills (under the `/fi:` namespace, where **fi** stands for
 - Crossover-point math (when investment income exceeds expenses, including SSA / pension third-leg inputs)
 - Surplus-cashflow deployment — debt paydown AND investing, as a question-asking discipline (`/fi:redirect`)
 - Daily FU money readout (optional) *("FU" is intentional — established FI slang for "fuck-you money," having enough to walk away from any situation. Not a typo of "FI.")*
-- Book audit pipeline ("I read it so you didn't have to")
+- Weekly money-date counterweight ritual for chronic under-spenders (`/fi:money-date`)
 
 The skills derive their concepts from books — primarily Vicki Robin & Joe Dominguez's *Your Money or Your Life*, with refinements from Mike Michalowicz's *Profit First*, Morgan Housel's *The Psychology of Money*, Bill Perkins's *Die With Zero*, Nick Maggiulli's *Just Keep Buying*, and others as the audit pipeline grows. Books contribute to skills; books don't *own* skills.
 
@@ -47,7 +47,7 @@ Dual-licensed:
 
 This is a deliberate choice. The repo is **explicitly free for everyone, forever, with no commercial appropriation.** Other open-source skill suites use commercial-permissive licenses (MIT, Apache) — that's a different goal, oriented at maximum reuse including commercial. Both choices are right; they serve different outcomes. This one is oriented at protecting the work from being repackaged into a paid product.
 
-## Getting started (when scaffold is done)
+## Getting started
 
 ```bash
 # Install as a Claude Code plugin

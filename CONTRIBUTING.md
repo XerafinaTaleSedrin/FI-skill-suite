@@ -139,7 +139,7 @@ This project is built using Claude Code, and contributors may use AI assistance.
 
 ## Versioning + releases
 
-(To be defined when the repo goes public. Initial scaffold is pre-versioning.)
+The repo is public; the version of record is `version` in `.claude-plugin/plugin.json` (semantic versioning). A `CHANGES.md` starts with the first tagged release.
 
 Planned approach:
 - Semantic versioning (`MAJOR.MINOR.PATCH`).
