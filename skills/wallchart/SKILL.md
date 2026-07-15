@@ -69,7 +69,7 @@ Extract per-month, per stream:
 
 **Spending** = `-1 × personal_expense` (the refund-netted expense, sign-flipped to positive for plotting).
 
-**Outlier detection** (mandatory): scan the income data for monthly values > 5× trailing-12-month median, OR > 3 standard deviations from trailing mean. When detected, surface to the user:
+**Outlier detection** (mandatory): scan the income data for monthly values > 5× the trailing-12-month median (when fewer than 12 months exist — most first-year users — use the median of all available months), OR > 3 standard deviations from the trailing mean. Compute the median / mean / SD **excluding the candidate month itself**: a large outlier left in its own baseline inflates the SD enough to mask itself from the 3-SD test (the 5× median test is the robust one; the SD test only works on outlier-excluded stats). When detected, surface to the user:
 
 > *"I detected an outlier: [month] income of [$X] is [N]× the trailing median ([$Y]). This looks like a windfall (severance, sale, inheritance, etc.) miscategorized as recurring income. How should I handle it?*
 >
