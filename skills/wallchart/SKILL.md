@@ -110,7 +110,7 @@ Earlier versions of this skill framed Step 3 as a "pick a method" choice between
 
 The skill MUST explicitly invite Q&A before accepting an answer. Do not just collect a number and proceed. Users who are new to FI need conversational space to understand what they're choosing.
 
-Apply the chosen rate to today's portfolio value (from `holdings.md`):
+Apply the chosen rate to today's portfolio value — the **investment-accounts total** from `holdings.md` (the same total the asset-class roll-up sums to), NOT net worth. Cash accounts, home equity, and other non-investment assets aren't perpetually SWR-drawable; using net worth silently inflates the reference line. (In the prompt above, `[$P]` is this same investment-accounts total.)
 
 ```
 projected_monthly_investment_income_capacity = (portfolio_value × annual_swr) / 12

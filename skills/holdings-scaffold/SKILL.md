@@ -705,7 +705,7 @@ This skill is **interactive by default**. Running it headlessly (cron / pipeline
 | `/fi:fu-money-readout` | All sections | Daily ground-state report; uses net worth, recurring passive (computed from holdings), runway calculation |
 | `/fi:crossover` | Investment accounts + asset-class roll-up | Computes FI threshold; needs portfolio composition for expected-return assumptions |
 | `/fi:redirect` | Investment accounts + account-type roll-up + holdings list | Tax-advantaged placement audit; diversification overlap analysis |
-| `/fi:wallchart` | Net worth / portfolio total | FI-threshold reference line (portfolio × SWR ÷ 12) — holdings.md is a required input for its Step 1 |
+| `/fi:wallchart` | Investment-accounts total | FI-threshold reference line (investment-accounts total × SWR ÷ 12; deliberately NOT net worth — non-investment assets aren't SWR-drawable) — holdings.md is a required input for its Step 1 |
 | `/fi:track-flow` | Doesn't read holdings.md directly, but reads transactions/ which are gitignored alongside | n/a |
 
 **If you change the schema**: update every reader skill in the same PR. The `holdings-schema-version` frontmatter field exists to make breakage detectable.
