@@ -160,7 +160,7 @@ After CSV import (or before walkthrough), surface what aggregators systematicall
 
   **Effective end** = `min(calendar_end_date, today + funds_remaining ÷ per_period_amount)`. Many users hit the funds boundary well before the calendar boundary (e.g., UI year is 52 weeks but the benefit-pool is ~26 weeks of payments — once exhausted, no payments even though the eligibility window remains open). The skill computes both and surfaces the binding one.
 
-  Render as monthly-equivalent in cashflow rollups: `per_period_amount × periods_per_month` (4.33 for weekly, 2.17 for biweekly, 1.0 for monthly). The monthly-equivalent figure is what flows into `personal_active_income` for `_trend-totals.csv`, but the run's effective-end date drives the active-income forward-projection cliff (see Step 7 / cashflow rollup).
+  Render as monthly-equivalent: `per_period_amount × periods_per_month` (4.33 for weekly, 2.17 for biweekly, 1.0 for monthly). These rows classify as `government-benefit` source-type (Step 7), so the monthly-equivalent figure flows to the **government-benefit line** of the monthly tab — NOT into `personal_active_income` (past-work residual, not current labor; folding it into active income was the exact failure the 2026-05-26 carve-out fixed). The run's effective-end date drives the benefit-income cliff that downstream forward-projections ask about (see `/fi:fu-money-readout` and `/fi:crossover`, active-income forward-projection prompts).
 
 Capture as monthly-equivalent. Documenting "considered and zero" is honest data.
 
@@ -300,6 +300,7 @@ When a refund-shaped row is detected (positive amount in expense-shaped category
 Compute per-month rollups. Show **gross**, **netting adjustments**, and **windfalls separately** — never collapse into a single hidden number.
 
 - **Active cashflow income** (per Step 7): wage + family-support + side-hustle + investment-cash + income-other
+- **Government-benefit income** (separate line, per Step 7): sum of `government-benefit` rows — UI, pension, SS, and similar past-work residuals. Never folded into active cashflow income; shown on its own line so benefit coverage is visible without masquerading as current labor. *(Lives in the monthly tab only — `_trend-totals.csv` deliberately has no column for it; see the schema note below.)*
 - **Gross expenses**: sum of negative-amount rows in personal bucket (excluding internal-flow rows)
 - **In-window refunds**: sum of `refund`-tagged rows (positive, original expense in tracking window) — netted against gross expenses
 - **Net expenses (refund-netted)**: gross expenses + in-window refunds
@@ -452,6 +453,7 @@ patterns-detected: 4
 | Refunds (in-window, net against expenses) | +$R |
 | Personal expenses (net of in-window refunds) | -$Yn |
 | **Personal net (cashflow)** | **$Z** |
+| Government-benefit income (UI / pension / SS — separate line, not in active income) | +$V |
 | Windfall income (cross-period refunds, settlements, etc.) | +$W |
 | Business net | $A (accumulating in business account) |
 | **Month closed at** | **$B combined (incl. windfalls)** |
@@ -467,6 +469,7 @@ patterns-detected: 4
 | family-support | $X | N | ✓ active cashflow |
 | side-hustle | $X | N | ✓ active cashflow |
 | investment-cash | $X | N | ✓ active cashflow |
+| government-benefit | $X | N | ✗ separate line — past-work residual |
 | refund | $X | N | ✗ reverses in-window expense |
 | windfall | $X | N | ✗ one-time, separate line |
 | **Active cashflow income** | **$Y** | | |
@@ -517,6 +520,8 @@ Twelve-column schema gives downstream skills (`/fi:crossover`, `/fi:redirect`, `
 - `personal_expense_gross` vs `personal_expense` — see how much is real vs refund-netted
 - `personal_refund_in_window` — magnitude of in-period reversals
 - `complete: true|false` — partial months flagged so consumers can filter
+
+**No government-benefit column — a deliberate, documented limitation.** Government-benefit totals live only in the monthly tab (`monthly-tabs/YYYY-MM.md`); `_trend-totals.csv` carries no column for them, so CSV consumers (`/fi:wallchart`, `/fi:crossover`, `/fi:fu-money-readout`) do not see benefit income at all — a user living primarily on UI or a pension shows near-zero income in those skills. That is the honest reading of "active income" (current labor only), but consumers should know the benefit line exists and where it lives. Adding a thirteenth column is a breaking schema change (every consumer filters on column positions/names) and must be a coordinated update across all readers plus this schema section — don't add it casually.
 
 ---
 
