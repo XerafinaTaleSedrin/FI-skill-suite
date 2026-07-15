@@ -365,6 +365,8 @@ Per AGENTS.md §Deterministic invariants — recompute each identity from the ro
 - **Schema shape**: every `_trend-totals.csv` row has exactly 12 columns; `complete` ∈ {`true`, `false`}; months strictly increasing with no duplicate month rows.
 - **Currency completeness**: every non-base-currency row has an FX rate recorded for the month (no silent unconverted amounts inside base-currency sums).
 
+### Step 10 — Write outputs
+
 Five artifacts plus profile files. **Idempotent**: re-running mid-month overwrites/refreshes the current month's row.
 
 ```
