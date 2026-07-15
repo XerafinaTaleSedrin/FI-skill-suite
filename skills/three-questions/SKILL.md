@@ -12,7 +12,7 @@ sources:
     contribution: "Business-side mirror of the YMOYL expense-awareness discipline. The Profit First OpEx 'cut what you don't need, be aware' move is the business-cash version of the YMOYL spending-awareness question 4. Surfaces in this skill for users who run a business — apply the same three questions to OpEx line items."
   - author: Marika Olson
     contribution: "2026 design refinements: energy-aware pacing (resumable mid-walk), real-hourly-wage anchoring (life-energy in actual hours not abstract concept), pattern-surfacing from /fi:track-flow as scaffolding for each category prompt, AuDHD-aware support for users who can't sit through 30+ category prompts in one go."
-last-reviewed: 2026-05-12
+last-reviewed: 2026-07-14
 ---
 
 # /fi:three-questions
@@ -112,7 +112,7 @@ Offer the original YMOYL phrasing as a footnote on first category:
 
 > *(YMOYL original: "Did I receive fulfillment, satisfaction, and value in proportion to life energy spent?" / "Is this expenditure of life energy in alignment with my values and life purpose?" / "How might this expenditure change if I didn't have to work for a living?" — say "use original" anytime you'd prefer the unmodernized phrasing.)*
 
-For each question, capture the user's response. Use a 3-letter shorthand to keep pacing fast:
+For each question, capture the user's response. Use a one-character shorthand to keep pacing fast:
 
 - `-` = out of alignment (one or more questions answered "no" / "not really" / "I'd cut this in FI")
 - `=` = neutral / mixed (some yes some no, or genuinely indifferent)
