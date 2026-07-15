@@ -10,7 +10,7 @@ sources:
     contribution: "Step 5 — make life energy visible via long-arc chart. Three lines (income, spending, investment income) plotted over time; crossover where investment income meets spending = FI threshold."
   - author: Marika Olson
     contribution: "2026 design refinements: three-method investment-income computation (actual yield / balance-change derived / forward-projected), default to forward-projection because it's the line that conceptually crosses spending. ASCII-first rendering for universal terminal compatibility, SVG/PNG via matplotlib as printable wall-chart upgrade. Reads track-flow trend CSVs rather than re-aggregating monthly tabs."
-last-reviewed: 2026-05-28
+last-reviewed: 2026-07-14
 ---
 
 # /fi:wallchart
@@ -60,7 +60,7 @@ Read `_trend-totals.csv`. **Include ALL months by default** (both `complete: tru
 Extract per-month, per stream:
 
 **Income streams** (all of these, each as its own line, summed into a combined total):
-- `personal_active_income` — W-2 / paycheck / pension income
+- `personal_active_income` — current-labor income only (wage + family-support + side-hustle + investment-cash + income-other, per track-flow Step 7). **Not pensions or UI** — track-flow classifies those `government-benefit` and excludes them from this column; they appear in the monthly tab only, so a user living mainly on benefit income will chart near-zero here. Say so rather than letting the low line read as an error.
 - `business_income` — net consulting / LLC / side-hustle revenue (`business_income + business_expense`, net)
 - `personal_gross_yield` — actual investment yield (cash dividends/interest that hit the account this month). This goes IN income, not as a separate "method" — see Step 3.
 - Any additional income column the user has declared in `<finances_root>/profile/wallchart-config.md` (rental, royalties, etc.)
