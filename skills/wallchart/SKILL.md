@@ -61,7 +61,7 @@ Extract per-month, per stream:
 
 **Income streams** (all of these, each as its own line, summed into a combined total):
 - `personal_active_income` — current-labor income only (wage + family-support + side-hustle + investment-cash + income-other, per track-flow Step 7). **Not pensions or UI** — track-flow classifies those `government-benefit` and excludes them from this column; they appear in the monthly tab only, so a user living mainly on benefit income will chart near-zero here. Say so rather than letting the low line read as an error.
-- `business_income` — net consulting / LLC / side-hustle revenue (`business_income + business_expense`, net)
+- `business_net` — net consulting / LLC / side-hustle revenue. Read the CSV's `business_net` column directly (it equals `business_income + business_expense` by track-flow's own invariant — don't recompute from the gross columns and risk disagreeing with it)
 - `personal_gross_yield` — actual investment yield (cash dividends/interest that hit the account this month). This goes IN income, not as a separate "method" — see Step 3.
 - Any additional income column the user has declared in `<finances_root>/profile/wallchart-config.md` (rental, royalties, etc.)
 
@@ -248,7 +248,7 @@ generated-by: /fi:wallchart
 
 ## Per-month data
 
-| Month | Active income | Business income | Investment yield | Income TOTAL | Spending | FI threshold (capacity) | Complete? | Notes |
+| Month | Active income | Business (net) | Investment yield | Income TOTAL | Spending | FI threshold (capacity) | Complete? | Notes |
 |---|---|---|---|---|---|---|---|---|
 | 2026-01 | $X | $X | $X | $X | $Y | $Z | ✓ / partial | |
 | 2026-02 | ... | ... | ... | ... | ... | ... | ... | |
