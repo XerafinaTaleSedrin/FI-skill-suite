@@ -50,7 +50,7 @@ All data paths below are relative to `<finances_root>`, resolved at the start of
 
    **Legacy fallback (backwards compatibility):** if a `profile/future-income-streams.md` file exists from an earlier version of this skill AND `holdings.md` has no income-streams section, read the legacy file so the readout still works, and offer a one-time migration: *"Your income streams live in the old standalone profile file; the suite now keeps them in holdings.md so every skill reads one source. Want me to move them over (via /fi:holdings-scaffold update mode)?"* Never read both silently — if both exist, holdings.md wins and the skill flags the stale legacy file.
 4. **Checks freshness.** Flags `holdings.md` warm if last-updated >14 days ago; stale if >30 days. Flags `_trend-totals.csv` stale if last month is >2 months old.
-5. **Pulls the user's "retirement frame"** from `<finances_root>/profile/retirement-frame.md`. Frame options:
+5. **Pulls the user's "retirement frame"** from `<finances_root>/profile/retirement-frame.md`. The same file's `birth_year` field is where the Nuclear line's age arithmetic ("age you'd be at depletion") gets the user's current age — the skill never asks for age interactively. Frame options:
    - **Full stop**: traditional retirement, all income from passive sources.
    - **Location-time flexibility**: working, but able to choose where and when.
    - **Income downshift**: working, but at lower income because non-money values are weighted higher.
@@ -129,11 +129,15 @@ Income streams (pensions, annuities, government retirement, rental, royalties) l
 
 ### `<finances_root>/profile/retirement-frame.md`
 
+Schema of record: `skills/crossover/SKILL.md` Step 4 (per the AGENTS.md contract table) — `/fi:crossover` writes the setup template. The block below mirrors it; if the two ever disagree, crossover's wins.
+
 ```yaml
 ---
+birth_year: <YYYY>             # required — anchors all age-relative math (the Nuclear line's depletion age here; bridge ages in /fi:crossover)
 frame: full-stop|location-time-flexibility|income-downshift|coast-fi
+desired_action_age: <age>      # optional — when the user wants earning to become optional; see /fi:crossover Step 4
 target_crossover_pct: <0-100>  # auto-derived from frame; user can override
-target_age: <age>
+target_age: <age>              # coast-FI target age (the year compounding must reach threshold by)
 notes: |
   <user's working definition of retirement>
 ---
@@ -141,11 +145,15 @@ notes: |
 
 ### `<finances_root>/profile/crossover-headline.md`
 
-Written by `/fi:crossover`. One line, plain text. Read by `/fi:fu-money-readout` for the headline echo.
+Written by `/fi:crossover` (schema of record: `skills/crossover/SKILL.md` §Output formats). YAML frontmatter (`last-computed`, `computed-against`, `frame`, `position`, `material-caveats-count`) plus a `# Headline` section holding the one-line load-bearing answer, then material/immaterial caveat sections. **The readout echoes only the line under `# Headline`** — a position statement with material caveats acknowledged inline, e.g.:
 
 ```
-Until <year> to grow <income stream> to $<amount>/mo for the bridge years.
+You are already FI under your chosen frame, assuming current conditions hold. Known caveats: <...>.
+FI crossover at age <est> under baseline assumptions; sensitivity shows <range>. Bridge from today: <N> years.
+Current trajectory does not cross FI threshold within sensitivity range. Gap: <specifics>.
 ```
+
+Full-caveat detail stays in the file; the readout never recomputes any of it.
 
 ### `<finances_root>/profile/readout-config.md`
 
