@@ -154,7 +154,7 @@ This is the only place the skill is directive. High-rate debt is the universal e
 
 #### Q1: IPS (Investment Policy Statement)
 
-> *"Do you have a written IPS — a one-page document describing your asset allocation, rebalancing rules, and behavior thresholds? It's the single highest-leverage thing on the investment side. If you don't have one, we can scaffold a draft as part of this skill (see `references/ips-template.md`)."*
+> *"Do you have a written IPS — a one-page document describing your asset allocation, rebalancing rules, and behavior thresholds? It's the single highest-leverage thing on the investment side. If you don't have one, we can scaffold a draft as part of this skill (template below)."*
 
 If user has one, ask: *"What does it say about rebalancing triggers? When did you last review it?"*
 
@@ -196,7 +196,8 @@ Many users hold 3-5 "different" funds that all track the same underlying index. 
 
 For each equity holding, identify the underlying benchmark (S&P 500, Total US Stock Market, MSCI EAFE, etc.). Look up the top-10 holdings via:
 - ETF database (etf.com / portfolio visualizer / fund prospectus)
-- Cached data in `references/funds/<TICKER>.md` (last-reviewed dated)
+- User-supplied top-10 lists, when lookup isn't available
+- Cached data in `references/funds/<TICKER>.md` when authored — **no fund files exist yet** (planned; see TODO), so today the two sources above are the only ones
 
 Compute weighted overlap:
 
@@ -420,13 +421,13 @@ Show:
 
 User's Investment Policy Statement, scaffolded by the skill if absent. Read by future runs.
 
-### `references/funds/<TICKER>.md` (persistent, repo-shipped)
+### `references/funds/<TICKER>.md` (planned, repo-shipped — none authored yet)
 
-Per-fund reference data: top holdings, expense ratio, asset class, last-reviewed date. Used for diversification overlap analysis.
+Per-fund reference data: top holdings, expense ratio, asset class, last-reviewed date. Used for diversification overlap analysis. Until authored, the overlap check runs from ETF-database lookups or user-supplied top-10 lists (Step 5 Q2).
 
 ### `references/tax/<COUNTRY>.md` (persistent, repo-shipped)
 
-Country-specific contribution limits, deductibility rules, tax-advantaged hierarchy, ladder variant.
+Country-specific contribution limits, deductibility rules, tax-advantaged hierarchy, ladder variant. Authored so far: `US.md`. Other countries: schema in `references/tax/_country-template.md`; until a country is authored, the skill asks the user for current values (Step 2).
 
 ---
 
