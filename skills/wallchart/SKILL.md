@@ -192,6 +192,8 @@ Crossover annotation: when the FI threshold reference line is above the spending
 
 **Color / typography polish**: the ASCII baseline above is the headless-friendly contract. For print-ready / wall-ready output, downstream upgrade via the `design:` skill (or matplotlib SVG/PNG path below) can add color, hierarchy, and typography. Don't gold-plate the ASCII; keep it readable in a terminal.
 
+**Charset portability**: the default markers (`█ ▒ ╌ ┄ ┤`) are Unicode block/box-drawing characters, not strict ASCII — on a terminal without UTF-8 output (e.g., a legacy Windows code page) they garble or raise encoding errors. If the terminal can't render UTF-8, fall back to a plain-ASCII marker set with the same roles: `#` income TOTAL, `*` per-stream, `=` spending, `- - -` FI threshold reference, and note the substitution in the legend.
+
 #### SVG / PNG (planned)
 
 Pseudocode using matplotlib:
