@@ -444,7 +444,7 @@ Bridge-math framing emerged paired with `/fi:fu-money-readout` validation 2026-0
 - [ ] Year-by-year bridge cashflow projection format — visualization vs table.
 - [ ] Worked examples in `examples/` for each retirement frame.
 - [ ] Headline-file schema versioning — if format changes, fu-money-readout needs to handle gracefully.
-- [ ] Per-country tax/accessibility references (`references/tax/<COUNTRY>.md`) for the bridge-capital accessibility tiers and tax-on-withdrawal logic. US baseline written inline; UK / CA / EU / AU still need authoring.
+- [ ] Per-country tax/accessibility references (`references/tax/<COUNTRY>.md`) for the bridge-capital accessibility tiers and tax-on-withdrawal logic. US authored (`references/tax/US.md`, 2026-07-15 — tier mapping + per-account withdrawal tax, consistent with the inline US baseline above); UK / CA / EU / AU still need authoring.
 - [ ] Sequence-of-returns risk modeling — mean-return sensitivity is shown but order-of-returns variation (which can be 2–3× more impactful for portfolios in drawdown) is not. Future addition.
 
 ---
