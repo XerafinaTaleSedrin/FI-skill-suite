@@ -64,14 +64,16 @@ The unified yield-comparison frame: when a user has surplus capital and competin
 
 ### Step 1 — Read upstream
 
+Resolve `<finances_root>` per AGENTS.md §Path resolution (`FI_ROOT` env var → `.fi-root` walk-up → `~/.fi/config.toml` → `~/finances/` default); all user-data paths below are relative to it.
+
 Required:
-- `~/finances/holdings.md` (from `/fi:holdings-scaffold`) — pulls debts (with `rate` + `rate_type`), investment accounts, cash positions, asset-class roll-ups
+- `<finances_root>/holdings.md` (from `/fi:holdings-scaffold`) — pulls debts (with `rate` + `rate_type`), investment accounts, cash positions, asset-class roll-ups
 - `references/tax/<COUNTRY>.md` — for tax-advantaged-account hierarchy, deductibility rules, contribution limits
 
 Optional:
-- `~/finances/monthly-tabs/_trend-totals.csv` (from `/fi:track-flow`) — for surplus identification
-- `~/finances/fu-money-log/[latest].md` (from `/fi:fu-money-readout`) — for the gap number
-- `~/finances/monthly-tabs/YYYY-MM-with-values.md` (from `/fi:three-questions`) — for minus-rated categories whose freed-up dollars are the surplus we're deploying
+- `<finances_root>/monthly-tabs/_trend-totals.csv` (from `/fi:track-flow`) — for surplus identification
+- `<finances_root>/fu-money-log/[latest].md` (from `/fi:fu-money-readout`) — for the gap number. "Latest" = greatest `YYYY-MM-DD` filename, not filesystem mtime (mtimes lie after a clone — see AGENTS.md §File operations).
+- `<finances_root>/monthly-tabs/YYYY-MM-with-values.md` (from `/fi:three-questions`) — for minus-rated categories whose freed-up dollars are the surplus we're deploying
 
 If `holdings.md` is missing, instruct the user to run `/fi:holdings-scaffold` first and stop.
 
@@ -82,11 +84,11 @@ Pull current rates from authoritative sources (cache results for 24h to avoid ha
 - **Treasury yields** (1mo, 3mo, 6mo, 1yr, 2yr, 5yr, 10yr, 30yr) — from US Treasury or equivalent national source
 - **HYSA market rates** — top 5 by APY, sourced from a trusted aggregator (Bankrate, NerdWallet, DepositAccounts)
 - **Mortgage rates** — current 30-year, 15-year, 5/1 ARM
-- **Country-specific contribution limits** (current year):
-  - US: 401k ($23K + $7.5K catch-up), IRA ($7K + $1K catch-up), HSA ($4,300 self-only / $8,550 family + $1K catch-up), FSA ($3,300), backdoor Roth process
-  - UK: ISA (£20K), SIPP, LISA, pension annual allowance
-  - Canada: RRSP, TFSA
-  - Other countries: stub for user-declared
+- **Country-specific contribution limits** — fetch the CURRENT year's values at runtime; do not reuse a figure from an example, a cached file, or model memory without verifying the year. What to fetch, per country:
+  - US: 401(k) employee-deferral limit + age-50 catch-up, IRA limit + catch-up, HSA self-only / family + catch-up, FSA limit, backdoor-Roth viability — authoritative source: the IRS's annual cost-of-living-adjustment announcement
+  - UK: ISA allowance, pension annual allowance (SIPP), LISA limit — gov.uk
+  - Canada: RRSP limit, TFSA annual room — canada.ca
+  - Other countries: per `references/tax/<COUNTRY>.md` when authored; otherwise ask the user to supply the current values and record them in the assumption log
 
 Surface stale-data flags if any source can't be fetched: *"Couldn't fetch current Treasury yields; last cached value from [date]. Skill continues with the cached number, flagging for user awareness."*
 
@@ -186,7 +188,7 @@ Continuity:
   - Beneficiaries on file at: [list institutions]
 ```
 
-Walk the user through filling this. Persist to `~/finances/profile/ips.md` (gitignored).
+Walk the user through filling this. Persist to `<finances_root>/profile/ips.md` (gitignored).
 
 #### Q2: Diversification reality check
 
@@ -264,7 +266,7 @@ Capture honestly. The user's claimed risk tolerance is less informative than the
 
 Compare to current-year contribution limits (from Step 2 freshness check). Surface gaps:
 
-> *"You're contributing $X/yr to your IRA. The 2026 limit is $7,000 ($8,000 if 50+). Gap: $Y. Worth automating the rest? At 8% expected return, that gap costs you ~$Z over the next 10 years compounded."*
+> *"You're contributing $X/yr to your IRA. The current-year limit is $[limit from Step 2] ($[limit + catch-up] if 50+). Gap: $Y. Worth automating the rest? At [expected-return assumption]% expected return, that gap costs you ~$Z over the next 10 years compounded."*
 
 The "cost of the gap" framing is grounding. Most users underestimate how much the marginal contribution matters over a decade.
 
@@ -330,7 +332,15 @@ Rates updated [today] from [sources].
 
 ### Step 8 — Write the deployment plan
 
-Combine everything into `~/finances/redirect-review-YYYY-MM-DD.md`:
+**Deterministic checks first** (per AGENTS.md §Deterministic invariants — on mismatch, reconcile before writing):
+
+- **Deployment conservation**: the recommended deployment lines sum to exactly the declared monthly surplus — no dollar deployed twice, none silently unallocated (an explicit "unallocated: $X" line is fine; a missing remainder is not).
+- **Amortization recompute**: per debt, months-to-payoff re-derived via the amortization formula from balance + rate + payment; with surplus > 0, months at (minimum + surplus) < months at minimum, strictly.
+- **After-tax sanity**: after-tax cost of each debt ≤ its nominal rate; deductibility adjustments never increase a rate.
+- **Headroom non-negativity**: tax-advantaged headroom = current-year limit − contributions to date, ≥ 0 per account (a negative means the limit or the contribution figure is wrong — resolve before advising).
+- **Ladder-step consistency**: the "you are at step N" claim is consistent with the data (e.g., step 4 requires no debt >10% after-tax outstanding and employer match captured).
+
+Combine everything into `<finances_root>/redirect-review-YYYY-MM-DD.md`:
 
 ```markdown
 ---
@@ -387,7 +397,7 @@ Re-run after major changes (new debt, new income, sold investments, RIF, raise, 
 
 Show:
 
-> *"Saved to ~/finances/redirect-review-[date].md.*
+> *"Saved to <finances_root>/redirect-review-[date].md.*
 >
 > *The yield-comparison snapshot is a moment-in-time read; rates move. Re-run me if any of these shift materially:*
 > - *Mortgage rate environment moves >0.5pp from your rate*
@@ -402,11 +412,11 @@ Show:
 
 ## Output schema
 
-### `~/finances/redirect-review-YYYY-MM-DD.md`
+### `<finances_root>/redirect-review-YYYY-MM-DD.md`
 
 (Per Step 8. Frontmatter declares date, source country, surplus number + source, IPS status. Body has debt landscape, investment landscape, diagnostics, yield comparison, recommended deployment shape, open questions.)
 
-### `~/finances/profile/ips.md` (persistent)
+### `<finances_root>/profile/ips.md` (persistent)
 
 User's Investment Policy Statement, scaffolded by the skill if absent. Read by future runs.
 
@@ -444,7 +454,7 @@ Common reactions:
 
 Not generally headless — interactive walkthrough. Two partial-headless modes:
 
-1. **Refresh-rates-only** — pulls current Treasury yields, HYSA rates, mortgage rates, contribution limits, writes a snapshot to `~/finances/redirect-rates-[date].md`. Useful as a cron-fired weekly refresh that the next interactive run reads from.
+1. **Refresh-rates-only** — pulls current Treasury yields, HYSA rates, mortgage rates, contribution limits, writes a snapshot to `<finances_root>/redirect-rates-[date].md`. Useful as a cron-fired weekly refresh that the next interactive run reads from.
 2. **Manifest-driven deployment** — for users with stable IPS + stable debt landscape, accept a YAML manifest declaring surplus + deployment-plan shape, write the deployment record without prompts. Planned but not built.
 
 Full interactive walkthrough remains the recommended path for first runs and after major life events.

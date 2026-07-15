@@ -4,7 +4,7 @@ description: The unified flow skill — captures money in + money out from aggre
 layer: concept+pattern
 ymoyl_step: 2+3
 mode_aware: false
-status: draft
+status: alpha
 sources:
   - book: Your Money or Your Life
     contribution: "Step 2b — track every dollar (no rounding); Step 3 — monthly tabulation by category. Combined here because in 2026 multi-currency multi-stream reality, capture and tabulation share the same user invocation (drop CSV, get tab) — splitting them was overengineering."
@@ -12,13 +12,14 @@ sources:
     contribution: "Sub-account allocation pattern — operational checking, tax reserves, profit pool. Categorization rules respect the sub-account purposes (pass-through vs reserve vs profit) when a user is running this architecture."
   - author: Marika Olson
     contribution: "2026 design refinements surfaced by running the skill end-to-end on real aggregator data: phantom-paycheck filter, account-purpose interrogation, mixed-purpose vendor reclassification, income source-type split, Profit First sub-account architecture recognition."
-last-reviewed: 2026-05-26
+last-reviewed: 2026-07-14
 status-history:
-  - 2026-05-03: draft (initial 2026 design — unified capture+tabulation, source-type classification, phantom-paycheck filter, mixed-purpose vendor handling, cross-period refund attribution, investment-account internal-flow exclusion, anomaly grouping, gitignore enforcement)
-  - 2026-05-23: draft + time-bound-benefit handling tightened. Step 3 previously said "capture amount + end date" — singular end date. Real UI / severance / similar benefits have TWO end boundaries (calendar end date AND funds-exhaustion date computed from remaining ÷ per-period-amount); the binding one is `min(calendar_end, today + remaining/period_rate)`. Skill now captures payment unit (weekly/biweekly/monthly), per-period amount, calendar end, and funds remaining; computes effective-end honestly. Caught when a real UI capture (~$1,152/week, $3,712 remaining, calendar year end Oct 31 2026) revealed funds would exhaust ~June 2026 — 4 months before the stated end date.
-  - 2026-05-23: draft + step ordering — currency handling moved from Step 4 to Step 2 (right after ingest, before account-purpose and everything-flowing interrogations). Reason: account-purpose questions and missed-flow questions are currency-aware in multi-currency users; asking currency fourth meant the first three steps assumed single-currency implicitly. Renumbered: was Step 2 Account-purpose → now Step 3; was Step 3 Everything-flowing → now Step 4; was Step 4 Currency → now Step 2. Steps 5–11 unchanged. Caught when a multi-currency user (USD base + EUR foreign account) noted that the currency question should have come earlier in the walkthrough.
-  - 2026-05-23: draft + mixed-purpose vendor default inverted. Was: skill forces user to declare a single dominant category per vendor (Walmart → Groceries) under the assumption that 70-80%/20-30% splits dominate. Real users routinely have 50/50 vendors (Amazon, Walmart) where any single default is wrong half the time. Now: default behavior is "trust the aggregator's per-transaction call" — the per-row category is the best signal available for genuinely-mixed vendors. Vendor-level overrides become opt-in per vendor, with "no override" as a first-class answer. Verification step only runs when overrides were declared (nothing to verify if nothing changed). Caught when a real user reported Costco=food (clear dominant, override valuable), Walmart=split (no dominant), Amazon=50/50 (no dominant) — two of three vendors didn't fit the forced-default pattern.
-  - 2026-05-26: draft + government-benefit source-type added. Aggregators commonly tag UI / pension / government-retirement / VA / railroad-retirement deposits as `Paychecks`, which made them roll up as `wage` source-type and inflate active cashflow income. The structural problem: when the entire "wage" line is composed of past-work-residual benefit income, the user's *current* labor income reads as ample when it's actually zero — and any benefit cliff (UI expiration, severance exhaustion) becomes invisible until it hits. Fix: detect statement/merchant text for known government-benefit markers (extensible list) and classify as `government-benefit` source-type — surfaced on its own monthly-tab line, excluded from active cashflow income. Same shape as the existing phantom-paycheck filter, but the carve-out is "past-work residual" rather than "internal flow."
+  - "2026-05-03: draft (initial 2026 design — unified capture+tabulation, source-type classification, phantom-paycheck filter, mixed-purpose vendor handling, cross-period refund attribution, investment-account internal-flow exclusion, anomaly grouping, gitignore enforcement)"
+  - "2026-05-23: draft + time-bound-benefit handling tightened. Step 3 previously said \"capture amount + end date\" — singular end date. Real UI / severance / similar benefits have TWO end boundaries (calendar end date AND funds-exhaustion date computed from remaining ÷ per-period-amount); the binding one is `min(calendar_end, today + remaining/period_rate)`. Skill now captures payment unit (weekly/biweekly/monthly), per-period amount, calendar end, and funds remaining; computes effective-end honestly. Caught when a real UI capture revealed the benefit pool would exhaust months before the stated calendar end date."
+  - "2026-05-23: draft + step ordering — currency handling moved from Step 4 to Step 2 (right after ingest, before account-purpose and everything-flowing interrogations). Reason: account-purpose questions and missed-flow questions are currency-aware in multi-currency users; asking currency fourth meant the first three steps assumed single-currency implicitly. Renumbered: was Step 2 Account-purpose → now Step 3; was Step 3 Everything-flowing → now Step 4; was Step 4 Currency → now Step 2. Steps 5–11 unchanged. Caught when a multi-currency user (USD base + EUR foreign account) noted that the currency question should have come earlier in the walkthrough."
+  - "2026-05-23: draft + mixed-purpose vendor default inverted. Was: skill forces user to declare a single dominant category per vendor (Walmart → Groceries) under the assumption that 70-80%/20-30% splits dominate. Real users routinely have 50/50 vendors (Amazon, Walmart) where any single default is wrong half the time. Now: default behavior is \"trust the aggregator's per-transaction call\" — the per-row category is the best signal available for genuinely-mixed vendors. Vendor-level overrides become opt-in per vendor, with \"no override\" as a first-class answer. Verification step only runs when overrides were declared (nothing to verify if nothing changed). Caught when a real user reported Costco=food (clear dominant, override valuable), Walmart=split (no dominant), Amazon=50/50 (no dominant) — two of three vendors didn't fit the forced-default pattern."
+  - "2026-05-26: draft + government-benefit source-type added. Aggregators commonly tag UI / pension / government-retirement / VA / railroad-retirement deposits as `Paychecks`, which made them roll up as `wage` source-type and inflate active cashflow income. The structural problem: when the entire \"wage\" line is composed of past-work-residual benefit income, the user's *current* labor income reads as ample when it's actually zero — and any benefit cliff (UI expiration, severance exhaustion) becomes invisible until it hits. Fix: detect statement/merchant text for known government-benefit markers (extensible list) and classify as `government-benefit` source-type — surfaced on its own monthly-tab line, excluded from active cashflow income. Same shape as the existing phantom-paycheck filter, but the carve-out is \"past-work residual\" rather than \"internal flow.\""
+  - "2026-07-14: alpha — frontmatter synced to the 2026-05-22 index promotion (end-to-end validation on real multi-stream multi-currency aggregator data recorded above); same-day hardening pass added deterministic ledger checks (Step 9b) and canonicalized the complete flag"
 ---
 
 # /fi:track-flow
@@ -50,15 +51,17 @@ Three layers of classification, applied in order:
 
 ## What the skill does at runtime
 
+All data paths below are relative to `<finances_root>`, resolved at the start of the run per AGENTS.md §Path resolution (`FI_ROOT` env var → `.fi-root` walk-up → `~/.fi/config.toml` → `~/finances/` default).
+
 ### Step 0 — Finalization-check pass (run before ingest)
 
-Before asking the user for new data, scan `monthly-tabs/_trend-totals.csv` for any prior months still flagged `partial`. For each such month older than the current month:
+Before asking the user for new data, scan `monthly-tabs/_trend-totals.csv` for any prior months still flagged incomplete (`complete: false`). For each such month older than the current month:
 
 > *"`<month>` is still flagged partial from a prior run. We're now in `<current-month>`, so `<month>` should be finalizable — all of its transactions have had time to clear. Want me to re-tabulate `<month>` with whatever data has come in since, and flip it to complete?"*
 
 If yes: re-run the rolling tabulation pass against `<month>` only, including any transactions ingested in the meantime, and flip the `complete` flag to `true`. If no: leave as-is but note that downstream skills (wallchart, crossover) will continue treating `<month>` as partial.
 
-**Why this matters**: track-flow's complete/partial flag captures the state at last-run, not the state of reality. A month that was partial when last tracked may have been fully captured since but never re-run, leaving the trend file lying. The finalization-check makes the staleness visible and offers a one-click fix. Validation case (2026-05-28): April 2026 was found flagged `partial` in late May during a fresh-user walkthrough of `/fi:wallchart`; this check would surface that and offer to finalize April before any downstream skill consumed the lying flag.
+**Why this matters**: track-flow's complete/partial flag captures the state at last-run, not the state of reality. A month that was partial when last tracked may have been fully captured since but never re-run, leaving the trend file lying. The finalization-check makes the staleness visible and offers a one-click fix. Observed failure shape: a prior month left flagged `partial` for weeks after its transactions had fully cleared, with downstream skills (`/fi:wallchart`, `/fi:crossover`) consuming the lying flag until someone noticed.
 
 This step is fast (no user-data ingest), runs every track-flow invocation, and is silent when there's nothing to finalize.
 
@@ -117,9 +120,9 @@ After ingest, before classification, ask the user about each account in the data
 > - *HSA / FSA — tax-advantaged but restricted-use*
 > - *Reserve / sinking fund — emergency, CD ladder, specific savings goal*
 
-User declares per-account roles. Skill applies bucket and treatment rules accordingly. The Profit First architecture (one main + multiple sub-accounts: federal taxes / B&O tax / sales tax / profit pool) is a common pattern; handle each sub-account per its declared purpose.
+User declares per-account roles. Skill applies bucket and treatment rules accordingly. The Profit First architecture (one main + multiple sub-accounts: federal taxes / state business tax / sales tax / profit pool) is a common pattern; handle each sub-account per its declared purpose.
 
-**Persist declarations to user profile.** All account-purpose declarations are written to `~/finances/profile/account-purposes.md` (gitignored). On first run, walk all accounts. On subsequent runs, read the profile silently and only prompt for accounts that are NEW (appearing in the data but not yet declared). User can re-walk anytime via `--rewalk-accounts`.
+**Persist declarations to user profile.** All account-purpose declarations are written to `<finances_root>/profile/account-purposes.md` (gitignored). On first run, walk all accounts. On subsequent runs, read the profile silently and only prompt for accounts that are NEW (appearing in the data but not yet declared). User can re-walk anytime via `--rewalk-accounts`.
 
 **First-run friction reducer:** before walking each account, count them and offer the choice:
 
@@ -213,7 +216,7 @@ If user walks: ask one default per vendor with **"no override — keep aggregato
 > *Amazon → mostly shopping? mostly electronics? **no override**?*
 > *etc."*
 
-**Persist declarations to user profile.** Vendor-level overrides written to `~/finances/profile/vendor-defaults.md` (gitignored) — empty file is fine if the user declined all overrides; on subsequent runs, read silently and only prompt for NEW mixed-purpose vendors that appear in the data. User can re-walk via `--rewalk-vendors`.
+**Persist declarations to user profile.** Vendor-level overrides written to `<finances_root>/profile/vendor-defaults.md` (gitignored) — empty file is fine if the user declined all overrides; on subsequent runs, read silently and only prompt for NEW mixed-purpose vendors that appear in the data. User can re-walk via `--rewalk-vendors`.
 
 **User verification step (only when overrides were declared)**: render the proposed mapping, ask *"these look right?"* Wave-through if yes; point-corrections if no. Skip the verification step entirely if no overrides were declared (nothing changed from aggregator defaults).
 
@@ -246,7 +249,7 @@ These rows still contribute to **gross investment yield** (extracted separately,
 
 **User confirmation in Step 3 — account-purpose interrogation:** the skill confirms with the user *"this account auto-reinvests dividends, yes? Or do dividends flow to checking?"* for each investment-bucket account. Default = auto-reinvest. If a user has an account that DOES cash out yield to checking, flip the default; those yield events then count as `investment-cash` for that account.
 
-**Why this matters:** without this rule, every quarterly dividend distribution and every fund rebalance (e.g., consolidating multiple eREIT positions into a single fund) inflates "income" — sometimes by thousands of dollars in a single month. The validation case: a 7-sells-to-1-buy same-day rebalance event totaling ~5K of principal moving sideways inside a Fundrise account looked like ~5K of income until the rule was added.
+**Why this matters:** without this rule, every quarterly dividend distribution and every fund rebalance (e.g., consolidating multiple fund positions into a single fund) inflates "income" — sometimes by thousands of dollars in a single month. The validation case: a many-sells-to-one-buy same-day rebalance event moving principal sideways inside an investment account looked like income for the full rebalance amount until the rule was added.
 
 **Gross investment yield (capacity number, separate from cashflow):**
 
@@ -272,13 +275,13 @@ For each flagged row, surface to the user:
 
 > *"This row stood out as much larger than your normal income pattern: [merchant] [$X] on [date], currently tagged as [source-type]. Trailing-12-month median monthly income is [$Y].*
 >
-> *Common causes of an income spike this size: severance lump sum, USAID/federal buyout, business sale, inheritance, settlement, asset sale, large gift. All of those belong in `windfall`, not `wage` or `side-hustle` — windfalls go on a separate line so the recurring-income trend doesn't lie.*
+> *Common causes of an income spike this size: severance lump sum, employer or government buyout, business sale, inheritance, settlement, asset sale, large gift. All of those belong in `windfall`, not `wage` or `side-hustle` — windfalls go on a separate line so the recurring-income trend doesn't lie.*
 >
 > *Re-classify as `windfall`? (y/n/explain)"*
 
 If user confirms: re-tag as `windfall`. If user declines: leave as-is but persist the "user-confirmed-not-windfall" tag so future runs don't re-prompt for the same row.
 
-**Why this matters**: rule-based classification at the merchant/statement-text layer cannot catch every windfall. A USAID buyout deposited via the same direct-deposit channel as a regular paycheck will hit the wage classifier. Without a magnitude check, a $102K buyout sits in `personal_active_income` and breaks every downstream chart (wallchart, crossover, fu-money-readout) that treats active income as recurring. The validation case (2026-05-28): a buyout was found in `personal_active_income` during a fresh-user walkthrough of `/fi:wallchart`; this detection step would have caught it at ingest.
+**Why this matters**: rule-based classification at the merchant/statement-text layer cannot catch every windfall. A buyout or severance lump sum deposited via the same direct-deposit channel as a regular paycheck will hit the wage classifier. Without a magnitude check, a six-figure one-time deposit sits in `personal_active_income` and breaks every downstream chart (wallchart, crossover, fu-money-readout) that treats active income as recurring. This failure shape was observed in real data — the detection step exists to catch it at ingest.
 
 **Cross-period refund attribution (rule + user confirmation)**
 
@@ -290,7 +293,7 @@ When a refund-shaped row is detected (positive amount in expense-shaped category
 | Out-of-window match (original expense pre-tracking) | Reclassify as `windfall`. Does NOT reduce current expense magnitude — surfaces as separate windfall line. |
 | No match (no prior same-merchant negative found) | Reclassify as `windfall`, flag for user: *"This positive-amount row from [vendor] looks refund-shaped but I can't find a matching original expense. Refund of an out-of-window purchase, or income event?"* |
 
-**Why this matters:** refunds for purchases made before the tracking window started would otherwise net against unrelated current-month expenses, making the period look artificially cheap. The validation case: a flight cancelation refund of ~2K in April for tickets purchased the previous September would have understated April's actual spending by 40%.
+**Why this matters:** refunds for purchases made before the tracking window started would otherwise net against unrelated current-month expenses, making the period look artificially cheap. The validation case: a large flight-cancellation refund landing months after the original ticket purchase would have materially understated the refund month's actual spending.
 
 ### Step 8 — Tabulate
 
@@ -351,27 +354,36 @@ User picks:
 
 Default: save (respects energy; patterns are still in the output file when wanted).
 
-### Step 10 — Write outputs
+### Step 9b — Deterministic checks (run before Step 10; never write output that fails)
+
+Per AGENTS.md §Deterministic invariants — recompute each identity from the row-level data by a second route and compare against the tabulated values. On any mismatch: stop, reconcile (usually a mis-bucketed or double-counted row), and re-tabulate; never write trend files that fail their own ledger math, because every downstream skill trusts them.
+
+- **Row conservation**: every ingested row is assigned exactly one `bucket`, and every positive-amount non-internal row exactly one `source_type`. count(rows out) = count(rows in) — no row silently dropped, none duplicated by the idempotent re-run merge.
+- **Active-income identity**: `personal_active_income` = Σ(wage + family-support + side-hustle + investment-cash + income-other rows), personal bucket, non-internal.
+- **Expense identities**: `personal_expense_gross` = Σ(negative-amount personal non-internal rows); `personal_expense` = `personal_expense_gross` + `personal_refund_in_window`; Σ(per-category expense totals in `_trend-categories.csv`) = `personal_expense_gross` for the same month.
+- **Net identities**: `personal_net` = `personal_active_income` + `personal_expense`; `business_net` = `business_income` + `business_expense`; month-closed-at = `personal_net` + `business_net` + `personal_windfall`.
+- **Schema shape**: every `_trend-totals.csv` row has exactly 12 columns; `complete` ∈ {`true`, `false`}; months strictly increasing with no duplicate month rows.
+- **Currency completeness**: every non-base-currency row has an FX rate recorded for the month (no silent unconverted amounts inside base-currency sums).
 
 Five artifacts plus profile files. **Idempotent**: re-running mid-month overwrites/refreshes the current month's row.
 
 ```
-~/finances/transactions/YYYY-MM.csv             # Clean per-row transactions
-~/finances/monthly-tabs/YYYY-MM.md              # Human readout per month
-~/finances/monthly-tabs/_trend-categories.csv   # Month × category × stats (for /fi:wallchart)
-~/finances/monthly-tabs/_trend-totals.csv       # Month × {personal/business income+expense+net} (for /fi:crossover)
-~/finances/monthly-tabs/_patterns-detected.md   # Cumulative pattern log (for /fi:three-questions)
-~/finances/profile/account-purposes.md          # User's per-account declarations (Step 3 — persisted across runs)
-~/finances/profile/vendor-defaults.md           # User's mixed-purpose vendor defaults (Step 6 — persisted across runs)
+<finances_root>/transactions/YYYY-MM.csv             # Clean per-row transactions
+<finances_root>/monthly-tabs/YYYY-MM.md              # Human readout per month
+<finances_root>/monthly-tabs/_trend-categories.csv   # Month × category × stats (for /fi:wallchart)
+<finances_root>/monthly-tabs/_trend-totals.csv       # Month × {personal/business income+expense+net} (for /fi:crossover)
+<finances_root>/monthly-tabs/_patterns-detected.md   # Cumulative pattern log (for /fi:three-questions)
+<finances_root>/profile/account-purposes.md          # User's per-account declarations (Step 3 — persisted across runs)
+<finances_root>/profile/vendor-defaults.md           # User's mixed-purpose vendor defaults (Step 6 — persisted across runs)
 ```
 
 **Gitignore enforcement (mandatory, every run):**
 
-Before writing any output, the skill verifies that `~/finances/` is covered by the user's repo `.gitignore`. Three outcomes:
+Before writing any output, the skill verifies that `<finances_root>/` is covered by the user's repo `.gitignore`. Three outcomes:
 
 1. **Already gitignored** (`git check-ignore` returns coverage) — proceed silently.
 2. **Not in a git repo** — write a "DO NOT COMMIT" header banner at the top of every file generated.
-3. **In a git repo but not gitignored** — STOP. Add `life/finances/` (or equivalent path) to the user's `.gitignore`, commit the gitignore change with a clear message, then proceed. Never write user financial data to a path that could land in git history.
+3. **In a git repo but not gitignored** — STOP. Add the finances directory (or a covering parent path) to the user's `.gitignore`, commit the gitignore change with a clear message, then proceed. Never write user financial data to a path that could land in git history.
 
 The skill also verifies via `git log --all --follow -- <path>` that no historical version of any output file exists in git history. If a leaked version is found, surface it loudly: *"Found prior version of this file in git history at commit X. This is a privacy leak — investigate and consider history-rewrite (force-push) before proceeding."*
 
@@ -491,10 +503,12 @@ month,category,bucket,total,transaction_count,top_vendor,top_vendor_share,recurr
 ```
 month,personal_active_income,personal_gross_yield,personal_windfall,personal_expense_gross,personal_refund_in_window,personal_expense,personal_net,business_income,business_expense,business_net,complete
 2026-04,X.XX,X.XX,X.XX,-X.XX,X.XX,-X.XX,X.XX,X.XX,-X.XX,X.XX,true
-2026-05,...,...,...,...,...,...,...,...,...,...,partial
+2026-05,...,...,...,...,...,...,...,...,...,...,false
 ```
 
-Eleven-column schema gives downstream skills (`/fi:crossover`, `/fi:redirect`, `/fi:fu-money-readout`) access to:
+**The `complete` column takes exactly two values: `true` or `false`.** A month still being tracked mid-cycle is `false` (called a "partial month" in prose, but the flag value written to the CSV is the literal string `false` — never `partial`). Downstream readers (`/fi:wallchart`, `/fi:crossover`, `/fi:fu-money-readout`) filter on this literal value; a third vocabulary silently breaks their filters.
+
+Twelve-column schema gives downstream skills (`/fi:crossover`, `/fi:redirect`, `/fi:fu-money-readout`) access to:
 - `personal_active_income` — recurring cashflow baseline (use as crossover-target denominator)
 - `personal_gross_yield` — retirement-income capacity (use for "what could the portfolio support?")
 - `personal_windfall` — one-time events (exclude from rolling-baseline averages)
@@ -567,7 +581,7 @@ User-specific test artifacts live on the user's machine in their gitignored fina
 - [ ] Pattern detection thresholds — what counts as "anomaly"? What counts as "recurring"?
 - [ ] Currency-conversion audit log per month (which transactions were converted, at what rate, when).
 - [ ] Recurring-detection across months — first-month-seen flag, last-month-seen flag for subscriptions ending or starting.
-- [ ] Mixed-purpose vendor profile — user-declared defaults stored in `references/user-profile.md` so the skill remembers Walmart=Groceries across runs.
+- [x] Mixed-purpose vendor profile — implemented as `profile/vendor-defaults.md` (Step 6): user-declared defaults persisted across runs, re-walk via `--rewalk-vendors`.
 - [x] Auto-reinvest pair detection — replaced by simpler "investment-account = internal by default" rule, validated against real data. Per-account override available via account-purpose interrogation.
 - [x] Refund-pair matching — full-history same-merchant scan in prior 12 months; in-window match → refund, else → windfall.
 - [ ] Account-pair routing rules (e.g., "<savings account> → <checking account> = always internal flow") — declared once, applied forever.

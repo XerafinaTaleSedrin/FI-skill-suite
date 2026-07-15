@@ -35,7 +35,7 @@ In 2026 reality, the chart can be rendered (rather than hand-plotted), and the u
 
 Aggregate trend data from `/fi:track-flow` (monthly income + spending) → derive or project monthly investment income from `/fi:holdings-scaffold` → render a chart with three series → write to a sentinel file the user can re-render or update over time.
 
-The skill is **idempotent**: re-running with new data refreshes the chart in place. The sentinel file at `~/finances/wallchart.md` is always the latest snapshot; previous renders are not preserved (the trend itself is the history).
+The skill is **idempotent**: re-running with new data refreshes the chart in place. The sentinel file at `<finances_root>/wallchart.md` is always the latest snapshot; previous renders are not preserved (the trend itself is the history).
 
 ---
 
@@ -55,7 +55,7 @@ If `<finances_root>` itself can't be resolved, fail loudly per the AGENTS.md pat
 
 ### Step 2 — Aggregate the data series
 
-Read `_trend-totals.csv`. **Include ALL months by default** (both `complete: true` and `partial`). Render solid line for complete months, dashed line for partial months. **Never silently filter to complete-only** — the current month is the one the user most wants to see, and it will always be partial.
+Read `_trend-totals.csv`. **Include ALL months by default** (both `complete: true` and `complete: false`). Render solid line for complete months, dashed line for partial months (`complete: false`). **Never silently filter to complete-only** — the current month is the one the user most wants to see, and it will always be partial.
 
 Extract per-month, per stream:
 
@@ -138,6 +138,16 @@ Identify the point where `projected_monthly_investment_income_capacity >= monthl
 
 - **Crossing visible in the historical data**: the lines crossed somewhere in the chart's time range. Mark the crossover month with a vertical annotation.
 
+### Step 4b — Deterministic checks (run before rendering; a chart that fails its own math never ships)
+
+Per AGENTS.md §Deterministic invariants:
+
+- **Total is a sum**: per month, Income TOTAL = Σ(stream columns) exactly — in the per-month data table AND in the chart's plotted series (same numbers, two renderings).
+- **Spending traceability**: per month, plotted spending = −1 × `personal_expense` from the source CSV row.
+- **Reference-line recompute**: FI threshold = portfolio value (holdings.md) × chosen SWR ÷ 12; the at-a-glance line, the chart annotation, and the frontmatter `swr-assumption` all agree.
+- **Axis discipline**: months strictly increasing, no month duplicated or skipped silently (a gap in the data renders as a labeled gap, not a compressed axis).
+- **Crossover-status consistency**: the frontmatter `crossover-status` value matches the computed comparison of reference line vs. spending at the latest month.
+
 ### Step 5 — Render
 
 Two formats. Default: ASCII (universal). Optional: SVG/PNG (matplotlib, planned).
@@ -197,7 +207,7 @@ ax.axhline(y=crossover_value, color="gold", linestyle=":", label="FI threshold")
 ax.set_ylabel("Monthly $")
 ax.set_xlabel("Month")
 ax.legend()
-plt.savefig("~/finances/wallchart.png", dpi=300)
+plt.savefig("<finances_root>/wallchart.png", dpi=300)
 ```
 
 PNG output is dpi=300 so it prints cleanly at 8×11 or larger. Color choices favor printability (no near-white on white).
@@ -207,8 +217,8 @@ PNG output is dpi=300 so it prints cleanly at 8×11 or larger. Color choices fav
 Two artifacts:
 
 ```
-~/finances/wallchart.md       # Data + ASCII chart + caveats
-~/finances/wallchart.png      # Renderable image (when matplotlib path is implemented)
+<finances_root>/wallchart.md       # Data + ASCII chart + caveats
+<finances_root>/wallchart.png      # Renderable image (when matplotlib path is implemented)
 ```
 
 #### `wallchart.md` schema:
@@ -219,7 +229,7 @@ generated: YYYY-MM-DD
 data-source: monthly-tabs/_trend-totals.csv
 months-included: YYYY-MM to YYYY-MM
 swr-assumption: 4%
-investment-income-method: projected | actual | balance-change-derived
+fi-threshold-method: capacity-projection   # always portfolio × SWR / 12; actual yield folds into income (Step 2), balance-change is an optional separate panel — see Step 3
 crossover-status: already-crossed | crossing-visible | not-yet-crossed
 generated-by: /fi:wallchart
 ---
@@ -264,7 +274,7 @@ Re-run `/fi:wallchart` after `/fi:track-flow` adds new monthly data. Chart updat
 
 Show:
 
-> *"Wall chart at ~/finances/wallchart.md. Print it, tape it to a wall.*
+> *"Wall chart at <finances_root>/wallchart.md. Print it, tape it to a wall.*
 >
 > *Status: [already-crossed | crossing-visible-at-YYYY-MM | not-yet-crossed-projected-YYYY]. [One-line headline.]*
 >
@@ -276,11 +286,11 @@ Show:
 
 ## Output schema
 
-### `~/finances/wallchart.md`
+### `<finances_root>/wallchart.md`
 
 (Per Step 6. Frontmatter declares generation date, data source, SWR assumption, crossover status. Body has the at-a-glance summary, ASCII chart, per-month data table, and caveats.)
 
-### `~/finances/wallchart.png` (planned)
+### `<finances_root>/wallchart.png` (planned)
 
 Generated via matplotlib when the Python optimization is built. Until then, ASCII-only.
 
@@ -290,11 +300,12 @@ Generated via matplotlib when the Python optimization is built. Until then, ASCI
 
 Fully supported. Cron-friendly:
 
-- Pulls from already-existing CSV + holdings.md (no interactive prompts needed if user has previously declared SWR + investment-income method)
-- SWR + method declarations persist in `~/finances/profile/wallchart-config.md` after first run
+- Pulls from already-existing CSV + holdings.md (no interactive prompts needed if the user has previously declared an SWR and resolved any outlier prompts)
+- SWR choice + per-outlier handling decisions persist in `<finances_root>/profile/wallchart-config.md` after first run
+- If a NEW outlier appears in a headless run (no human to answer the Step 2 prompt), render it raw with an inline annotation flagging it for the next interactive run — never silently filter it
 - Re-renders the wallchart at whatever cadence the cron fires (typically end-of-month after `/fi:track-flow` finalizes)
 
-For first runs, interactive setup is required to capture SWR + method preference.
+For first runs, interactive setup is required to capture the SWR preference.
 
 ---
 
@@ -328,7 +339,7 @@ For users near or at crossover: the value is the daily exposure to the fact that
 
 ## Status history
 
-- **2026-05-28** — Fresh-user QA walkthrough revealed 5 wallchart-specific structural issues (W-1 through W-5), 3 suite-level findings (S-1 path resolution; S-2 + S-3 in `/fi:track-flow`), and 2 cross-cutting meta-patterns (M-1 skills-as-advisors; M-2 default-to-inclusion). Full findings at `<Komorebi>/work/moc/research/fi-skill-suite/20260528_wallchart-fresh-user-qa.md`. SKILL.md updated to reflect: include-all-months default, multi-stream income with bold combined-total comparator, reframed Step 3 as concept-not-method (capacity reference line vs. flow lines), mandatory outlier detection with user-decided handling, conversational prompts with explicit Q&A invitations, persistence to `wallchart-config.md`. Status remains `draft` pending the suite-level path resolution work (S-1) and a clean second walkthrough.
+- **2026-05-28** — Fresh-user QA walkthrough revealed 5 wallchart-specific structural issues (W-1 through W-5), 3 suite-level findings (S-1 path resolution; S-2 + S-3 in `/fi:track-flow`), and 2 cross-cutting meta-patterns (M-1 skills-as-advisors; M-2 default-to-inclusion). SKILL.md updated to reflect: include-all-months default, multi-stream income with bold combined-total comparator, reframed Step 3 as concept-not-method (capacity reference line vs. flow lines), mandatory outlier detection with user-decided handling, conversational prompts with explicit Q&A invitations, persistence to `wallchart-config.md`. Status remains `draft` pending the suite-level path resolution work (S-1) and a clean second walkthrough.
 
 ---
 

@@ -85,12 +85,11 @@ FI-skill-suite/
 │   ├── wallchart/                ← /fi:wallchart — YMOYL Step 5
 │   ├── crossover/                ← /fi:crossover — YMOYL Step 8
 │   ├── redirect/                 ← /fi:redirect — YMOYL Step 5 + 9 (debt + investment deployment, question-asking)
-│   └── audit/                    ← /fi:audit — book audit pipeline
+│   └── money-date/               ← /fi:money-date — weekly counterweight ritual (cadence companion)
 ├── references/                   ← shared rules, per-country tax files
 │   └── tax/                      ← community-contributed per-country tax content
 ├── tools/                        ← tool register, dated, replacement-shape
-├── book-audits/                  ← outputs of /fi:audit
-├── docs/                         ← Rogue Reads website (rendered from book-audits/)
+├── docs/                         ← Rogue Reads website build
 └── examples/                     ← worked examples, dated
 ```
 
@@ -102,8 +101,9 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md). Short version:
 
 - **Country tax files**: highest-leverage contribution surface. If your country doesn't have a `references/tax/<COUNTRY>.md` file, write one.
 - **New tool entries**: add to `tools/` with `last-reviewed` frontmatter and a "if this dies, look for X-shape replacement" note.
-- **Book audits**: run the `/fi:audit` skill on a finance/business book you've read; submit the output as a PR.
 - **New skills**: less common — most concepts already have a home. If you think a new concept needs its own skill, open an issue first.
+
+(Book audits are not a contribution surface — the audit pipeline moved out of this repo 2026-05-27 and carries the author's voice.)
 
 ## Author / posting
 

@@ -4,7 +4,7 @@ description: Computes the financial-independence threshold — when investment i
 layer: concept+pattern
 ymoyl_step: 8
 mode_aware: true
-status: draft
+status: alpha
 sources:
   - book: Your Money or Your Life
     contribution: "Step 8 — capital and the crossover point"
@@ -12,13 +12,14 @@ sources:
     contribution: "The 'transfer the load' framing of the crossover point — keep buying income-producing assets until they out-earn your labor and carry you by the time you can no longer work. Conceptual reinforcement of YMOYL Step 8 rather than a new mechanic."
   - author: Marika Olson
     contribution: "2026 design refinements — bridge math vs perpetual-portfolio math; load-bearing headline written here, echoed in fu-money-readout; income streams read from holdings.md (single source of truth) rather than a separate profile file; future expense reductions derived from holdings.md liabilities via amortization (not a separate input); two-scenario sensitivity for streams with early-reduced and waited-full options; trust-fund-haircut sensitivity for government retirement; active-income-forward-projection rule"
-last-reviewed: 2026-05-23
+last-reviewed: 2026-07-14
 status-history:
-  - 2026-05-03: draft (initial design — compute crossover as output, bridge-math framing, two-tier output, sensitivity-aware)
-  - 2026-05-23: draft + data-flow correction. Income streams now read from `holdings.md` `## Income streams (non-labor)` section (added by holdings-scaffold Step 4d earlier same session) rather than a separate `~/finances/profile/future-income-streams.md` file. Future expense reductions clarified as derived from holdings.md liabilities via amortization, not a separate input file. Single source of truth, no contract drift. Caught when the crossover walkthrough hit a fork — tonight's holdings-scaffold edit had created two homes for the same data without resolving which is canonical.
-  - 2026-05-23: draft + retirement-frame.md stays as a separate profile file (decision recorded). Different kind of data from holdings.md (stated intention, not a measurement) and different cadence (rarely changes; tied to life events). Headless behavior updated to write a setup template when the file is missing so the user has a clear next step rather than a hard fail.
-  - 2026-05-23: draft + manual-baseline override for spending when `_trend-totals.csv` is missing. A first-time crossover analysis should not require having already run `/fi:track-flow` — the skill now prompts for rough monthly numbers and tags the run as `baseline-source: manual` (with inline caveat in the headline). Preferred behavior: prefer track-flow data automatically once it becomes available on a later run. Headless mode still hard-fails on missing track-flow (no human present to provide the override).
-  - 2026-05-23: draft + 7 load-bearing-and-medium gaps closed from real-data walkthrough: (C) `birth_year` field added to `retirement-frame.md` — was the missing anchor for all age-relative math; (F) `desired_action_age` field added to same file — distinct from FI crossover age, used for behavior planning and bridge-start anchoring; (G) bridge-capital accessibility tiers defined (Tier 1 fully accessible, Tier 2 rule-gated like Roth contributions / Rule of 55 / 72(t), Tier 3 penalty-unless-age-gated, Tier 4 fully restricted) with per-locale rules referenced via `references/tax/<COUNTRY>.md`; (J) tax-on-bridge-withdrawal subsection added — without it, bridge capital was overstated 20–30%; covers LTCG / ordinary / Roth-qualified / HSA-medical-vs-non / cash with US baseline; (D) real-return methodology defined — default 5% real for 70/30, portfolio-mix-aware scale, live-rate sanity check, user override, sensitivity ±1pp; (E) mode-aware crossover math per frame defined — full-stop ≥100%, location-time-flex 60–80% (reports both ends + implied hours-per-week), income-downshift 40–60% (reports both ends or explicit downshift target), coast-FI binary with margin shown; (K) inflation handling — projects in nominal by default with both nominal+real rendered, expense baseline grows at expected inflation, income streams grow per `cola_adjusted` flag (from holdings.md), portfolio returns already real (don't double-count). TODOs #1 and #2 marked done; new TODOs added for per-country tax references and sequence-of-returns risk modeling.
+  - "2026-05-03: draft (initial design — compute crossover as output, bridge-math framing, two-tier output, sensitivity-aware)"
+  - "2026-05-23: draft + data-flow correction. Income streams now read from `holdings.md` `## Income streams (non-labor)` section (added by holdings-scaffold Step 4d earlier same session) rather than a separate `~/finances/profile/future-income-streams.md` file. Future expense reductions clarified as derived from holdings.md liabilities via amortization, not a separate input file. Single source of truth, no contract drift. Caught when the crossover walkthrough hit a fork — tonight's holdings-scaffold edit had created two homes for the same data without resolving which is canonical."
+  - "2026-05-23: draft + retirement-frame.md stays as a separate profile file (decision recorded). Different kind of data from holdings.md (stated intention, not a measurement) and different cadence (rarely changes; tied to life events). Headless behavior updated to write a setup template when the file is missing so the user has a clear next step rather than a hard fail."
+  - "2026-05-23: draft + manual-baseline override for spending when `_trend-totals.csv` is missing. A first-time crossover analysis should not require having already run `/fi:track-flow` — the skill now prompts for rough monthly numbers and tags the run as `baseline-source: manual` (with inline caveat in the headline). Preferred behavior: prefer track-flow data automatically once it becomes available on a later run. Headless mode still hard-fails on missing track-flow (no human present to provide the override)."
+  - "2026-05-23: draft + 7 load-bearing-and-medium gaps closed from real-data walkthrough: (C) `birth_year` field added to `retirement-frame.md` — was the missing anchor for all age-relative math; (F) `desired_action_age` field added to same file — distinct from FI crossover age, used for behavior planning and bridge-start anchoring; (G) bridge-capital accessibility tiers defined (Tier 1 fully accessible, Tier 2 rule-gated like Roth contributions / Rule of 55 / 72(t), Tier 3 penalty-unless-age-gated, Tier 4 fully restricted) with per-locale rules referenced via `references/tax/<COUNTRY>.md`; (J) tax-on-bridge-withdrawal subsection added — without it, bridge capital was overstated 20–30%; covers LTCG / ordinary / Roth-qualified / HSA-medical-vs-non / cash with US baseline; (D) real-return methodology defined — default 5% real for 70/30, portfolio-mix-aware scale, live-rate sanity check, user override, sensitivity ±1pp; (E) mode-aware crossover math per frame defined — full-stop ≥100%, location-time-flex 60–80% (reports both ends + implied hours-per-week), income-downshift 40–60% (reports both ends or explicit downshift target), coast-FI binary with margin shown; (K) inflation handling — projects in nominal by default with both nominal+real rendered, expense baseline grows at expected inflation, income streams grow per `cola_adjusted` flag (from holdings.md), portfolio returns already real (don't double-count). TODOs #1 and #2 marked done; new TODOs added for per-country tax references and sequence-of-returns risk modeling."
+  - "2026-07-14: alpha — frontmatter synced to the 2026-05-22 index promotion (bridge-math validated paired with fu-money-readout 2026-05-03); same-day hardening pass added deterministic checks and fixed the two leftover future-income-streams references"
 ---
 
 # /fi:crossover
@@ -60,9 +61,11 @@ Output is two-tier:
 
 ## What the skill does at runtime
 
+All data paths below are relative to `<finances_root>`, resolved at the start of the run per AGENTS.md §Path resolution (`FI_ROOT` env var → `.fi-root` walk-up → `~/.fi/config.toml` → `~/finances/` default). Unqualified `holdings.md` means `<finances_root>/holdings.md`.
+
 1. **Reads `holdings.md`** for current invested assets, real estate, vehicles, mortgage balance, mortgage rate. Validates schema. Reports if missing — points at `/fi:holdings-scaffold`.
 
-2. **Reads `~/finances/monthly-tabs/_trend-totals.csv`** (output from `/fi:track-flow`) when available. Computes:
+2. **Reads `<finances_root>/monthly-tabs/_trend-totals.csv`** (output from `/fi:track-flow`) when available. Computes:
    - Median monthly active income (recent 3-month rolling, complete months only, anomalies excluded)
    - Median monthly gross expenses
    - Median monthly gross investment yield (capacity)
@@ -83,7 +86,7 @@ Output is two-tier:
 
    **Future expense reductions** are NOT a separate input file — they're *derived from `holdings.md` `## Liabilities`* via amortization. For each liability with `rate`, `balance`, and current monthly payment, compute the payoff date from current payment + balance + rate. **Trust the math, not lender-stated maturity** (lenders often display original 30-yr maturity even when the user is paying above minimum scheduled P&I). Mortgage payoff, auto loan payoff, student loan payoff all fold in this way — symmetric to income stream activations, opposite sign on the burn line.
 
-4. **Reads `~/finances/profile/retirement-frame.md`** for the user's personal-intention data — three fields, separate from holdings.md (different cadence: holdings is monthly, frame is rare/life-event-driven):
+4. **Reads `<finances_root>/profile/retirement-frame.md`** for the user's personal-intention data — three fields, separate from holdings.md (different cadence: holdings is monthly, frame is rare/life-event-driven):
    - **`birth_year`** (YYYY) — required. Anchors all age-relative math: years until crossover, years on the bridge, age at each future stream activation. The skill computes current age as `(today - birth_year)` for the projection year, not asking interactively each run.
    - **`frame`** (required) — one of:
      - **Full stop**: traditional retirement; crossover target = passive + fixed income ≥ 100% of expenses
@@ -92,7 +95,7 @@ Output is two-tier:
      - **Coast FI**: invested enough that compounding alone reaches FI by traditional retirement age; target = `existing_invested × (1 + expected_real_return)^(years_to_target_age) ≥ FI_threshold` with zero further contributions
    - **`desired_action_age`** (optional integer) — the age at which the user wants to stop being *required* to earn. Distinct from the computed FI crossover age. Used for behavior planning (bridge-capital projections start from this age, not from today) and for the optional "you have N years of optional work between desired-action-age and FI-crossover-age" framing.
 
-   **If the file is missing**, write a setup template to `~/finances/profile/retirement-frame.md.template` and exit with a clear "edit the template and re-run" message — don't silently default.
+   **If the file is missing**, write a setup template to `<finances_root>/profile/retirement-frame.md.template` and exit with a clear "edit the template and re-run" message — don't silently default.
 
 5. **Runtime freshness check**: pulls current 10-year Treasury yield (for safe-withdrawal-rate sensitivity), current S&P historical real return (for portfolio growth assumption), current inflation rate. **Does NOT hard-code these.** When WebFetch is unavailable, prompts user for current values.
 
@@ -138,7 +141,7 @@ Output is two-tier:
 7. **Sensitivity table** — vary the load-bearing assumptions, show how the answer shifts:
    - Real return on portfolio: ±1% from baseline (typically 5% real)
    - Spending baseline: ±10%
-   - High-3 / pension multiplier: per the confidence interval declared in `future-income-streams.md`
+   - High-3 / pension multiplier: per the confidence noted on the stream's `source` field in `holdings.md`'s income-streams section
    - Government retirement timing: early / full / late (locale-aware — US SSA at 62/67/70, UK State Pension at State Pension Age with 1% deferral bonus per 9 weeks, Canada CPP at 60-70 with adjustments per month, etc.)
    - Trust-fund haircut: locale-aware; for US, model SSA 2034 -19% scenario per current law; for UK, model State Pension means-testing scenarios; etc.
    - Mortgage payoff timing: as-amortized vs accelerated curtailments
@@ -150,7 +153,7 @@ Output is two-tier:
    - Income downshift: 40-60%?
    - Coast FI: existing invested × expected real return → reach target by year N?
 
-9. **Writes the load-bearing headline** to `~/finances/profile/crossover-headline.md`. One line plus optional caveat acknowledgment, computed from the crossover analysis. The headline should be honest and direct about which case applies — AND must acknowledge material caveats inline (see "State the already-FI case clearly with caveats" below). Format examples (placeholders, not user data):
+9. **Writes the load-bearing headline** to `<finances_root>/profile/crossover-headline.md`. One line plus optional caveat acknowledgment, computed from the crossover analysis. The headline should be honest and direct about which case applies — AND must acknowledge material caveats inline (see "State the already-FI case clearly with caveats" below). Format examples (placeholders, not user data):
 
    **Already-FI case with caveats acknowledged:**
    - *"You are already FI under your chosen frame, assuming current conditions hold. Known caveats: <government-retirement trust fund risk, e.g., US SSA -19% from 2034>, <pension high-3 pending verification>, <other material risks>."*
@@ -170,13 +173,13 @@ Output is two-tier:
 
    The skill should NEVER write a stale or demoralizing version when the already-FI case applies. State the win directly. AND never write an unqualified already-FI headline when material caveats exist — surface them in the same line.
 
-10. **Writes the full report** to `~/finances/crossover-YYYY-MM-DD.md`. Sensitivity table, scenario breakdowns, assumption log, year-by-year bridge cashflow projection.
+10. **Writes the full report** to `<finances_root>/crossover-YYYY-MM-DD.md`. Sensitivity table, scenario breakdowns, assumption log, year-by-year bridge cashflow projection.
 
 ---
 
 ## Output formats
 
-### `~/finances/profile/crossover-headline.md`
+### `<finances_root>/profile/crossover-headline.md`
 
 ```
 ---
@@ -200,7 +203,7 @@ material-caveats-count: <integer>
 
 Read by `/fi:fu-money-readout` for the headline echo. Readout echoes the headline line; full-caveat detail available via `/fi:crossover` re-run or by reading the file directly.
 
-### `~/finances/crossover-YYYY-MM-DD.md`
+### `<finances_root>/crossover-YYYY-MM-DD.md`
 
 ```markdown
 ---
@@ -369,13 +372,13 @@ and real numbers in the report so the user can see purchasing-power impact.
 
   The principle: the user should not be surprised by a caveat later that they could have known about now. The headline carries the load.
 
-- **Bridge math, not perpetual-portfolio math.** When future fixed-income streams exceed cost-of-living at activation, the portfolio's job is to bridge — not support spending forever. This is often the more honest frame than the textbook "4% rule" perpetual-portfolio model. The skill defaults to bridge-math framing if `future-income-streams.md` declares any stream ≥ 50% of expense baseline.
+- **Bridge math, not perpetual-portfolio math.** When future fixed-income streams exceed cost-of-living at activation, the portfolio's job is to bridge — not support spending forever. This is often the more honest frame than the textbook "4% rule" perpetual-portfolio model. The skill defaults to bridge-math framing if `holdings.md`'s income-streams section declares any stream ≥ 50% of expense baseline.
 
 - **Headline written here, echoed in fu-money-readout.** Decouples slow sensitivity math (run periodically) from fast daily orientation (echoed every readout). The headline file is the contract between skills.
 
 - **Two-scenario for streams with reduced/full eligibility ages.** Same pattern as fu-money-readout — for any stream that offers both an early-reduced option (e.g., taking benefits at reduced amount before full eligibility age) and a waited-full option (e.g., waiting for unreduced amount), run the analysis under both. Surface the time-arbitrage decision honestly. Common in employer pensions (US FERS, UK final-salary schemes, etc.), government retirement income (US SSA early at 62 / FRA at 67 / max at 70), and some annuities. Counterintuitively, early-reduced often produces better bridge math in nuclear scenarios.
 
-- **Trust-fund-haircut sensitivity (locale-aware).** Government retirement systems have known funding risks documented in their official statements. US SSA Trust Fund per current law: ~81% of scheduled benefits payable from 2034. UK State Pension: means-testing risk under future legislation. The skill surfaces the haircut scenario in the sensitivity table — does the FI math still work if scheduled benefits are reduced? Not a prediction; a sensitivity test.
+- **Trust-fund-haircut sensitivity (locale-aware).** Government retirement systems have known funding risks documented in their official statements. US SSA Trust Fund per current law: ~81% of scheduled benefits payable from 2034. UK State Pension: means-testing risk under future legislation. The skill surfaces the haircut scenario in the sensitivity table — does the FI math still work if scheduled benefits are reduced? Not a prediction; a sensitivity test. **The specific year and percentage are tool-layer facts** — re-verify against the latest trustees' report (or locale equivalent) at runtime before quoting them; they shift with every annual report and with legislation. The mentions of "2034 / −19%" elsewhere in this skill are examples of the shape, not values to trust.
 
 - **Future expense reductions stack with future income streams.** Mortgage payoff, auto loan payoff, student loan payoff — same math, opposite sign. At a known future date (computed via amortization formula, not lender-stated maturity), monthly burn drops. Stacks with pension/government-retirement activations to close the bridge.
 
@@ -386,6 +389,18 @@ and real numbers in the report so the user can see purchasing-power impact.
 - **Sensitivity over precision.** Don't report a single point estimate (e.g., "you'll be FI at age N"); report a range across the assumption space (e.g., "you cross the FI threshold somewhere in a window of years depending on which assumptions hold"). The shape of FI matters more than the point estimate.
 
 ---
+
+## Deterministic checks (run before writing headline or report; never write output that fails)
+
+Per AGENTS.md §Deterministic invariants — this skill's outputs steer retirement-shaped decisions, so every identity below is recomputed by a second route before anything is written. On mismatch: stop and reconcile; in headless mode write an error note instead of output (and leave the previous headline untouched).
+
+- **Age arithmetic**: every age in the output = the corresponding year − `birth_year` (one consistent convention throughout); bridge-phase age ranges are strictly increasing, contiguous, and non-overlapping.
+- **Bridge-table row identity**: each phase row's Net = Active income + Fixed income − Burn, to the dollar.
+- **Bridge ratio recompute**: bridge ratio = Σ(available net bridge capital across bridge years) ÷ Σ(bridge gap across bridge years), re-derived from the per-year table — not carried forward from an earlier draft of the analysis.
+- **Accessibility/tax sanity**: per account per year, `net_available` ≤ gross balance; Tier-4 accounts contribute exactly $0; effective tax rates ∈ [0%, 60%].
+- **Sensitivity monotonicity**: raising the real-return assumption never worsens the crossover age; raising spending never improves it; a benefit haircut never improves it. A non-monotonic sensitivity table means a computation error, not an interesting finding.
+- **Headline consistency**: the `position` frontmatter value must match the numbers (`already-fi` ⇔ computed crossover age ≤ current age; `coast-fi-passing` ⇔ the coast test inequality holds); `material-caveats-count` = the number of entries in the material-caveats list.
+- **Stream conservation**: every stream read from holdings.md appears in the analysis exactly once (multi-scenario entries as alternatives, never summed together).
 
 ## Headless behavior
 
@@ -398,14 +413,14 @@ When fired with no human present:
 - Does NOT print to stdout
 - Does NOT prompt interactively
 - If `holdings.md` is missing or stale (or its `## Income streams (non-labor)` section is missing for users with non-account income): writes an error note to the report file with a clear next step (pointer to `/fi:holdings-scaffold`), exits cleanly without overwriting the previous headline (don't write a stale headline).
-- If `retirement-frame.md` is missing: writes a one-time setup template to `~/finances/profile/retirement-frame.md.template` showing the four frame options (full-stop / location-time-flex / income-downshift / coast-fi) and notes in the error message that the user can copy and edit to enable the run. Don't hard-fail forever — make the setup step obvious.
+- If `retirement-frame.md` is missing: writes a one-time setup template to `<finances_root>/profile/retirement-frame.md.template` showing the four frame options (full-stop / location-time-flex / income-downshift / coast-fi) and notes in the error message that the user can copy and edit to enable the run. Don't hard-fail forever — make the setup step obvious.
 - If `_trend-totals.csv` is missing: cannot run in headless mode (no human present to provide the manual fallback). Exits with a clear error pointing at `/fi:track-flow` and noting that interactive runs support a manual-baseline override.
 
 ---
 
 ## Privacy posture
 
-This SKILL.md describes the procedure in general terms. User-specific data (account names, dollar amounts, pension figures, vendor patterns) is never embedded in the public skill files. All user data writes go to gitignored paths on the user's machine — `~/finances/profile/`, `~/finances/crossover-*.md`.
+This SKILL.md describes the procedure in general terms. User-specific data (account names, dollar amounts, pension figures, vendor patterns) is never embedded in the public skill files. All user data writes go to gitignored paths on the user's machine — `<finances_root>/profile/`, `<finances_root>/crossover-*.md`.
 
 User-specific test artifacts and design logs live on the user's machine in their gitignored finance directory. They do not get published.
 

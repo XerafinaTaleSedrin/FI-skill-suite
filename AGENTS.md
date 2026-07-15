@@ -84,6 +84,20 @@ Mechanisms:
 
 ---
 
+## Deterministic invariants (every skill that computes)
+
+An LLM running a finance procedure can be confidently wrong in arithmetic while being perfectly fluent in prose — the failure mode this suite most needs to guard against. The guard: **the model proposes the numbers; cheap deterministic checks adjudicate.** Wherever a skill's math admits an identity that must hold by construction (ledger sides balance, percentages sum to 100, components sum to the total, dates strictly ordered), the skill declares it in a `## Deterministic checks` section and runs every check **before presenting results or writing an output file**.
+
+Rules:
+
+1. **Recompute, don't re-read.** A check re-derives the quantity from the inputs by a second route (e.g., net = income + expense summed from rows, compared against the net the tabulation produced). Re-reading the same computed value proves nothing.
+2. **On failure, stop — never present.** A failed invariant means the numbers are wrong or the inputs are inconsistent. Reconcile, or surface the discrepancy to the user with both values shown (interactive) / write an error note instead of output (headless). Never write an output file that fails its own invariants; a downstream skill will trust it.
+3. **Tolerance is for rounding only.** Currency identities hold to the cent (or a stated rounding tolerance for FX-converted figures, e.g. ±0.5% of the converted amount). "Close enough" beyond rounding is a failure.
+4. **Checks are silent when they pass.** No "all checks passed ✓" ceremony in user output — the check is scaffolding, not content. (Headless runs MAY log a one-line pass note to the output file's frontmatter, e.g. `invariants: pass`.)
+5. **Backwards compatible by construction.** Checks change no computation and no output schema; they only gate wrong output from escaping. A skill invoked exactly as yesterday produces exactly yesterday's output — unless yesterday's output was arithmetically wrong.
+
+---
+
 ## Runtime freshness
 
 Every skill that touches time-sensitive content must include a runtime "is this still true?" check. See [ARCHITECTURE.md](./ARCHITECTURE.md) §Runtime freshness for the full rule. The three checks:
@@ -111,8 +125,8 @@ Skills can use WebFetch (when available) to verify external state. When WebFetch
 
 In `FI-skill-suite`, Hearth has a defined role:
 
-- **`/fi:audit` skill**: Hearth's verdict is **mandatory** on every short-form clip (IG carousels, social cuts, the 5-line takeaway hero slide) and present on the full audit. Hearth speaks for herself.
-- **Other skills**: Hearth is silent unless the user invokes her with a command-line flag. Default OFF for all skills except `/fi:audit`.
+- **Book audits**: Hearth's verdict is mandatory on audits — but the `/fi:audit` skill and its artifacts moved out of this repo on 2026-05-27 (the pipeline lives privately with the author). This section remains so the verdict scale stays defined for the audits cited in skills' `sources:` frontmatter.
+- **Skills in this repo**: Hearth is silent unless the user invokes her with a command-line flag. Default OFF for every `/fi:` skill.
 
 The verdict scale is the substance — books that recommend ignoring lived constraints get *hiss-worthy*; books with a single load-bearing insight worth keeping get *windowsill-approved*; books that survive the audit intact and earn re-reads get full Hearth approval. *Would-knock-off-the-desk* is reserved for books that confidently misinform.
 
@@ -142,21 +156,39 @@ Every skill in this suite reads from / writes to files under a common root, conv
 
 ## Cross-skill data contracts
 
-All paths below are relative to `<finances_root>` (see path resolution above). Skills that read from / write to shared sentinel files must respect the schema:
+All paths below are relative to `<finances_root>` (see path resolution above). Skills that read from / write to shared sentinel files must respect the schema. Schema sources point at the owning skill's SKILL.md section — there are no standalone SCHEMA.md files.
 
 | Sentinel file (relative to `<finances_root>`) | Owner skill | Reader skills | Schema source |
 |---|---|---|---|
 | `.fi-root` (root marker, optional TOML overrides) | `/fi:holdings-scaffold` | (every skill walks up looking for it) | See path resolution above |
-| `holdings.md` | `/fi:holdings-scaffold` | `/fi:fu-money-readout`, `/fi:crossover`, `/fi:redirect`, `/fi:wallchart` | See `skills/holdings-scaffold/SCHEMA.md` |
-| `transactions/<YYYY-MM>.csv` | `/fi:track-flow` | (internal — track-flow reads its own output during the rolling tabulation pass) | See `skills/track-flow/SCHEMA.md` |
-| `monthly-tabs/<YYYY-MM>.md` | `/fi:track-flow` | `/fi:three-questions` | See `skills/track-flow/SCHEMA.md` |
-| `monthly-tabs/_trend-categories.csv` | `/fi:track-flow` | `/fi:wallchart` | See `skills/track-flow/SCHEMA.md` |
-| `monthly-tabs/_trend-totals.csv` | `/fi:track-flow` | `/fi:crossover`, `/fi:wallchart` | See `skills/track-flow/SCHEMA.md` |
-| `profile/wallchart-config.md` | `/fi:wallchart` | (internal — persisted user preferences) | See `skills/wallchart/SKILL.md` |
-| `wallchart.md` | `/fi:wallchart` | `/fi:crossover` | See `skills/wallchart/SCHEMA.md` |
-| `book-audits/<DATE>-<book>.md` (this repo, not finances_root) | `/fi:audit` | (read by humans, surfaced in cross-references) | See `book-audits/_audit-template.md` |
+| `holdings.md` (accounts + income streams + liabilities) | `/fi:holdings-scaffold` | `/fi:fu-money-readout`, `/fi:crossover`, `/fi:redirect`, `/fi:wallchart` | `skills/holdings-scaffold/SKILL.md` §Schema |
+| `transactions/<YYYY-MM>.csv` | `/fi:track-flow` | `/fi:money-date` (fallback source); internal re-reads during rolling tabulation | `skills/track-flow/SKILL.md` §Output schemas |
+| `monthly-tabs/<YYYY-MM>.md` | `/fi:track-flow` | `/fi:three-questions` | `skills/track-flow/SKILL.md` §Output schemas |
+| `monthly-tabs/_trend-categories.csv` | `/fi:track-flow` | (reserved for `/fi:wallchart` per-category panels — no consumer yet) | `skills/track-flow/SKILL.md` §Output schemas |
+| `monthly-tabs/_trend-totals.csv` | `/fi:track-flow` | `/fi:fu-money-readout`, `/fi:crossover`, `/fi:wallchart`, `/fi:redirect` (optional) | `skills/track-flow/SKILL.md` §Output schemas |
+| `monthly-tabs/_patterns-detected.md` | `/fi:track-flow` | `/fi:three-questions` | `skills/track-flow/SKILL.md` Step 9 |
+| `monthly-tabs/<YYYY-MM>-with-values.md` | `/fi:three-questions` | `/fi:redirect` (minus-rated categories as surplus source) | `skills/three-questions/SKILL.md` Step 7 |
+| `profile/retirement-frame.md` | user (template written by `/fi:crossover`) | `/fi:crossover`, `/fi:fu-money-readout` | `skills/crossover/SKILL.md` step 4 |
+| `profile/crossover-headline.md` | `/fi:crossover` | `/fi:fu-money-readout` (headline echo) | `skills/crossover/SKILL.md` §Output formats |
+| `profile/readout-config.md` | `/fi:fu-money-readout` | (internal — tone, echo cadence, drawdown sequence) | `skills/fu-money-readout/SKILL.md` |
+| `profile/account-purposes.md` | `/fi:track-flow` | (internal — persisted across runs) | `skills/track-flow/SKILL.md` Step 3 |
+| `profile/vendor-defaults.md` | `/fi:track-flow` | `/fi:hourly-wage` (read-only) | `skills/track-flow/SKILL.md` Step 6 |
+| `profile/wallchart-config.md` | `/fi:wallchart` | (internal — SWR + stream opt-outs + outlier decisions) | `skills/wallchart/SKILL.md` |
+| `profile/ips.md` | `/fi:redirect` | (internal — re-read on later runs) | `skills/redirect/SKILL.md` Step 5 Q1 |
+| `profile/money-date-cadence.md` | `/fi:money-date` | (internal) | `skills/money-date/SKILL.md` Step 1 |
+| `profile/{typical-hours, processor-fees, allocation-basis, hourly-wage-custom-categories, tax-pass-throughs}.md` | `/fi:hourly-wage` | (internal — defaults offered on later runs) | `skills/hourly-wage/SKILL.md` Step 6 |
+| `hourly-wage/<YYYY-MM-DD>.md` | `/fi:hourly-wage` | `/fi:three-questions` (life-energy anchor), `/fi:crossover` (implied hours-per-week), `/fi:wallchart` (optional annotation) | `skills/hourly-wage/SKILL.md` §Output |
+| `fu-money-log/<YYYY-MM-DD>.md` | `/fi:fu-money-readout` | `/fi:redirect` (optional — the gap number; latest by filename date) | `skills/fu-money-readout/SKILL.md` §Output format |
+| `wallchart.md` | `/fi:wallchart` | (human — printed artifact; no skill consumer today) | `skills/wallchart/SKILL.md` Step 6 |
+| `crossover-<YYYY-MM-DD>.md` (full report) | `/fi:crossover` | (human) | `skills/crossover/SKILL.md` §Output formats |
+| `redirect-review-<YYYY-MM-DD>.md` | `/fi:redirect` | (human) | `skills/redirect/SKILL.md` Step 8 |
+| `money-date/<YYYY-MM-DD>.md` | `/fi:money-date` | (internal — trend recompute on later runs) | `skills/money-date/SKILL.md` §Output |
+
+**Deprecated sentinel:** `profile/future-income-streams.md` — superseded 2026-05-23 by `holdings.md`'s `## Income streams (non-labor)` section. `/fi:fu-money-readout` still reads it as a legacy fallback (with a one-time migration offer) when holdings.md has no streams section. No skill writes it anymore.
 
 **Rule:** if a skill reads from a sentinel file, it MUST validate the schema and fail loudly if the file is malformed. Don't silently ignore unexpected fields.
+
+**Rule:** "latest file" selection in date-named directories (`hourly-wage/`, `fu-money-log/`, `money-date/`) is by filename date (lexicographic max on the `YYYY-MM-DD` name), never by filesystem mtime — mtimes are identical after a fresh clone or sync (see File operations above).
 
 ---
 

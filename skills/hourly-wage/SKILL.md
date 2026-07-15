@@ -6,10 +6,10 @@ ymoyl_step: 2
 mode_aware: true
 status: alpha
 status-history:
-  - 2026-05-20: draft (initial 2026 modernization complete)
-  - 2026-05-23: alpha (content review pass — multi-stream, mode-aware, employer-benefits, load-phase tagging, shared-expense allocation, pipeline mode, output template, privacy validation, worked example, sources all complete; remaining gap to "stable" is one non-author beta-test run + any iteration on real-world findings)
-  - 2026-05-23: alpha (real-data walkthrough — added Step 5b tax handling (pre-tax vs after-tax basis, SE + federal-marginal + state guidance), Step 1 labor-only framing (excludes pensions/dividends/rental/royalties), Step 4 shared-hours allocation (parallel to shared-expense), Step 6 sparse-log plausibility check (compare against typical-week / invoice-implied / calendar-implied), Output path made overridable via FI_FINANCES_DIR env var, gitignore validation tightened from "warn" to "refuse")
-  - 2026-05-26: alpha (live-data findings pass — 10 structural issues surfaced and folded into the skill: Step 0 portfolio-pre-read + time-budget guidance, Step 1 partial-stream split (active labor + past-work residual in the same stream), Step 3 state/sales-tax pass-through prompt, Step 4 time-log format guidance (explicit-duration / switch-style / external-tool), Step 4 per-stream effective windows, Step 5 payment-processor fee handling, Step 5/7 pro-bono overhead allocation note, Step 6 profile-file auto-creation, Step 7 reporting refinements)
+  - "2026-05-20: draft (initial 2026 modernization complete)"
+  - "2026-05-23: alpha (content review pass — multi-stream, mode-aware, employer-benefits, load-phase tagging, shared-expense allocation, pipeline mode, output template, privacy validation, worked example, sources all complete; remaining gap to \"stable\" is one non-author beta-test run + any iteration on real-world findings)"
+  - "2026-05-23: alpha (real-data walkthrough — added Step 5b tax handling (pre-tax vs after-tax basis, SE + federal-marginal + state guidance), Step 1 labor-only framing (excludes pensions/dividends/rental/royalties), Step 4 shared-hours allocation (parallel to shared-expense), Step 6 sparse-log plausibility check (compare against typical-week / invoice-implied / calendar-implied), Output path made overridable via FI_FINANCES_DIR env var, gitignore validation tightened from \"warn\" to \"refuse\")"
+  - "2026-05-26: alpha (live-data findings pass — 10 structural issues surfaced and folded into the skill: Step 0 portfolio-pre-read + time-budget guidance, Step 1 partial-stream split (active labor + past-work residual in the same stream), Step 3 state/sales-tax pass-through prompt, Step 4 time-log format guidance (explicit-duration / switch-style / external-tool), Step 4 per-stream effective windows, Step 5 payment-processor fee handling, Step 5/7 pro-bono overhead allocation note, Step 6 profile-file auto-creation, Step 7 reporting refinements)"
 sources:
   - book: Your Money or Your Life
     contribution: "Step 2 — the real-hourly-wage calculation. Subtract every cost incurred because of the job; add every hour spent because of the job; divide. The classic on-site line items carry forward; the 1992 list assumed an office commuter."
@@ -360,8 +360,10 @@ When the user supplies any of the following, persist to
 - `processor-fees.md` — payment processor + fee structure per stream
   (used by Step 5 fee subtraction)
 - `allocation-basis.md` — by-hours vs by-revenue, captured once, reused
-- `mixed-purpose-vendors.md` — vendor-default category map (Walmart →
-  Groceries, etc.) — shared with `/fi:track-flow`
+- `vendor-defaults.md` — vendor-default category map (Walmart →
+  Groceries, etc.) — owned and written by `/fi:track-flow` (Step 6
+  there); this skill only reads it. Read-only here — never write it
+  from hourly-wage.
 - `tax-pass-throughs.md` — per-stream state/sales tax pass-through rates
   (used by Step 3a)
 
@@ -380,7 +382,7 @@ common silent failure mode: 5 hours logged when 60 were worked produces a wage
 that looks 12× higher than reality. Cross-check with whichever of these the user
 has:
 
-- **Stated typical week** — captured in `~/finances/profile/typical-hours.md`
+- **Stated typical week** — captured in `<finances-dir>/profile/typical-hours.md`
   on first run, e.g. "16 hours/week across all paid streams." If logged hours
   for the period fall below ~50% of expected, flag and ask: under-logged, or a
   genuinely lighter period?
@@ -395,6 +397,14 @@ the hours figure as `hours-source: logged-only, no plausibility check available`
 so the wage isn't read as a settled number.
 
 ## Step 7 — Compute and report
+
+**Deterministic checks first** (per AGENTS.md §Deterministic invariants — run before reporting; on mismatch, reconcile, don't report):
+
+- **Wage identity per stream**: real hourly wage × hours = compensation − job-related expenses − allocated shared expenses − tax (when after-tax basis). Recompute the multiplication back; it must close to the cent.
+- **Blended is a ratio of sums**: blended wage = Σ(net compensation across paid streams) ÷ Σ(hours across paid streams) — NEVER the average of the per-stream wages (that weights a 2-hour stream equal to a 100-hour one).
+- **Allocation conservation**: shared-expense and shared-hours allocations sum to exactly 100% across streams; every shared dollar and hour lands on exactly one stream.
+- **Window discipline**: per stream, the income figure and the hours figure cover the same effective window; each effective window ⊆ the overall window; hours > 0 for any stream reporting a wage.
+- **Non-negativity**: expenses, allocated shares, and tax are each ≥ 0; a negative subtraction means a sign error upstream.
 
 Per stream:
 
@@ -461,15 +471,20 @@ directory if needed). One file per run — a dated snapshot, never overwritten.
 
 **Resolving `<finances-dir>`:**
 
-1. Check the `FI_FINANCES_DIR` environment variable. If set and the path
-   exists, use it.
-2. Otherwise fall back to `~/finances/`.
+`<finances-dir>` is this skill's historical name for the suite-wide
+`<finances_root>`. Resolve it per AGENTS.md §Path resolution — `FI_ROOT`
+env var → `.fi-root` walk-up → `~/.fi/config.toml` → `~/finances/`
+default — with one skill-local addition for backwards compatibility:
 
-Users with a non-standard layout (e.g. a finances folder inside another repo)
-should set `FI_FINANCES_DIR` once in their shell profile. The same resolution
-applies everywhere this skill references `~/finances/` — profile files, output
-files, and the gitignore check below all read from `<finances-dir>` resolved
-through this rule.
+- **`FI_FINANCES_DIR`** (this skill's original env var) is still honored.
+  Check it immediately after `FI_ROOT`: if `FI_ROOT` is unset but
+  `FI_FINANCES_DIR` is set and the path exists, use it, and mention once
+  that `FI_ROOT` is the suite-wide spelling going forward. Existing
+  shell profiles keep working unchanged.
+
+The same resolution applies everywhere this skill references a finances
+path — profile files, output files, and the gitignore check below all
+read from `<finances-dir>` resolved through this rule.
 
 **Gitignore validation** before writing: check that `<finances-dir>` (or a
 parent that contains it) is covered by a `.gitignore` rule in the nearest git
@@ -542,8 +557,9 @@ When invoked by another agent or a scheduled run with no human present:
 User-specific data — income, expense amounts, employer names, vendor patterns —
 is never embedded in this skill file or committed to the plugin repo. All user
 data writes go to gitignored paths on the user's machine — `<finances-dir>`
-resolved per the Output section (defaults to `~/finances/`, overridable via
-`FI_FINANCES_DIR`). The skill validates `.gitignore` coverage before writing
+resolved per the Output section (AGENTS.md §Path resolution, with
+`FI_FINANCES_DIR` honored as this skill's legacy env-var alias). The
+skill validates `.gitignore` coverage before writing
 and refuses to write if the resolved path is not ignored. See `AGENTS.md` for
 the cross-skill privacy posture.
 

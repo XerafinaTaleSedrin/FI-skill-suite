@@ -73,7 +73,7 @@ Roughly: do these in order. Some skills can run independently once `/fi:holdings
               └─→ /fi:wallchart
 ```
 
-The book audits that informed the `sources:` frontmatter across these skills live in [`book-audits/`](../book-audits/) — they're the published artifacts of the audit pipeline that produced the source-tracing.
+The book audits that informed the `sources:` frontmatter across these skills were produced by the audit pipeline that moved out of this repo on 2026-05-27 (see the note at the bottom of this file); the pre-move audit artifacts remain available in this repo's git history.
 
 ---
 
@@ -81,12 +81,15 @@ The book audits that informed the `sources:` frontmatter across these skills liv
 
 - **scaffold**: SKILL.md stub exists with frontmatter + outline; not yet implementable.
 - **draft**: SKILL.md is complete enough to run; needs review and testing.
-- **alpha**: skill runs and produces output; rough edges remain.
-- **stable**: skill is reliable; tool-register entries are current.
+- **alpha**: skill runs and produces output on real data; rough edges remain. Promotion to alpha requires recorded real-run evidence (a dated status-history entry naming the run).
+- **beta**: alpha, plus (1) at least one recorded run by someone other than the author, (2) no known cross-skill contract drift at time of promotion, and (3) the skill's deterministic checks exercised in a live run. The transition worth naming: works for someone whose finances the author has never seen.
+- **stable**: skill is reliable across users; tool-register entries are current.
 - **not started**: no SKILL.md yet; planned but unwritten.
 
 ---
 
-*Last updated: 2026-05-27 (audit skill removed from this repo — the book audit pipeline lives privately under the auditor's local skills, since it carries authorial voice (the auditor's verdict, the auditor's reading framing) that doesn't generalize. The published book-audits remain in `book-audits/` as bylined artifacts that inform the `sources:` frontmatter across skills.)*
+*Last updated: 2026-07-14 (hardening pass + status sync: frontmatter `status` fields for holdings-scaffold, fu-money-readout, track-flow, and crossover synced to the alpha promotions this index recorded on 2026-05-22 — the index and the skills had disagreed since then. **beta** added to the status legend with a defined gate (non-author run + no contract drift + deterministic checks exercised live); no skill qualifies yet. three-questions, redirect, and money-date stay draft — no recorded real run; wallchart stays draft pending its clean second walkthrough now that the S-1 path-resolution work landed.)*
+
+*Previous update: 2026-05-27 (audit skill removed from this repo — the book audit pipeline lives privately under the auditor's local skills, since it carries authorial voice (the auditor's verdict, the auditor's reading framing) that doesn't generalize. The published book-audits remain in `book-audits/` as bylined artifacts that inform the `sources:` frontmatter across skills.)*
 
 *2026-05-22 (per-skill status audit — corrected stale status fields that were never updated as skills got used. Five skills moved draft → alpha on real-run evidence: `holdings-scaffold` (run on real holdings, put in front of others for review), `fu-money-readout` (end-to-end validated against real user data 2026-05-03, validation findings encoded as design rules), `track-flow` (end-to-end validated on real multi-stream multi-currency aggregator data, 14 validation findings), `crossover` (bridge-math validated paired with fu-money-readout 2026-05-03). `hourly-wage`, `three-questions`, `wallchart`, `redirect` remain draft — complete runnable procedures but no evidence of a real run yet (`hourly-wage` has one worked example but no live-invocation validation).)*

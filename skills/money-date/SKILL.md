@@ -1,8 +1,8 @@
 ---
 name: money-date
 description: Weekly ~5-minute counterweight ritual to the hoarding instinct. Three honest questions — did you pay yourself, did you spend on ease, did you enjoy anything — surfaced once a week against the user's actual flow. Designed for owners whose risk pattern is *under*-spending, not over. Use weekly, or whenever the user wants a quick check against the "check the balance to feel safe" compulsion.
-layer: pattern
-ymoyl_step: cadence-companion
+layer: concept+pattern
+ymoyl_step: n/a
 mode_aware: false
 status: draft
 status-history:
@@ -36,6 +36,8 @@ they pick), with a trend over time as runs accrete. Short, honest, glance-able.
 
 ## Step 1 — Settle the cadence
 
+(All data paths in this skill are relative to `<finances_root>`, resolved per AGENTS.md §Path resolution: `FI_ROOT` env var → `.fi-root` walk-up → `~/.fi/config.toml` → `~/finances/` default.)
+
 Ask first: **"When's your money date — same day each week, or roving?"**
 
 - **Fixed day** (e.g. every Friday morning) — the rhythm itself is the value.
@@ -44,7 +46,7 @@ Ask first: **"When's your money date — same day each week, or roving?"**
   mean the cadence isn't holding; surface that gently and ask if a fixed slot
   would help.
 
-Persist the cadence choice to `~/finances/profile/money-date-cadence.md`
+Persist the cadence choice to `<finances_root>/profile/money-date-cadence.md`
 (gitignored). Don't re-ask once set.
 
 ## Step 2 — Pull the week
@@ -55,7 +57,7 @@ Read the user's flow data for the period since the last money-date file
 1. The `/fi:track-flow` output if the user runs it — that's already classified
    by bucket / source / category.
 2. A configured banking aggregator / file path if they use one.
-3. Recent entries from `~/finances/transactions/`.
+3. Recent entries from `<finances_root>/transactions/`.
 4. User self-report if nothing is automated.
 
 If multiple sources exist, prefer the most-classified one. State which source
@@ -136,7 +138,7 @@ deliberate.
 
 ## Step 5 — Trend
 
-Read prior `~/finances/money-date/*.md` files. Surface a short trend on the
+Read prior `<finances_root>/money-date/*.md` files. Surface a short trend on the
 three questions:
 
 - **Pay yourself** — frequency over the last 8 weeks (e.g. "5 of 8 weeks").
@@ -149,9 +151,14 @@ intervention.
 
 ## Output
 
-Write each run to `~/finances/money-date/YYYY-MM-DD.md`. One file per run, a
+**Deterministic checks first** (per AGENTS.md §Deterministic invariants): each trend-table count n ≤ the number of money-date files in the window (can't have 6 yes-weeks out of 5 runs); `days-covered` = the actual day span since the previous file's date; the period's in/out flow figures re-sum from the source rows.
+
+Write each run to `<finances_root>/money-date/YYYY-MM-DD.md`. One file per run, a
 dated snapshot, never overwritten. Validate `.gitignore` coverage before
-writing; warn if the path is not ignored.
+writing, per AGENTS.md privacy posture rule 2: if the path is inside a git
+repo and not covered, add it to `.gitignore` BEFORE writing (with the user
+shown the diff); if not in a git repo, write the "DO NOT COMMIT" warning
+header at the top of the file. Never just warn and write anyway.
 
 ```markdown
 ---
@@ -226,7 +233,7 @@ user what's getting in the way. The ritual is a counterweight, not a duty.
 
 User-specific data — payment amounts, vendor names, categories, balances — is
 never embedded in this skill file or committed to the plugin repo. All user
-data writes go to gitignored paths on the user's machine (`~/finances/`). See
+data writes go to gitignored paths on the user's machine (`<finances_root>/`). See
 `AGENTS.md` for the cross-skill privacy posture.
 
 ## Cross-refs
