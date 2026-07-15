@@ -17,7 +17,7 @@ sources:
     contribution: "Owner-as-key-employee principle and purpose-bound treatment of business expenses — informs the shared-expense allocation across multiple income streams, and naturalizes a real wage for the business-owner case where 'wage' might otherwise be conflated with owner draw."
   - author: Marika Olson
     contribution: "2026 design refinements — work-mode branching (remote/hybrid/on-site/gig), AI/SaaS OpEx as a load-bearing line item, contracted-vs-cash income basis, explicit denominator-policy capture, load-phase tagging, shared-expense + shared-hours allocation, multi-stream per-engagement wages with a blended number, pro bono reported as its own line, dated-output trend tracking, headless pipeline mode, labor-only framing (excludes capital and past-work income), Step 5b tax-attributable subtraction with pre-tax/after-tax basis switch, sparse-log plausibility check against typical-week / invoice-implied / calendar baselines, configurable finances directory via FI_FINANCES_DIR."
-last-reviewed: 2026-05-26
+last-reviewed: 2026-07-14
 ---
 
 # /fi:hourly-wage
@@ -393,8 +393,9 @@ has:
   blocks, total them as a sanity floor.
 
 If no baseline is available, the skill can still run, but the output must tag
-the hours figure as `hours-source: logged-only, no plausibility check available`
-so the wage isn't read as a settled number.
+the hours figure as `hours-source: logged-only-no-plausibility-check` (the
+exact enum value from the Output frontmatter below) so the wage isn't read as
+a settled number.
 
 ## Step 7 — Compute and report
 
