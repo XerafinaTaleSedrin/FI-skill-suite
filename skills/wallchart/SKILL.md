@@ -10,7 +10,7 @@ sources:
     contribution: "Step 5 — make life energy visible via long-arc chart. Three lines (income, spending, investment income) plotted over time; crossover where investment income meets spending = FI threshold."
   - author: Marika Olson
     contribution: "2026 design refinements: three-method investment-income computation (actual yield / balance-change derived / forward-projected), default to forward-projection because it's the line that conceptually crosses spending. ASCII-first rendering for universal terminal compatibility, SVG/PNG via matplotlib as printable wall-chart upgrade. Reads track-flow trend CSVs rather than re-aggregating monthly tabs."
-last-reviewed: 2026-07-14
+last-reviewed: 2026-07-20
 ---
 
 # /fi:wallchart
@@ -111,6 +111,8 @@ Earlier versions of this skill framed Step 3 as a "pick a method" choice between
 > *Want me to explain any of these in more depth, or compare them side-by-side, before you pick? Otherwise — what rate do you want me to use?"*
 
 The skill MUST explicitly invite Q&A before accepting an answer. Do not just collect a number and proceed. Users who are new to FI need conversational space to understand what they're choosing.
+
+When the user asks for the "explain in more depth" path, ground the explanation in `references/withdrawal-rates.md` — the key context being that 4% was derived from the *worst* historical retirement cohort (it's a floor-shaped number, not the expected case), and that rates above it are defensible only with flexible-spending behavior. For the comfortable-vs-floor two-number treatment of the FI threshold itself, point at `/fi:crossover` (opt-in there); the wallchart keeps a single reference line by design.
 
 Apply the chosen rate to today's portfolio value — the **investment-accounts total** from `holdings.md` (the same total the asset-class roll-up sums to), NOT net worth. Cash accounts, home equity, and other non-investment assets aren't perpetually SWR-drawable; using net worth silently inflates the reference line. (In the prompt above, `[$P]` is this same investment-accounts total.)
 
